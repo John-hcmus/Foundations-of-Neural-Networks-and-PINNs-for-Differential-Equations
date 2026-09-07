@@ -11,9 +11,9 @@
 \setdefaultlanguage{vietnamese}
 \setotherlanguage{english}
 
-\usepackage[headheight=15pt]{geometry}
-% Hoặc nếu đã nạp geometry từ trước:
-% \geometry{headheight=15pt}
+% LƯU Ý: geometry chỉ được nạp MỘT lần, ở Mục 4 (Bố cục trang), với đầy đủ
+% tuỳ chọn lề và headheight. Nạp hai lần với tuỳ chọn khác nhau sẽ gây lỗi
+% "Option clash for package geometry" và dừng biên dịch.
 
 \setmainfont{TeX Gyre Termes}          % Times-like, hỗ trợ đầy đủ dấu tiếng Việt
 % \setmainfont{Liberation Serif}       % phương án thay thế nếu máy không có TeX Gyre
@@ -66,7 +66,7 @@
 %--------------------------------------------------------------
 % 4. BỐ CỤC TRANG
 %--------------------------------------------------------------
-\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
+\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm, headheight=15pt]{geometry}
 \usepackage{setspace}
 \setstretch{1.25}
 \usepackage{emptypage}
@@ -126,7 +126,8 @@
 \usepackage{subcaption}
 
 \usepackage{tikz}
-\usetikzlibrary{calc, positioning, arrows.meta, fit, backgrounds}
+\usetikzlibrary{calc, positioning, arrows.meta, fit, backgrounds,
+                decorations.pathreplacing}
 % \usepackage{pgfplots}\pgfplotsset{compat=1.18}   % bật nếu vẽ đồ thị trực tiếp trong LaTeX
 
 \usepackage{enumitem}
@@ -257,15 +258,12 @@
 \newcommand{\ngaythangnam}[3]{ngày #1 tháng #2 năm #3}
 \newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}   % xóa trước khi nộp
 
-\usepackage{amsmath, amssymb}
-\usepackage{bm}        % Hỗ trợ in đậm ký hiệu toán học đẹp hơn
-\usepackage{mathtools} % Hỗ trợ định nghĩa \abs chuẩn giãn cách
+% LƯU Ý: amsmath, amssymb, bm và mathtools ĐÃ được nạp ở Mục 2 (Toán học).
+% Không nạp lại ở đây: nạp trùng sau hyperref là thừa và dễ gây thứ tự nạp sai.
 
-% 1. Sửa lỗi chung \bk (chọn một trong hai cách dưới)
-\newcommand{\bk}{\mathbf{k}}  % Cách 1: dùng \mathbf thông thường
-% \newcommand{\bk}{\bm{k}}    % Cách 2: dùng \bm (đẹp hơn nếu k là biến nghiêng đậm)
+% Vectơ số sóng: dùng \bm cho nhất quán với toàn bộ notation.tex
+% (\bx, \btheta, ... đều dùng \bm chứ không phải \mathbf).
+\newcommand{\bk}{\bm{k}}
 
-% 2. Phòng ngừa lỗi \abs
+% Trị tuyệt đối có giãn cách chuẩn (mathtools, đã nạp ở Mục 2)
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}
-% Hoặc nếu không muốn dùng mathtools:
-% \newcommand{\abs}[1]{\left|#1\right|}

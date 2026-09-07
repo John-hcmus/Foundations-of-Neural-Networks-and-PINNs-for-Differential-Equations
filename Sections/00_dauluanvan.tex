@@ -1,0 +1,82 @@
+%==============================================================
+%  PHẦN ĐẦU: Lời cam đoan, Lời cảm ơn, Danh mục từ viết tắt
+%==============================================================
+
+\chapter*{Lời cam đoan}
+\addcontentsline{toc}{chapter}{Lời cam đoan}
+\markboth{Lời cam đoan}{Lời cam đoan}
+
+Tôi xin cam đoan đây là công trình nghiên cứu của riêng tôi, được thực hiện dưới
+sự hướng dẫn của \thesisAdvisor. Các kết quả lý thuyết được trình bày trong luận
+văn hoặc do tôi tự chứng minh, hoặc được trích dẫn đầy đủ từ tài liệu gốc. Toàn
+bộ số liệu thực nghiệm được tạo ra bằng mã nguồn công bố kèm luận văn
+(Phụ lục~\ref{app:code}) và có thể kiểm chứng lại; các giới hạn về tính tái lập
+của những số liệu ấy được nêu thẳng ở Mục~\ref{sec:hanche}. Luận văn không sao
+chép từ bất kỳ công trình nào khác mà không ghi rõ nguồn.
+
+\vspace{1.5cm}
+\begin{flushright}
+\begin{minipage}{7cm}
+\centering
+TP. Hồ Chí Minh, \ngaythangnam{5}{9}{2026}\\[0.3cm]
+\textit{Sinh viên thực hiện}\\[2cm]
+\thesisAuthor
+\end{minipage}
+\end{flushright}
+
+%--------------------------------------------------------------
+\chapter*{Lời cảm ơn}
+\addcontentsline{toc}{chapter}{Lời cảm ơn}
+\markboth{Lời cảm ơn}{Lời cảm ơn}
+
+\TODO{Phần này cần tác giả tự viết. Thông thường gồm: lời cảm ơn giảng viên
+hướng dẫn, quý thầy cô Khoa Toán--Tin học, gia đình và bạn bè. Xoá lệnh
+\texttt{\textbackslash TODO} này sau khi viết xong.}
+
+%--------------------------------------------------------------
+\chapter*{Danh mục từ viết tắt}
+\addcontentsline{toc}{chapter}{Danh mục từ viết tắt}
+\markboth{Danh mục từ viết tắt}{Danh mục từ viết tắt}
+
+\begin{longtable}{@{}l p{5.3cm} p{6.0cm}@{}}
+\toprule
+\textbf{Viết tắt} & \textbf{Nguyên văn} & \textbf{Nghĩa dùng trong luận văn} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Viết tắt} & \textbf{Nguyên văn} & \textbf{Nghĩa dùng trong luận văn} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+PINN & physics-informed neural network & mạng nơ-ron thông tin vật lý \\
+FNN & feedforward neural network & mạng nơ-ron truyền thẳng \\
+MLP & multilayer perceptron & perceptron nhiều lớp \\
+AD & automatic differentiation & vi phân tự động \\
+JVP & Jacobian--vector product & tích Jacobi--vectơ (chế độ thuận) \\
+VJP & vector--Jacobian product & tích vectơ--Jacobi (chế độ ngược) \\
+MSE & mean squared error & sai số bình phương trung bình \\
+SGD & stochastic gradient descent & hạ gradient ngẫu nhiên \\
+BFGS & Broyden--Fletcher--Goldfarb--Shanno & phương pháp tựa Newton \\
+L-BFGS & limited-memory BFGS & BFGS bộ nhớ hạn chế \\
+ReLU & rectified linear unit & hàm kích hoạt $\max\{0,z\}$ \\
+SiLU & sigmoid linear unit & hàm kích hoạt Swish, $z\,\sigma_{\mathrm{s}}(z)$ \\
+LHS & Latin hypercube sampling & lấy mẫu siêu khối Latin \\
+RAR & residual-based adaptive refinement & lấy mẫu thích nghi theo phần dư \\
+NTK & neural tangent kernel & nhân tiếp tuyến nơ-ron \\
+RK4 & Runge--Kutta bậc bốn & lược đồ tích phân thời gian tường minh \\
+cPINN & conservative PINN & PINN phân rã miền dạng bảo toàn \\
+XPINN & extended PINN & PINN phân rã miền tổng quát \\
+\bottomrule
+\end{longtable}
+
+\begin{center}
+\begin{minipage}{0.92\textwidth}
+\small
+\textbf{Về hai chữ viết tắt không dùng.} Luận văn viết đầy đủ ``phương trình đạo
+hàm riêng'' và ``phương trình vi phân thường'' thay vì PDE và ODE, để tránh lẫn
+với cách viết tắt tiếng Việt; riêng ký hiệu $\mathcal{L}$ luôn chỉ toán tử vi
+phân và không bao giờ chỉ hàm mất mát (xem quy ước ở đầu
+Chương~\ref{chap:pinn}).
+\end{minipage}
+\end{center}

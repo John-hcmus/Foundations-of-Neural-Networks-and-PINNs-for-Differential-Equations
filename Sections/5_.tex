@@ -11,8 +11,8 @@ chứng đó.
 Mục tiêu không dừng ở chỗ trình bày một cài đặt chạy được. Mỗi thí nghiệm dưới
 đây được thiết kế để trả lời một câu hỏi cụ thể do Chương~\ref{chap:pinn} đặt ra,
 với tiêu chí thành công hoặc thất bại xác định \emph{trước} khi chạy. Ta báo cáo
-đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong mười hai hạng mục đối
-chiếu ở Mục~\ref{sec:doi-chieu}, năm khớp trọn vẹn, một khớp về hướng nhưng
+đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong mười bốn hạng mục đối
+chiếu ở Mục~\ref{sec:doi-chieu}, sáu khớp trọn vẹn, hai khớp về hướng nhưng
 không về độ lớn, \emph{bốn} buộc phải siết lại cách phát biểu, một không tái lập
 được khi đổi hạt giống, và một cho kết quả trái với kỳ vọng.
 Phần điều chỉnh được ghi rõ thay vì bỏ qua; theo quan điểm của luận văn, một kết
@@ -449,12 +449,23 @@ $\lambda_b \in [0{,}1;\,100]$ cho
 \text{sai số biên} \;\propto\; \lambda_b^{-0{,}907},
 \label{eq:do-doc-do}
 \end{equation}
-so với số mũ $-1$ của Mệnh đề~\ref{md:phat-bien-phat}. Sai lệch $9\%$ ở số mũ là
-mức phù hợp tốt, xét rằng mệnh đề được chứng minh tại một \emph{điểm dừng chính
-xác} của mô hình một ràng buộc, còn thực nghiệm chạy trên mạng phi tuyến
-$2\,209$ tham số sau $4\,000$ vòng Adam -- tức tại một điểm mà theo
-Mệnh đề~\ref{md:san-nhieu}, gradient chưa triệt tiêu mà chỉ dao động quanh sàn
-nhiễu.
+so với số mũ $-1$ của Mệnh đề~\ref{md:phat-bien-phat}.
+
+Con số $-0{,}907$ này \emph{không} nên được đọc như một phép đo chính xác tới hai
+chữ số, và Mục~\ref{sec:tn8} cho biết vì sao: lặp lại toàn bộ phép quét trên năm
+hạt giống cho các số mũ $-0{,}907$, $-0{,}503$, $-0{,}638$, $-0{,}585$,
+$-0{,}906$, tức trung vị $-0{,}64$ với khoảng $[-0{,}907;\ -0{,}503]$. Giá trị
+$-0{,}907$ ở \eqref{eq:do-doc-do} là một trong hai giá trị \emph{cực trị} của
+dải ấy, chứ không phải giá trị điển hình.
+
+Phát biểu đúng vì vậy là: sai số biên giảm theo $\lambda_b$ với một số mũ âm cỡ
+đơn vị, nhất quán về hướng với Mệnh đề~\ref{md:phat-bien-phat} ở cả năm hạt
+giống, nhưng \emph{nông hơn} $-1$ một cách hệ thống. Điều này hợp lý: mệnh đề
+được chứng minh tại một \emph{điểm dừng chính xác} của mô hình một ràng buộc,
+còn thực nghiệm chạy trên mạng phi tuyến $2\,209$ tham số sau $4\,000$ vòng
+Adam -- tức tại một điểm mà theo Mệnh đề~\ref{md:san-nhieu}, gradient chưa triệt
+tiêu mà chỉ dao động quanh sàn nhiễu. Một số mũ nông hơn đúng là điều ta chờ đợi
+khi ngân sách hữu hạn chưa đưa được hệ tới chế độ tiệm cận của mệnh đề.
  
 Ở đầu $\lambda_b = 0{,}01$, sai số biên bão hoà ở mức $0{,}91$: đúng kịch bản
 Nhận xét~\ref{rem:ill-posedness} mô tả. Nghiệm thu được thoả phương trình khá tốt
@@ -1289,16 +1300,20 @@ Hạn chế \emph{đầu tiên} mà Mục~\ref{sec:hanche} tự nêu là mọi s
 một hạt giống duy nhất, và hệ quả thực hành được rút ra ở đó là ``các chênh lệch
 dưới hai lần không nên được coi là có ý nghĩa''. Cả hai phát biểu ấy đều chưa
 được kiểm chứng --- bản thân con số ``hai lần'' cũng chỉ là ước lượng. Thí
-nghiệm này lặp lại nguyên vẹn TN4 và TN5 trên \emph{năm} hạt giống, cho cả hai
-chiến lược trọng số, rồi hỏi một câu duy nhất: \emph{kết luận nào của chương này
-sống sót, và kết luận nào chỉ là một lần rút thăm may mắn?}
+nghiệm này lặp lại nguyên vẹn \emph{mọi} thí nghiệm của chương có phụ thuộc vào
+khởi tạo hoặc lấy mẫu --- TN2, TN3, TN4, TN5 --- trên \emph{năm} hạt giống, rồi
+hỏi một câu duy nhất: \emph{kết luận nào của chương này sống sót, và kết luận
+nào chỉ là một lần rút thăm may mắn?}
 \end{thinghiem}
 
-\textbf{Thiết lập.} Cấu hình giữ nguyên hoàn toàn so với Mục~\ref{sec:tn4} và
-Mục~\ref{sec:tn5}; chỉ hạt giống thay đổi, chạy $s \in \{0,1,2,3,4\}$. Mỗi bài
-toán chạy hai chiến lược --- trọng số cố định $\lambda_b = 1$, và ủ trọng số
-theo Thuật toán~\ref{alg:annealing} --- thành $20$ lần huấn luyện. Ta báo cáo
-\emph{trung vị} cùng \emph{khoảng} $[\min;\max]$ thay vì một giá trị.
+\textbf{Thiết lập.} Cấu hình giữ nguyên hoàn toàn so với các mục gốc; chỉ hạt
+giống thay đổi, chạy $s \in \{0,1,2,3,4\}$. Với TN4 và TN5, mỗi bài toán chạy
+hai chiến lược --- trọng số cố định $\lambda_b = 1$, và ủ trọng số theo
+Thuật toán~\ref{alg:annealing} --- thành $20$ lần huấn luyện; TN3 chạy cả ba chế
+độ và TN2 chạy cả sáu giá trị $\lambda_b$, thành $55$ lần huấn luyện tất cả. Ta
+báo cáo \emph{trung vị} cùng \emph{khoảng} $[\min;\max]$ thay vì một giá trị.
+
+Kết quả (a)--(c) dưới đây nói về TN4 và TN5; kết quả (d) về TN3 và (e) về TN2.
 
 \begin{table}[H]
 \centering
@@ -1389,6 +1404,84 @@ $1{,}4\times10^{5}$ ở mọi hạt giống, tại đó số hạng phần dư t
 \eqref{eq:total-loss} bị át hoàn toàn, nên mạng thực chất chỉ còn khớp điều kiện
 biên --- một bài toán dễ, ít phụ thuộc khởi tạo, và sai.
 
+\textbf{Kết quả (d): ba khẳng định của Mục~\ref{sec:tn3} --- hướng vững, độ lớn
+thì không.} Mục~\ref{sec:tn3} là thí nghiệm ngẫu nhiên còn lại, và nó dùng lưới
+phối trí \emph{tất định}, nên nguồn ngẫu nhiên duy nhất là khởi tạo mạng. Lặp cả
+ba chế độ trên năm hạt giống cho một hình mẫu rất rõ: mọi khẳng định về
+\emph{hướng} đều đúng $5/5$, còn mọi con số đi kèm đều trải rộng.
+
+\begin{table}[H]
+\centering
+\caption[Ba khẳng định của Thí nghiệm 3 trên năm hạt giống]{Ba khẳng định của
+Mục~\ref{sec:tn3}, kiểm chứng trên năm hạt giống.}
+\label{tab:tn8-pho}
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}p{5.3cm} r l c@{}}
+\toprule
+\textbf{Khẳng định} & \textbf{trung vị} & \textbf{khoảng} & \textbf{đúng} \\
+\midrule
+(a) hồi quy học theo thứ tự $k$ tăng dần
+  & --- & --- & $\mathbf{5/5}$ \\
+(b) phần dư đảo chiều: $\abs{c_1}/\abs{c_8} > 1$
+  & $5{,}5$ & $[4{,}5;\ 46{,}3]$ & $\mathbf{5/5}$ \\
+(c) nhúng Fourier cải thiện sai số
+  & $49\times$ & $[18;\ 83]$ & $\mathbf{5/5}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\emph{(a) là kết quả vững nhất của cả chương.} Thứ tự $t_{10}(1) < t_{10}(4) <
+t_{10}(8)$ đúng ở cả năm hạt giống, và ba khoảng giá trị tách bạch hoàn toàn:
+$t_{10}(1) \in [300;\ 400]$, $t_{10}(4) \in [900;\ 1\,300]$,
+$t_{10}(8) \in [2\,700;\ 3\,800]$. Thiên kiến phổ của mạng, đo ở nhóm đối
+chứng hồi quy, không phụ thuộc khởi tạo theo bất kỳ nghĩa nào đáng kể.
+
+\emph{(b) đúng về hướng, nhưng con số $38{,}6$ thì không tiêu biểu.} Tỉ số
+$\abs{c_1}/\abs{c_8}$ lớn hơn $1$ ở cả năm hạt giống --- sự đảo chiều là thật.
+Nhưng bốn trong năm hạt giống cho tỉ số nằm gọn trong $[4{,}5;\ 7{,}6]$, còn hạt
+giống thứ năm cho $46{,}3$; trung vị là $5{,}5$. Giá trị $38{,}6$ mà
+Mục~\ref{sec:tn3} báo cáo thuộc về cái đuôi hiếm ấy chứ không phải vùng điển
+hình. Hệ quả trực tiếp: phép đối chiếu $38{,}6$ với ước lượng $8^2 = 64$ ở
+Mục~\ref{sec:tn3} phải được \emph{bỏ hẳn}, không chỉ dè dặt. Mục ấy đã thận
+trọng nói ``ta không rút kết luận định lượng từ đối chiếu này''; năm hạt giống
+cho thấy sự thận trọng đó là cần thiết chứ không phải khiêm tốn hình thức, vì
+với trung vị $5{,}5$ thì đối chiếu với $64$ không còn ý nghĩa gì.
+
+\emph{(c) đúng về hướng, nhưng hệ số $161$ nằm ngoài dải đo được.} Nhúng Fourier
+tốt hơn ở cả $5/5$ hạt giống, với hệ số cải thiện trung vị $49$ và khoảng
+$[18;\ 83]$. Con số $161$ lần mà Mục~\ref{sec:tn3} báo cáo nằm \emph{ngoài} dải
+này. Kết luận ``nhúng Fourier khôi phục khả năng học'' vẫn đúng và vẫn mạnh ---
+một cải thiện $18$ lần đã là rất lớn --- nhưng \emph{hệ số} thì phải nêu kèm dải
+giá trị.
+
+\textbf{Kết quả (e): số mũ của Mục~\ref{sec:tn2} là một lần rút thăm may.} Phép
+quét $\lambda_b$ qua sáu bậc độ lớn, lặp trên năm hạt giống, cho hai câu trả lời
+rất khác nhau về độ vững.
+
+\emph{Kết luận định tính thì tuyệt đối vững.} Giá trị $\lambda_b$ cực tiểu hoá
+$\varepsilon_{L^2}$ là $\lambda_b = 100$ ở \emph{cả năm} hạt giống --- không
+phải giá trị lớn nhất của dải quét. Đây chính là kết quả tiêu cực trung tâm của
+Mục~\ref{sec:tn2}: tăng $\lambda_b$ vô hạn không phải chiến lược tốt, vì tối ưu
+nằm ở một giá trị \emph{hữu hạn}. Nó không phụ thuộc hạt giống chút nào.
+
+\emph{Nhưng số mũ thì phụ thuộc nặng.} Hồi quy log--log trên dải
+$[0{,}1;\ 100]$ cho năm số mũ $-0{,}907$, $-0{,}503$, $-0{,}638$, $-0{,}585$,
+$-0{,}906$: trung vị $-0{,}64$, khoảng $[-0{,}907;\ -0{,}503]$. Giá trị
+$-0{,}907$ báo cáo ở \eqref{eq:do-doc-do} là một \emph{cực trị} của dải này. Vì
+vậy nhận định ``sai lệch $9\%$ ở số mũ là mức phù hợp tốt'' không đứng được:
+sai lệch điển hình là $36\%$, và không hạt giống nào cho số mũ nằm trong khoảng
+$10\%$ quanh $-1$.
+
+Điều đáng nói là hai hạng mục phải siết lại vì lý do này ---
+Mệnh đề~\ref{md:phat-bien-phat} ở đây và Mệnh đề~\ref{md:chan-suy-bien} ở
+Mục~\ref{sec:tn7} --- có \emph{cùng} cấu trúc lỗi. Cả hai mệnh đề đều đúng và
+đều được xác nhận về hướng ở mọi hạt giống; cả hai đều là phát biểu
+\emph{tiệm cận}; và trong cả hai trường hợp luận văn đã đối chiếu một số mũ đo
+được ở chế độ ngân sách hữu hạn với số mũ tiệm cận, rồi đọc mức gần nhau như
+bằng chứng định lượng. Với $n = 1$ thì phép đối chiếu ấy trông thuyết phục; với
+$n = 5$ thì độ phân tán của chính số mũ đã lớn hơn khoảng cách tới dự báo.
+
 \begin{nhanxet}[Một tương quan không tái lập được]
 \label{nx:tuong-quan-hong}
 Mục~\ref{sec:tn5} ghi nhận rằng $\norm{\bW^{(1)}}_F^2$ và $\rho_b$ cùng tăng, và
@@ -1425,17 +1518,37 @@ Thí nghiệm này thay ngưỡng ``hai lần'' của Mục~\ref{sec:hanche} b�
 trên bài toán khuếch tán, và dưới khoảng một bậc độ lớn trên bài toán Burgers,
 không nên được coi là có ý nghĩa nếu chỉ dựa trên một hạt giống.
 
-Áp quy tắc ấy vào Bảng~\ref{tab:doi-chieu}: mọi kết luận ở đó dựa trên chênh
-lệch từ một bậc độ lớn trở lên đều đứng vững, trừ hai chỗ đã nêu --- phát biểu
-về chiều biến thiên của $\rho_b$ trên bài toán lành mạnh, và quan hệ
-$\rho_b$--$\norm{\bW^{(1)}}^2$. Riêng con số $\varepsilon_{L^2}$ của Burgers cần
-được đọc như một \emph{khoảng} chứ không phải một giá trị: giá trị
-$2{,}84\times10^{-2}$ mà Mục~\ref{sec:tn5} báo cáo nằm trong khoảng năm hạt
-giống, nhưng ở phía thuận lợi của nó, và trung vị là $1{,}38\times10^{-1}$.
+Kết quả (a)--(e) gộp lại cho một hình mẫu rõ đến mức đáng nêu thành quy tắc
+riêng: \emph{mọi kết luận định tính của chương đều sống sót; không một con số
+đơn lẻ nào sống sót nguyên vẹn.} Cụ thể, năm hạt giống xác nhận $5/5$ cho từng
+phát biểu về \emph{hướng} --- thứ tự học của hồi quy, sự đảo chiều do toán tử,
+nhúng Fourier có ích, tách biệt độ lớn của $\rho_b$, $\lambda_b$ tối ưu là hữu
+hạn, ủ trọng số phản tác dụng --- trong khi bốn đại lượng từng được trích dẫn
+như số đo đều hoá ra không tiêu biểu:
+
+\begin{center}
+\small
+\begin{tabular}{@{}l r l@{}}
+\toprule
+\textbf{Con số đã trích dẫn} & \textbf{trung vị} & \textbf{khoảng} \\
+\midrule
+số mũ $-0{,}907$ (Mục~\ref{sec:tn2})        & $-0{,}64$ & $[-0{,}907;\ -0{,}503]$ \\
+tỉ số $38{,}6$ (Mục~\ref{sec:tn3})          & $5{,}5$   & $[4{,}5;\ 46{,}3]$ \\
+cải thiện $161$ lần (Mục~\ref{sec:tn3})     & $49$      & $[18;\ 83]$ \\
+$\varepsilon_{L^2} = 2{,}84\times10^{-2}$ (Mục~\ref{sec:tn5})
+  & $1{,}38\times10^{-1}$ & $[7{,}9\times10^{-3};\ 2{,}1\times10^{-1}]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Ba trong bốn giá trị ấy nằm ở \emph{cực trị hoặc ngoài} dải năm hạt giống. Đó
+không phải trùng hợp: khi ta chạy một lần rồi viết con số vào bài, ta không có
+cách nào biết mình đang ở đâu trong dải --- và một con số ấn tượng thì dễ được
+giữ lại hơn một con số tầm thường.
 
 Bài học phương pháp luận thì rộng hơn một chương: \emph{chi phí của việc lặp năm
-hạt giống là hai mươi lần huấn luyện, tức khoảng một giờ máy; cái giá của việc
-không lặp là hai kết luận sai.}
+hạt giống là năm mươi lăm lần huấn luyện, chưa tới hai giờ máy; cái giá của việc
+không lặp là bốn con số sai trong một luận văn.}
 \end{nhanxet}
 
 %==============================================================================
@@ -1632,8 +1745,13 @@ Hệ quả~\ref{hq:pinn-hong}
 & \textbf{Khớp chính xác} \\[4pt]
 Mệnh đề~\ref{md:phat-bien-phat}
 & sai số biên $\propto \lambda_b^{-1}$
-& số mũ đo được $-0{,}907$; bão hoà ở hai đầu
-& \textbf{Khớp}, lệch $9\%$ ở số mũ \\[4pt]
+& giảm đơn điệu ở $5/5$ hạt giống, nhưng số mũ trung vị $-0{,}64$, khoảng
+  $[-0{,}907;\ -0{,}503]$
+& \textbf{Khớp về hướng}, số mũ nông hơn (Mục~\ref{sec:tn8}) \\[4pt]
+Mục~\ref{sec:tn2}, $\lambda_b$ tối ưu
+& (không có mệnh đề)
+& $\lambda_b = 100$ cực tiểu hoá $\varepsilon_{L^2}$ ở $5/5$ hạt giống
+& \textbf{Khớp}: tối ưu là hữu hạn \\[4pt]
 Mục~\ref{subsec:adam-vs-lbfgs}
 & tựa Newton vượt điều kiện số xấu và sàn nhiễu
 & cải thiện $28{,}6$ lần sau $500$ vòng
@@ -1646,8 +1764,14 @@ Mục~\ref{subsec:adam-vs-lbfgs}
   (Mục~\ref{sec:tn8}) \\[4pt]
 Giả thuyết \eqref{eq:pho-hieu-dung}
 & phần dư ưu tiên $k$ cao
-& $\abs{c_1}/\abs{c_8} = 38{,}6$; thứ tự học đảo chiều so với hồi quy
-& \textbf{Khớp về hướng} \\[4pt]
+& thứ tự học đảo chiều ở $5/5$ hạt giống, nhưng $\abs{c_1}/\abs{c_8}$ trung vị
+  chỉ $5{,}5$, khoảng $[4{,}5;\ 46{,}3]$
+& \textbf{Khớp về hướng}, không về độ lớn \\[4pt]
+Nhận xét~\ref{rem:ntk-view}
+& hồi quy học tần số thấp trước
+& $t_{10}$ tăng đơn điệu theo $k$ ở $5/5$ hạt giống, ba khoảng tách bạch hoàn
+  toàn
+& \textbf{Khớp}, vững nhất chương \\[4pt]
 Mục~\ref{subsec:he-qua-pinn}
 & lớp sốc học chậm nhất
 & với Poisson thì ngược lại
@@ -1685,35 +1809,47 @@ Nhận xét~\ref{nx:chi-phi-bac-cao}
 \end{longtable}
 \endgroup
  
-Trong mười hai hạng mục: năm khớp trọn vẹn, một khớp về hướng nhưng không rút
-được kết luận định lượng, \emph{bốn} cần siết lại cách phát biểu, một không tái
-lập được trên năm hạt giống, và một cho kết quả tiêu cực nhưng đã truy được
-nguyên nhân.
+Trong mười bốn hạng mục: sáu khớp trọn vẹn, hai khớp về hướng nhưng không về độ
+lớn, \emph{bốn} cần siết lại cách phát biểu, một không tái lập được trên năm hạt
+giống, và một cho kết quả tiêu cực nhưng đã truy được nguyên nhân.
 
 Mức khớp này ủng hộ khung lý thuyết của Chương~\ref{chap:pinn} một cách
-\emph{có điều kiện}, và điều kiện ấy hiện ra rất rõ khi xếp mười hai hạng mục
-theo \emph{nguồn gốc} của phát biểu thay vì theo kết quả. Ranh giới trùng khít:
+\emph{có điều kiện}, và điều kiện ấy hiện ra rất rõ khi xếp mười bốn hạng mục
+theo \emph{nguồn gốc} của phát biểu thay vì theo kết quả.
 
-\emph{Cả năm hạng mục khớp trọn vẹn đều tương ứng với một mệnh đề đã được chứng
-minh} --- Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:phat-bien-phat},
-Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh},
-Mệnh đề~\ref{md:chi-phi-bp} --- và \emph{không một hạng mục nào phải siết lại là
-chỗ một mệnh đề đã chứng minh bị số liệu bác bỏ}. Ngay cả
-Mệnh đề~\ref{md:chan-suy-bien}, nằm trong nhóm có vấn đề, cũng đúng ở cả $15/15$
-trường hợp; cái phải sửa là \emph{cách đọc} nó. Nói cách khác: trong toàn bộ
-chương thực nghiệm, chứng minh chưa một lần thất bại; chỉ có suy đoán thất bại.
+\emph{Không một mệnh đề đã chứng minh nào bị số liệu bác bỏ.} Bốn mệnh đề được
+xác nhận trọn vẹn (Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:san-nhieu},
+Mệnh đề~\ref{md:chan-on-dinh}, Mệnh đề~\ref{md:chi-phi-bp}), và hai mệnh đề còn
+lại --- Mệnh đề~\ref{md:phat-bien-phat} và Mệnh đề~\ref{md:chan-suy-bien} ---
+đúng về \emph{hướng} ở mọi hạt giống và mọi giá trị $\nu$; cái phải sửa ở cả hai
+là \emph{cách đọc}, không phải nội dung. Trong toàn bộ chương thực nghiệm, chứng
+minh chưa một lần thất bại; chỉ có suy đoán thất bại.
 
-Bảy chỗ phải điều chỉnh chia thành bốn kiểu suy luận yếu hơn. \emph{Ghép hai
-kết quả rời rạc}: giả thuyết \eqref{eq:pho-hieu-dung} nhân $\abs{P}^2$ với
-$\widehat{\varkappa}$, và kết luận ở Mục~\ref{subsec:he-qua-pinn} ngầm giả định
-thừa số nào thắng. \emph{Đọc một chặn trên như thể nó là cơ chế đang vận hành}:
-tầng thứ nhất của Bảng~\ref{tab:ba-nguyen-nhan} (Nhận xét~\ref{nx:doc-tn7}).
+Tám chỗ phải điều chỉnh chia thành bốn kiểu suy luận yếu hơn.
+
+\emph{Đối chiếu một số mũ đo ở ngân sách hữu hạn với số mũ tiệm cận.} Đây là
+kiểu phổ biến nhất và tinh vi nhất, vì nó luôn cho cảm giác ``khớp gần đúng'':
+Mệnh đề~\ref{md:phat-bien-phat} (số mũ đo được trải $[-0{,}907;\ -0{,}503]$ so
+với dự báo $-1$) và Mệnh đề~\ref{md:chan-suy-bien} (số mũ trải
+$[-0{,}730;\ +0{,}049]$ so với dự báo $-1$). Trong cả hai, độ phân tán của chính
+số mũ lớn hơn khoảng cách tới dự báo, nên phép đối chiếu không mang thông tin.
+
+\emph{Ghép hai kết quả rời rạc}: giả thuyết \eqref{eq:pho-hieu-dung} nhân
+$\abs{P}^2$ với $\widehat{\varkappa}$, và kết luận ở Mục~\ref{subsec:he-qua-pinn}
+ngầm giả định thừa số nào thắng.
+
 \emph{Khái quát hoá từ một lần chạy}: quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$
-không sống sót qua năm hạt giống (Nhận xét~\ref{nx:tuong-quan-hong}), và phát
-biểu về chiều biến thiên của $\rho_b$ trên bài toán lành mạnh chỉ đúng ở $3/5$
-hạt giống (Mục~\ref{sec:tn8}). Cuối cùng, \emph{ước lượng bậc độ lớn không được
-kiểm chứng}: Nhận xét~\ref{nx:chi-phi-bac-cao} đoán bội số $4$--$6$ trong khi đo
-được khoảng $9$ (Mục~\ref{sec:tn9}).
+không sống sót qua năm hạt giống (Nhận xét~\ref{nx:tuong-quan-hong}); phát biểu
+về chiều biến thiên của $\rho_b$ trên bài toán lành mạnh chỉ đúng ở $3/5$ hạt
+giống; và tỉ số $\abs{c_1}/\abs{c_8} = 38{,}6$ thuộc đuôi hiếm của một phân bố
+có trung vị $5{,}5$ (Mục~\ref{sec:tn8}).
+
+\emph{Ước lượng bậc độ lớn không được kiểm chứng}: Nhận xét~\ref{nx:chi-phi-bac-cao}
+đoán bội số $4$--$6$ trong khi đo được khoảng $9$ (Mục~\ref{sec:tn9}).
+
+Đáng chú ý là cả bốn kiểu đều \emph{không} bị phát hiện bởi một lần chạy. Ba
+kiểu đầu cần nhiều hạt giống; kiểu thứ tư cần lặp phép đo thời gian. Không kiểu
+nào đòi hỏi thêm lý thuyết.
 
 Đây là bài học phương pháp luận của chương, và nó nhất quán với ranh giới mà
 Chương~\ref{chap:fnn} đã vạch giữa lý thuyết xấp xỉ và lý thuyết tối ưu: những gì
@@ -1729,18 +1865,24 @@ giống}.
 Để các kết luận trên được đọc đúng phạm vi, cần nêu rõ những hạn chế sau.
  
 \begin{enumerate}[label=(\arabic*),leftmargin=2.2em,itemsep=4pt]
-\item \emph{Chỉ hai trong năm bài toán được lặp trên nhiều hạt giống.} Nguyên tắc
-ở Nhận xét~\ref{nx:doi-xung-hoan-vi} --- với ít nhất $2^{n_1}n_1!$ cực tiểu tương
-đương, một kết quả tốt từ một hạt giống may mắn không phải bằng chứng về phương
-pháp --- được thực hiện ở Mục~\ref{sec:tn8} cho TN4 và TN5, và ở
-Mục~\ref{sec:tn7} cho phép quét $\nu$ (ba hạt giống). Các mục còn lại thì không:
-TN1 và TN2 dùng lưới tất định nên vấn đề nhẹ hơn, nhưng \emph{TN3 dùng lấy mẫu
-ngẫu nhiên và vẫn chỉ có một hạt giống}. Hệ số $161$ lần của nhúng đặc trưng
-Fourier ở Mục~\ref{sec:tn3} vì vậy chưa có khoảng tin cậy nào, và theo ngưỡng đo
-được ở Nhận xét~\ref{nx:doc-tn8} thì một hệ số $161$ lần đủ lớn để không thể là
-nhiễu hạt giống, nhưng \emph{giá trị} $161$ thì không nên được trích dẫn như một
-con số. Khắc phục là chạy nốt TN3 trên năm hạt giống, đúng quy trình của
-Mục~\ref{sec:tn8}.
+\item \emph{Năm hạt giống là ít, và các số đơn lẻ trong chương vẫn đến từ một
+lần chạy.} Nguyên tắc ở Nhận xét~\ref{nx:doi-xung-hoan-vi} --- với ít nhất
+$2^{n_1}n_1!$ cực tiểu tương đương, một kết quả tốt từ một hạt giống may mắn
+không phải bằng chứng về phương pháp --- nay đã được thực hiện cho \emph{mọi}
+thí nghiệm có phụ thuộc ngẫu nhiên: TN2, TN3, TN4, TN5 trên năm hạt giống
+(Mục~\ref{sec:tn8}) và TN7 trên ba (Mục~\ref{sec:tn7}). TN1 và TN6 không cần,
+vì kết luận của chúng là một đẳng thức chính xác và một bất đẳng thức đúng hoặc
+sai, không phải một con số cần ước lượng.
+
+Hai hạn chế vẫn còn. \emph{Thứ nhất}, $n = 5$ chỉ đủ để nêu trung vị và khoảng,
+không đủ cho một khoảng tin cậy thật sự; với đại lượng lệch mạnh như tỉ số
+$\abs{c_1}/\abs{c_8}$ ở TN3 --- bốn hạt giống trong $[4{,}5;\ 7{,}6]$ và một tại
+$46{,}3$ --- năm mẫu là quá ít để mô tả cái đuôi. \emph{Thứ hai}, các bảng ở
+Mục~\ref{sec:tn1}--\ref{sec:tn7} vẫn in số của \emph{một} lần chạy, còn trung
+vị và khoảng chỉ xuất hiện ở Mục~\ref{sec:tn8}. Cách trình bày đúng là gộp
+chúng: mỗi ô số liệu nên là ``trung vị $[\min;\max]$'' ngay tại chỗ. Luận văn
+giữ cách trình bày hiện tại để mỗi mục còn đọc được độc lập, nhưng người đọc cần
+mang Mục~\ref{sec:tn8} theo khi đọc mọi con số ở các mục trước.
  
 \item \emph{Ngân sách huấn luyện hạn chế.} Toàn bộ thí nghiệm chạy trên một lõi
 CPU, với $4\,000$--$8\,000$ vòng Adam, so với bậc $10^5$ vòng thường dùng trong
@@ -1771,17 +1913,26 @@ Mục~\ref{sec:tn4}. Thêm vào đó,
 Nhận xét~\ref{nx:hai-nghiem-tham-chieu} đã nêu việc hai chương hiện dùng hai nghiệm
 tham chiếu khác nhau.
  
-\item \emph{Cách sinh mẫu ngẫu nhiên không được đặc tả.} Ba thí nghiệm
-TN3, TN4, TN5 dùng điểm phối trí lấy mẫu ngẫu nhiên, nhưng luận văn chỉ ghi
-\emph{số lượng} điểm chứ không ghi bộ sinh số ngẫu nhiên và thứ tự tiêu thụ nó.
-Hệ quả đo được: khi cài đặt lại từ chính mô tả trong luận văn
-(Phụ lục~\ref{app:code}), ba thí nghiệm ấy tái lập \emph{kết luận định tính} một
-cách trọn vẹn --- thứ tự học đơn điệu ở TN3, $\rho_b$ giảm ở TN4 và tăng ở TN5,
-ủ trọng số phản tác dụng ở cả hai --- nhưng các \emph{con số} lệch từ hai đến
-chín lần. Ngược lại, TN1, TN2, TN6 dùng lưới tất định và nghiệm tham chiếu sai
-phân hữu hạn của TN5 cũng tất định; cả bốn tái lập tới ba hoặc bốn chữ số có
-nghĩa. Bài học: với một thí nghiệm ngẫu nhiên, \emph{số lượng} điểm không phải
-là đặc tả đủ.
+\item \emph{Tập điểm phối trí không được đặc tả đủ.} Khuyết điểm này có hai
+dạng khác nhau, và cả hai chỉ lộ ra khi cài đặt lại từ chính mô tả trong luận
+văn (Phụ lục~\ref{app:code}).
+
+\emph{Dạng thứ nhất --- lấy mẫu ngẫu nhiên, chỉ ghi số lượng.} TN4 và TN5 lấy
+điểm phối trí ngẫu nhiên, nhưng luận văn chỉ ghi \emph{số lượng} điểm chứ không
+ghi bộ sinh số ngẫu nhiên và thứ tự tiêu thụ nó. Hai thí nghiệm ấy tái lập
+\emph{kết luận định tính} trọn vẹn --- $\rho_b$ giảm ở TN4 và tăng ở TN5, ủ
+trọng số phản tác dụng ở cả hai --- nhưng các \emph{con số} lệch từ hai đến chín
+lần.
+
+\emph{Dạng thứ hai --- không ghi gì cả.} Mục~\ref{sec:tn3} nêu ``cùng mục tiêu,
+cùng kiến trúc, cùng hạt giống'' nhưng \emph{không} nói tập điểm phối trí là gì.
+Bản cài đặt kèm theo chọn lưới đều $256$ điểm; một lựa chọn khác hoàn toàn có
+thể cho các số $t_{10}$ khác. Đây là chỗ đặc tả yếu nhất của cả chương.
+
+Ngược lại, TN1, TN2, TN6, TN7 dùng lưới tất định và nghiệm tham chiếu sai phân
+hữu hạn của TN5 cũng tất định; tất cả tái lập tới ba hoặc bốn chữ số có nghĩa.
+Bài học: với một thí nghiệm ngẫu nhiên, \emph{số lượng} điểm không phải là đặc
+tả đủ --- và với một thí nghiệm tất định, im lặng thì càng không.
 
 \item \emph{Hạt giống cố định chưa đủ để tái lập từng chữ số.} Ngoài hạt giống,
 kết quả còn phụ thuộc \emph{số luồng} của thư viện đại số tuyến tính. Đo trực

@@ -62,7 +62,7 @@ luận văn thực nghiệm. Kết luận đúng phạm vi là: các thí nghi�
 vụ còn nhiều dư địa nhất; Mục~\ref{sec:hanche} đã nêu thẳng chín hạn chế của chính
 thiết kế thực nghiệm. Phần khảo sát độ nhạy đi xa hơn dự kiến ở một điểm:
 Mục~\ref{sec:tn8} không chỉ đo độ nhạy theo hạt giống mà còn dùng chính phép đo
-ấy để \emph{loại bỏ} hai kết luận mà các mục trước đã rút ra --- đúng vai trò mà
+ấy để \emph{loại bỏ} bốn con số mà các mục trước đã rút ra --- đúng vai trò mà
 một khảo sát độ nhạy phải có.
 
 %==============================================================================
@@ -82,10 +82,11 @@ tái lập được, có thể dùng làm điểm khởi đầu cho các nghiên
 
 \emph{Thứ ba}, một phân tích đối chiếu có hệ thống giữa lý thuyết và số liệu
 (Bảng~\ref{tab:doi-chieu}). Phần đối chiếu này cho một kết luận phương pháp luận
-đáng chú ý: trong mười hai hạng mục, \emph{không} hạng mục nào phải điều chỉnh
-lại tương ứng với một mệnh đề đã được chứng minh. Cả năm chỗ phải siết lại đều
-đến từ ba kiểu suy luận yếu hơn --- suy luận tiệm cận, ghép hai kết quả rời rạc,
-và khái quát hoá từ một lần chạy duy nhất.
+đáng chú ý: trong mười bốn hạng mục, \emph{không} một mệnh đề đã chứng minh nào
+bị số liệu bác bỏ. Cả tám chỗ phải siết lại đều đến từ bốn kiểu suy luận yếu
+hơn --- đối chiếu một số mũ đo ở ngân sách hữu hạn với số mũ tiệm cận, ghép hai
+kết quả rời rạc, khái quát hoá từ một lần chạy duy nhất, và ước lượng bậc độ lớn
+chưa kiểm chứng.
 
 Bên cạnh ba đóng góp đã dự kiến, quá trình thực nghiệm sinh thêm bốn kết quả
 không nằm trong kế hoạch ban đầu, và cả bốn đều xuất phát từ \emph{kết quả tiêu
@@ -112,15 +113,18 @@ cực}:
       $\hat\lambda_i \gtrsim J_i^{-1/2}$ và không có cơ chế tự hãm. Đây là kết
       quả lý thuyết nảy sinh \emph{từ} thực nghiệm chứ không phải được kiểm chứng
       bởi thực nghiệm.
-\item \textbf{Một tương quan bị chính luận văn bác bỏ.} Mục~\ref{sec:tn5} ghi
-      nhận rằng $\rho_b$ và $\norm{\bW^{(1)}}_F^2$ cùng tăng, và nói rõ đó chỉ là
-      quan sát trên một lần chạy. Mục~\ref{sec:tn8} kiểm chứng chính điều đó trên
-      năm hạt giống: hệ số tương quan trên thang log chỉ còn $0{,}24$, và phát
-      biểu về chiều biến thiên của $\rho_b$ trên bài toán lành mạnh cũng chỉ đúng
-      ở $3/5$ hạt giống (Nhận xét~\ref{nx:tuong-quan-hong}). Giá trị của kết quả
-      này không nằm ở bản thân tương quan mà ở \emph{quy trình}: nó cho thấy chi
-      phí của việc lặp năm hạt giống --- khoảng một giờ máy --- rẻ hơn hẳn cái
-      giá của hai kết luận sai.
+\item \textbf{Bốn con số của chính luận văn bị chính luận văn loại bỏ.}
+      Mục~\ref{sec:tn8} lặp lại mọi thí nghiệm có phụ thuộc ngẫu nhiên trên năm
+      hạt giống, và kết quả là bốn đại lượng từng được trích dẫn như số đo đều
+      hoá ra không tiêu biểu: tương quan $\rho_b$--$\norm{\bW^{(1)}}_F^2$ chỉ còn
+      hệ số $0{,}24$ trên thang log (Nhận xét~\ref{nx:tuong-quan-hong}); chiều
+      biến thiên của $\rho_b$ trên bài toán lành mạnh chỉ đúng ở $3/5$ hạt giống;
+      số mũ $-0{,}907$ của Mục~\ref{sec:tn2} là cực trị của dải
+      $[-0{,}907;\ -0{,}503]$; và tỉ số $38{,}6$ của Mục~\ref{sec:tn3} thuộc đuôi
+      hiếm của một phân bố có trung vị $5{,}5$. Trong cả bốn trường hợp,
+      \emph{kết luận định tính vẫn đứng vững} --- điều bị loại bỏ chỉ là con số.
+      Giá trị của kết quả này nằm ở \emph{quy trình}: chi phí của việc lặp năm
+      hạt giống là chưa tới hai giờ máy, rẻ hơn hẳn cái giá của bốn con số sai.
 \end{itemize}
 
 %==============================================================================
@@ -181,11 +185,13 @@ biết. Một quy tắc chọn $s$ dựa trên dữ liệu --- ví dụ ước l
 dư trong vài trăm vòng lặp đầu --- là hướng cụ thể và khả thi.
 
 \paragraph{Củng cố phương pháp luận thực nghiệm.} Việc đầu tiên trong nhóm này
-đã được làm: Mục~\ref{sec:tn8} lặp TN4 và TN5 trên năm hạt giống, và riêng nó đã
-loại được một tương quan sai. Việc còn thiếu là chạy nốt TN3 --- thí nghiệm ngẫu
-nhiên duy nhất chưa được lặp --- theo cùng quy trình. Hai việc rẻ khác: áp dụng
-lấy mẫu thích nghi RAR cho bài toán Burgers, nơi Mục~\ref{sec:tn8} cho thấy sai
-số trải tới $26$ lần giữa các hạt giống nên dư địa cải thiện là lớn;
+đã được làm trọn: Mục~\ref{sec:tn8} lặp TN2, TN3, TN4, TN5 trên năm hạt giống,
+và riêng nó đã loại được bốn con số không tiêu biểu. Việc còn lại là
+\emph{cách trình bày} --- gộp trung vị và khoảng vào chính các bảng của
+Mục~\ref{sec:tn1}--\ref{sec:tn7} thay vì để riêng ở Mục~\ref{sec:tn8} --- và
+nâng $n$ từ $5$ lên $10$--$20$ cho những đại lượng lệch mạnh. Hai việc rẻ khác:
+áp dụng lấy mẫu thích nghi RAR cho bài toán Burgers, nơi Mục~\ref{sec:tn8} cho
+thấy sai số trải tới $26$ lần giữa các hạt giống nên dư địa cải thiện là lớn;
 và tách riêng tầng thứ nhất của Bảng~\ref{tab:ba-nguyen-nhan} bằng một thiết kế
 khác với Mục~\ref{sec:tn7}. Phép quét $\nu$ ở đó cho thấy tỉ số
 $\norm{e_{\btheta}}/\norm{r_{\btheta}}$ do huấn luyện sinh ra không đo được hằng

@@ -33,8 +33,9 @@ biết để tái lập kết quả.
 \texttt{pinns/exp6\_stability.py} & Mục~\ref{sec:tn6} \\
 \texttt{pinns/exp7\_nu\_sweep.py} & Mục~\ref{sec:tn7}, quét $\nu$ trên ba hạt
   giống \\
-\texttt{pinns/exp8\_seeds.py} & Mục~\ref{sec:tn8}, lặp lại TN4 và TN5 trên năm
-  hạt giống; chạy tiếp được sau khi bị ngắt, vì ghi kết quả sau mỗi hạt giống \\
+\texttt{pinns/exp8\_seeds.py} & Mục~\ref{sec:tn8}, lặp lại TN2, TN3, TN4, TN5
+  trên năm hạt giống; chạy tiếp được sau khi bị ngắt, vì ghi kết quả sau mỗi hạt
+  giống \\
 \texttt{pinns/exp9\_chiphi.py} & Mục~\ref{sec:tn9}, đo chi phí một bước, tổng
   thời gian huấn luyện, và thời gian bộ giải sai phân hữu hạn ở cùng mức sai số \\
 \texttt{pinns/run\_all.py} & Chạy lần lượt cả chín thí nghiệm \\
@@ -97,7 +98,9 @@ model = lambda x: x * (1 - x) * net(x)
 
 Mọi thí nghiệm dùng số học \texttt{float64}; các mục không quét hạt giống dùng
 \texttt{seed = 0}, còn Mục~\ref{sec:tn8} quét $\texttt{seed} \in \{0,\dots,4\}$
-và Mục~\ref{sec:tn7} quét ba hạt giống.
+và Mục~\ref{sec:tn7} quét ba hạt giống. Mục~\ref{sec:tn8} lặp lại TN2, TN3, TN4
+và TN5 trên $\texttt{seed} \in \{0,\dots,4\}$, tức mọi thí nghiệm của chương có
+phụ thuộc vào khởi tạo hoặc lấy mẫu.
 
 Cố định hạt giống \emph{vẫn chưa đủ}. Toàn bộ số liệu kèm theo được sinh với
 \begin{center}
@@ -109,6 +112,5 @@ toán Burgers điều đó đủ để đổi sai số cuối gần hai lần
 (Mục~\ref{sec:hanche}, hạn chế~(7)).
 
 Cần đọc cả hai điều trên kèm hạn chế thứ nhất ở Mục~\ref{sec:hanche}: tái lập
-được không đồng nghĩa với có ý nghĩa thống kê. Riêng Mục~\ref{sec:tn3} vẫn dùng
-lấy mẫu ngẫu nhiên với một hạt giống duy nhất, nên các hệ số cải thiện báo cáo ở
-đó chưa có khoảng tin cậy.
+được không đồng nghĩa với có ý nghĩa thống kê, và $n = 5$ chỉ đủ để nêu trung vị
+cùng khoảng chứ chưa đủ cho một khoảng tin cậy.

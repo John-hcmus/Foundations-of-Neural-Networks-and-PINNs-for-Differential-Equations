@@ -1,28 +1,43 @@
-# LaTeX auxiliary / intermediate files
+# =========================
+# LaTeX auxiliary files
+# =========================
 *.aux
-*.bbl
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex
 *.bcf
 *.blg
-*.fdb_latexmk
-*.fls
-*.glg
-*.glo
-*.gls
-*.idx
-*.ilg
-*.ind
-*.ist
-*.log
-*.nav
-*.out
-*.snm
-*.synctex.gz
-*.toc
+*.bbl
 *.run.xml
+*.nav
+*.snm
+*.vrb
+*.xdv
 
-# System files
+# =========================
+# Build/output directories
+# =========================
+build/
+out/
+dist/
+
+# =========================
+# OS files
+# =========================
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Tuỳ chọn: Bỏ comment dòng dưới nếu KHÔNG muốn đẩy file PDF lên GitHub
-# *.pdf
+# =========================
+# Editor / IDE files
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo

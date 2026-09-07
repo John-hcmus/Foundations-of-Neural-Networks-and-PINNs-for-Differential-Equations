@@ -9,6 +9,8 @@ MODULES = [
     ("TN4  phuong trinh khuech tan",     "pinns.exp4_heat"),
     ("TN5  Burgers do nhot nho",         "pinns.exp5_burgers"),
     ("TN6  kiem chung chan on dinh",     "pinns.exp6_stability"),
+    ("TN7  quet nu, ba hat giong",       "pinns.exp7_nu_sweep"),
+    ("TN8  do phan tan giua hat giong",  "pinns.exp8_seeds"),
 ]
 
 

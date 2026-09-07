@@ -12,8 +12,9 @@ Chay:
     python -m pinns.exp8_seeds burgers    # chi TN5
     python -m pinns.exp8_seeds            # ca hai
 
-Ket qua duoc ghi ra results/ SAU MOI HAT GIONG, nen mot lan chay bi ngat van
-giu duoc phan da lam.
+Ket qua duoc ghi ra results/ SAU MOI HAT GIONG, va mot lan chay moi se DOC LAI
+phan da co roi chi chay tiep nhung hat giong con thieu. Nho vay mot lan chay bi
+ngat khong lam mat gi.
 """
 from __future__ import annotations
 import json, os, statistics as st, sys, time
@@ -27,6 +28,16 @@ SEEDS = [0, 1, 2, 3, 4]
 def tom_tat(xs):
     xs = sorted(xs)
     return {"trung_vi": st.median(xs), "min": xs[0], "max": xs[-1], "n": len(xs)}
+
+
+def _doc(ten):
+    """Doc lai ket qua da co, de chay tiep thay vi chay lai tu dau."""
+    f = os.path.join(OUT, f"exp8_{ten}.json")
+    if not os.path.exists(f):
+        return [], []
+    with open(f) as fh:
+        d = json.load(fh)
+    return d.get("co_dinh", []), d.get("u_trong_so", [])
 
 
 def _ghi(ten, data):
@@ -62,8 +73,13 @@ def _bang(ten_bai, co_dinh, u_ts, khoa_rho, chieu):
 
 
 def chay_heat():
-    co_dinh, u_ts = [], []
-    for s in SEEDS:
+    co_dinh, u_ts = _doc("heat")
+    xong = min(len(co_dinh), len(u_ts))
+    co_dinh, u_ts = co_dinh[:xong], u_ts[:xong]
+    if xong:
+        print(f"[TN4] da co {xong} hat giong, chay tiep tu hat giong {SEEDS[xong]}",
+              flush=True)
+    for s in SEEDS[xong:]:
         t0 = time.time()
         co_dinh.append(exp4_heat.run(False, seed=s))
         u_ts.append(exp4_heat.run(True, seed=s))
@@ -77,10 +93,17 @@ def chay_heat():
 
 
 def chay_burgers():
+    co_dinh, u_ts = _doc("burgers")
+    xong = min(len(co_dinh), len(u_ts))
+    co_dinh, u_ts = co_dinh[:xong], u_ts[:xong]
+    if xong == len(SEEDS):
+        return _bang("TN5 Burgers", co_dinh, u_ts, "rho", "tang")
     print("Dang tinh nghiem tham chieu ...", flush=True)
     ref = exp5_burgers.reference(Nx=2047)
-    co_dinh, u_ts = [], []
-    for s in SEEDS:
+    if xong:
+        print(f"[TN5] da co {xong} hat giong, chay tiep tu hat giong {SEEDS[xong]}",
+              flush=True)
+    for s in SEEDS[xong:]:
         t0 = time.time()
         co_dinh.append(exp5_burgers.run(None, seed=s, ref=ref))
         u_ts.append(exp5_burgers.run(0.1, seed=s, ref=ref))

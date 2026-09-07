@@ -1,0 +1,91 @@
+%==============================================================
+%  LUẬN VĂN: CƠ SỞ LÝ THUYẾT VỀ MẠNG NƠ-RON VÀ PHƯƠNG PHÁP PINNs
+%            CHO BÀI TOÁN PHƯƠNG TRÌNH VI PHÂN
+%
+%  File điều khiển (driver).
+%
+%  BIÊN DỊCH (XeLaTeX + Biber):
+%      xelatex  main
+%      biber    main
+%      xelatex  main
+%      xelatex  main
+%  hoặc:
+%      latexmk -xelatex main.tex
+%==============================================================
+
+\documentclass[12pt,a4paper,oneside]{report}
+
+%------------------- CẤU HÌNH -------------------
+\input{preamble}
+\input{notation}
+
+%------------------- SIÊU DỮ LIỆU -------------------
+\newcommand{\thesisTitle}{Cơ sở lý thuyết về mạng nơ-ron và phương pháp PINNs cho phương trình vi phân}
+\newcommand{\thesisAuthor}{Nguyễn Hoàng Tú}
+\newcommand{\thesisAdvisor}{TS. Ông Thanh Hải}
+\newcommand{\thesisType}{BÁO CÁO 4}
+
+\hypersetup{
+    pdftitle={\thesisTitle},
+    pdfauthor={\thesisAuthor}
+}
+
+\addbibresource{references.bib}
+
+%==============================================================
+\begin{document}
+
+%==============================================================
+% PHẦN ĐẦU
+%==============================================================
+
+\frontmatterstyle
+
+% Trang bìa
+\input{titlepage}
+
+% Mục lục
+\tableofcontents
+
+% Danh mục hình
+\listoffigures
+
+% Danh mục bảng
+\listoftables
+
+%==============================================================
+% PHẦN THÂN
+%==============================================================
+
+\mainmatterstyle
+
+% Chương 1
+\input{Sections/1_}
+
+% Chương 2
+\input{Sections/2_}
+
+% Chương 3
+\input{Sections/3_}
+
+% Chương 4
+\input{Sections/4_}
+
+% Chương 5
+\input{Sections/5_}
+
+%==============================================================
+% TÀI LIỆU THAM KHẢO
+%==============================================================
+
+\printbibliography[
+    heading=bibintoc,
+    title={Tài liệu tham khảo}
+]
+
+%==============================================================
+% PHỤ LỤC
+%==============================================================
+% Chưa bật vì hiện tại chưa có file phụ lục trong File Tree.
+
+\end{document}

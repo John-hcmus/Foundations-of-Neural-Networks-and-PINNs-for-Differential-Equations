@@ -1,0 +1,159 @@
+%==============================================================
+%  NOTATION — Macro toán học dùng chung cho toàn luận văn.
+%==============================================================
+
+%--------------------------------------------------------------
+% 0. KHAI BÁO CÁC GÓI PHỤ THUỘC (Đặt ở main.tex nếu chưa có)
+%--------------------------------------------------------------
+% \usepackage{amsmath, amssymb, amsfonts}
+% \usepackage{bm}
+% \usepackage{mathtools}
+
+%--------------------------------------------------------------
+% 1. TẬP HỢP SỐ VÀ MIỀN
+%--------------------------------------------------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\E}{\mathbb{E}}                % Kỳ vọng: \E[\theta_k^2]
+\newcommand{\Pprob}{\mathbb{P}}            % Xác suất
+\newcommand{\dom}{\Omega}                  % Miền không gian
+\newcommand{\bdry}{\partial\Omega}         % Biên của miền không gian
+\newcommand{\timedom}{[0,T]}              % Miền thời gian
+
+%--------------------------------------------------------------
+% 2. VECTOR VÀ MA TRẬN (in đậm)
+%--------------------------------------------------------------
+% Chữ cái thường (Vector)
+\newcommand{\ba}{\bm{a}}
+\newcommand{\bb}{\bm{b}}
+\newcommand{\bc}{\bm{c}}
+\newcommand{\bd}{\bm{d}}
+\newcommand{\be}{\bm{e}}
+\newcommand{\bg}{\bm{g}}                   % Gradient
+\newcommand{\bh}{\bm{h}}                   % Trạng thái ẩn (hidden state)
+\newcommand{\bp}{\bm{p}}                   % Hướng tìm kiếm
+\newcommand{\br}{\bm{r}}                   % Residue / Điểm dữ liệu
+\newcommand{\bs}{\bm{s}}
+\newcommand{\bu}{\bm{u}}                   % Nghiệm / Biến phụ thuộc
+\newcommand{\bv}{\bm{v}}
+\newcommand{\bw}{\bm{w}}
+\newcommand{\bx}{\bm{x}}                   % Toạ độ không gian
+\newcommand{\by}{\bm{y}}                   % Đầu ra / Toạ độ
+\newcommand{\bz}{\bm{z}}                   % Giá trị kích hoạt (pre-activation)
+
+% Chữ cái hoa (Ma trận)
+\newcommand{\bA}{\bm{A}}
+\newcommand{\bB}{\bm{B}}
+\newcommand{\bD}{\bm{D}}                   % D^{(l)} = diag(sigma'(z^{(l)}))
+\newcommand{\bF}{\bm{F}}                   % Ma trận Fisher Information
+\newcommand{\bG}{\bm{G}}                   % Truy hồi Jacobi theo biến đầu vào
+\newcommand{\bH}{\bm{H}}                   % Ma trận Hessian hoặc xấp xỉ BFGS
+\newcommand{\bI}{\bm{I}}                   % Ma trận đơn vị
+\newcommand{\bJ}{\bm{J}}                   % Ma trận Jacobi
+\newcommand{\bK}{\bm{K}}                   % Kernel matrix
+\newcommand{\bS}{\bm{S}}                   % Truy hồi Hessian theo biến đầu vào
+\newcommand{\bU}{\bm{U}}
+\newcommand{\bV}{\bm{V}}
+\newcommand{\bW}{\bm{W}}                   % Ma trận trọng số (Weights)
+\newcommand{\bX}{\bm{X}}                   % Ma trận dữ liệu
+\newcommand{\bY}{\bm{Y}}
+\newcommand{\bzero}{\bm{0}}                % Vector/Ma trận zero
+
+% Ký hiệu Hy Lạp in đậm
+\newcommand{\btheta}{\bm{\theta}}          % Tham số mạng
+\newcommand{\bxi}{\bm{\xi}}                % Biến ngẫu nhiên / Điểm gieo
+\newcommand{\bzeta}{\bm{\zeta}}
+\newcommand{\bmu}{\bm{\mu}}
+\newcommand{\bsigma}{\bm{\sigma}}
+\newcommand{\blambda}{\bm{\lambda}}
+
+\newcommand{\transpose}{^{\top}}           % Chuyển vị: \bx\transpose
+
+%--------------------------------------------------------------
+% 3. TOÁN TỬ GIẢI TÍCH & ĐẠI SỐ
+%--------------------------------------------------------------
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdd}[2]{\frac{\partial^{2} #1}{\partial #2^{2}}}
+\newcommand{\od}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\odd}[2]{\frac{\dd^{2} #1}{\dd #2^{2}}}
+
+\newcommand{\grad}{\nabla}
+\newcommand{\gradt}{\nabla_{\btheta}}
+\newcommand{\lap}{\Delta}
+
+\DeclareMathOperator{\D}{D}                 % Ma trận Jacobi
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\rank}{rank}           % Hạng của ma trận
+\DeclareMathOperator{\spanop}{span}         % Không gian sinh
+\DeclareMathOperator{\supp}{supp}           % Giá (support) của hàm
+\DeclareMathOperator{\Var}{Var}             % Phương sai
+\DeclareMathOperator{\Cov}{Cov}             % Hiệu phương sai
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% Epsilon máy (phân biệt với \varepsilon của thuật toán Adam)
+\newcommand{\eps}{\varepsilon_{\mathrm{m}}}
+
+%--------------------------------------------------------------
+% 4. CHUẨN VÀ TRỊ TUYỆT ĐỐI (Yêu cầu package mathtools)
+%--------------------------------------------------------------
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\inner}{\langle}{\rangle}
+
+% Thêm trợ lý tự động thay đổi kích thước khi dùng dấu * (ví dụ \norm*{...})
+% Hoặc dùng \norm[\big]{...}
+
+%--------------------------------------------------------------
+% 5. MẠNG NƠ-RON
+%--------------------------------------------------------------
+\DeclareMathOperator{\Net}{Net}             % \Net_{\btheta}(\bx)
+\newcommand{\act}{\sigma}                   % Hàm kích hoạt
+\newcommand{\layer}[1]{^{(#1)}}             % Tầng: \bW\layer{l}
+\newcommand{\nlayer}{L}                     % Tổng số tầng
+\newcommand{\lr}{\alpha}                    % Tốc độ học (Learning rate)
+
+%--------------------------------------------------------------
+% 6. HÀM MẤT MÁT VÀ CÁC THÀNH PHẦN CỦA PINN
+%--------------------------------------------------------------
+\newcommand{\Lop}{\mathcal{L}}             % Toán tử vi phân (viết tắt 1)
+\newcommand{\diffop}{\mathcal{L}}          % Toán tử vi phân (viết tắt 2)
+\newcommand{\bdryop}{\mathcal{B}}          % Toán tử điều kiện biên
+\newcommand{\resid}{\mathcal{R}}           % Phần dư (Residual)
+\newcommand{\ptloss}{\varrho}              % Mất mát tại một điểm
+
+\newcommand{\Jr}{J_{\mathrm{r}}}            % Mất mát phần dư (PDE)
+\newcommand{\Jb}{J_{\mathrm{b}}}            % Mất mát điều kiện biên
+\newcommand{\Ji}{J_{\mathrm{ic}}}           % Mất mát điều kiện ban đầu
+\newcommand{\Jd}{J_{\mathrm{data}}}         % Mất mát dữ liệu quan sát
+
+% Trọng số các thành phần
+\newcommand{\lamr}{\lambda_{\mathrm{r}}}
+\newcommand{\lamb}{\lambda_{\mathrm{b}}}
+\newcommand{\lami}{\lambda_{\mathrm{ic}}}
+\newcommand{\lamd}{\lambda_{\mathrm{data}}}
+
+% Tập điểm huấn luyện (Collocation points)
+\newcommand{\setr}{\mathcal{T}_{\mathrm{r}}}
+\newcommand{\setb}{\mathcal{T}_{\mathrm{b}}}
+\newcommand{\seti}{\mathcal{T}_{\mathrm{ic}}}
+\newcommand{\setd}{\mathcal{T}_{\mathrm{data}}}
+\newcommand{\Nr}{N_{\mathrm{r}}}
+\newcommand{\Nb}{N_{\mathrm{b}}}
+\newcommand{\Ni}{N_{\mathrm{ic}}}
+\newcommand{\Nd}{N_{\mathrm{data}}}
+
+%--------------------------------------------------------------
+% 7. SAI SỐ VÀ ĐÁNH GIÁ
+%--------------------------------------------------------------
+\newcommand{\Ltwoerr}{\epsilon_{L^{2}}}
+\newcommand{\Linferr}{\epsilon_{L^{\infty}}}
+\newcommand{\uex}{u^{\ast}}                 % Nghiệm chính xác (Exact solution)
+\newcommand{\uhat}{\hat{u}}                 % Nghiệm dự đoán
+
+%---------------------------------------------------------------
+\DeclareMathOperator{\sech}{sech}
+\newcommand{\Bop}{\mathcal{B}}             % Toán tử biên (hoặc \mathbf{B} tùy bạn)
+\newcommand{\Tset}{\mathcal{T}}            % Tập hợp điểm phối trí (Collocation points)

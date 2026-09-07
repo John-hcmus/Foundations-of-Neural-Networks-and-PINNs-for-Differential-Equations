@@ -1,0 +1,227 @@
+%==============================================================
+%  REFERENCES.BIB
+%  Chỉ chứa các mục mà thông tin thư mục đã được kiểm chứng.
+%  Mục nào chưa xác nhận được đầy đủ metadata thì đánh dấu
+%  CẦN KIỂM TRA — tuyệt đối không tự điền DOI/số trang.
+%==============================================================
+
+%--------------------------------------------------------------
+% PINNs — bài báo gốc và tổng quan
+%--------------------------------------------------------------
+@article{raissi2019,
+  author  = {Raissi, M. and Perdikaris, P. and Karniadakis, G. E.},
+  title   = {Physics-informed neural networks: A deep learning framework for
+             solving forward and inverse problems involving nonlinear partial
+             differential equations},
+  journal = {Journal of Computational Physics},
+  volume  = {378},
+  pages   = {686--707},
+  year    = {2019},
+  doi     = {10.1016/j.jcp.2018.10.045}
+}
+
+@article{karniadakis2021,
+  author  = {Karniadakis, G. E. and Kevrekidis, I. G. and Lu, L. and
+             Perdikaris, P. and Wang, S. and Yang, L.},
+  title   = {Physics-informed machine learning},
+  journal = {Nature Reviews Physics},
+  volume  = {3},
+  number  = {6},
+  pages   = {422--440},
+  year    = {2021},
+  doi     = {10.1038/s42254-021-00314-5}
+}
+
+@article{lu2021,
+  author  = {Lu, L. and Meng, X. and Mao, Z. and Karniadakis, G. E.},
+  title   = {{DeepXDE}: A deep learning library for solving differential equations},
+  journal = {SIAM Review},
+  volume  = {63},
+  number  = {1},
+  pages   = {208--228},
+  year    = {2021},
+  doi     = {10.1137/19M1274067}
+}
+
+% CẦN KIỂM TRA: có nhiều bài Wang et al. 2021 về PINNs (gradient
+% pathologies; eigenvector bias/Fourier features; NTK perspective).
+% Mục dưới đây ứng với bài "gradient flow pathologies" — hãy đối chiếu
+% với file PDF trong thư mục Project trước khi trích dẫn.
+@article{wang2021,
+  author  = {Wang, S. and Teng, Y. and Perdikaris, P.},
+  title   = {Understanding and mitigating gradient flow pathologies in
+             physics-informed neural networks},
+  journal = {SIAM Journal on Scientific Computing},
+  volume  = {43},
+  number  = {5},
+  pages   = {A3055--A3081},
+  year    = {2021},
+  doi     = {10.1137/20M1318043}
+}
+
+% CẦN KIỂM TRA: chưa xác nhận được metadata đầy đủ (loại tài liệu,
+% nhà xuất bản/arXiv ID, số trang). Mở file PDF, lấy đúng thông tin
+% rồi thay thế các trường bên dưới.
+@misc{hammad2024,
+  author       = {Hammad, M. M.},
+  title        = {CẦN ĐIỀN TIÊU ĐỀ CHÍNH XÁC},
+  year         = {2024},
+  howpublished = {CẦN ĐIỀN: arXiv / sách / báo cáo kỹ thuật},
+  note         = {Metadata chưa được kiểm chứng}
+}
+
+%--------------------------------------------------------------
+% Mạng nơ-ron: cơ sở lý thuyết
+%--------------------------------------------------------------
+@book{goodfellow2016,
+  author    = {Goodfellow, I. and Bengio, Y. and Courville, A.},
+  title     = {Deep Learning},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  year      = {2016}
+}
+
+@article{cybenko1989,
+  author  = {Cybenko, G.},
+  title   = {Approximation by superpositions of a sigmoidal function},
+  journal = {Mathematics of Control, Signals and Systems},
+  volume  = {2},
+  number  = {4},
+  pages   = {303--314},
+  year    = {1989},
+  doi     = {10.1007/BF02551274}
+}
+
+@article{hornik1991,
+  author  = {Hornik, K.},
+  title   = {Approximation capabilities of multilayer feedforward networks},
+  journal = {Neural Networks},
+  volume  = {4},
+  number  = {2},
+  pages   = {251--257},
+  year    = {1991},
+  doi     = {10.1016/0893-6080(91)90009-T}
+}
+
+@inproceedings{glorot2010,
+  author    = {Glorot, X. and Bengio, Y.},
+  title     = {Understanding the difficulty of training deep feedforward
+               neural networks},
+  booktitle = {Proceedings of the 13th International Conference on Artificial
+               Intelligence and Statistics (AISTATS)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {9},
+  pages     = {249--256},
+  year      = {2010}
+}
+
+@inproceedings{rahaman2019,
+  author    = {Rahaman, N. and Baratin, A. and Arpit, D. and Draxler, F. and
+               Lin, M. and Hamprecht, F. and Bengio, Y. and Courville, A.},
+  title     = {On the spectral bias of neural networks},
+  booktitle = {Proceedings of the 36th International Conference on Machine
+               Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {97},
+  pages     = {5301--5310},
+  year      = {2019}
+}
+
+%--------------------------------------------------------------
+% Tối ưu hóa và vi phân tự động
+%--------------------------------------------------------------
+@book{nocedal2006,
+  author    = {Nocedal, J. and Wright, S. J.},
+  title     = {Numerical Optimization},
+  edition   = {2},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {2006},
+  doi       = {10.1007/978-0-387-40065-5}
+}
+
+@article{liu1989,
+  author  = {Liu, D. C. and Nocedal, J.},
+  title   = {On the limited memory {BFGS} method for large scale optimization},
+  journal = {Mathematical Programming},
+  volume  = {45},
+  number  = {1--3},
+  pages   = {503--528},
+  year    = {1989},
+  doi     = {10.1007/BF01589116}
+}
+
+@inproceedings{kingma2015,
+  author    = {Kingma, D. P. and Ba, J.},
+  title     = {{Adam}: A method for stochastic optimization},
+  booktitle = {Proceedings of the 3rd International Conference on Learning
+               Representations (ICLR)},
+  year      = {2015},
+  note      = {arXiv:1412.6980}
+}
+
+@article{baydin2018,
+  author  = {Baydin, A. G. and Pearlmutter, B. A. and Radul, A. A. and
+             Siskind, J. M.},
+  title   = {Automatic differentiation in machine learning: a survey},
+  journal = {Journal of Machine Learning Research},
+  volume  = {18},
+  number  = {153},
+  pages   = {1--43},
+  year    = {2018}
+}
+
+%--------------------------------------------------------------
+% Công cụ thực nghiệm
+%--------------------------------------------------------------
+@inproceedings{paszke2019,
+  author    = {Paszke, A. and Gross, S. and Massa, F. and Lerer, A. and
+               Bradbury, J. and Chanan, G. and Killeen, T. and Lin, Z. and
+               Gimelshein, N. and Antiga, L. and Desmaison, A. and
+               K{\"o}pf, A. and Yang, E. and DeVito, Z. and Raison, M. and
+               Tejani, A. and Chilamkurthy, S. and Steiner, B. and Fang, L. and
+               Bai, J. and Chintala, S.},
+  title     = {{PyTorch}: An imperative style, high-performance deep learning
+               library},
+  booktitle = {Advances in Neural Information Processing Systems 32 (NeurIPS)},
+  pages     = {8024--8035},
+  year      = {2019}
+}
+
+%--------------------------------------------------------------
+% Failure modes của PINNs (bổ sung, chưa có trong thư mục Project)
+%--------------------------------------------------------------
+@inproceedings{krishnapriyan2021,
+  author    = {Krishnapriyan, A. S. and Gholami, A. and Zhe, S. and
+               Kirby, R. M. and Mahoney, M. W.},
+  title     = {Characterizing possible failure modes in physics-informed
+               neural networks},
+  booktitle = {Advances in Neural Information Processing Systems 34 (NeurIPS)},
+  year      = {2021}
+}
+
+%--------------------------------------------------------------
+% Bổ sung theo các \cite có trong Chương 3
+%--------------------------------------------------------------
+@book{griewank2008,
+  author    = {Griewank, A. and Walther, A.},
+  title     = {Evaluating Derivatives: Principles and Techniques of
+               Algorithmic Differentiation},
+  edition   = {2},
+  publisher = {SIAM},
+  address   = {Philadelphia},
+  year      = {2008},
+  doi       = {10.1137/1.9780898717761}
+}
+
+% CẦN KIỂM TRA: số trang và số hiệu tập nên đối chiếu lại với bản gốc.
+@article{bertsekas2000,
+  author  = {Bertsekas, D. P. and Tsitsiklis, J. N.},
+  title   = {Gradient convergence in gradient methods with errors},
+  journal = {SIAM Journal on Optimization},
+  volume  = {10},
+  number  = {3},
+  pages   = {627--642},
+  year    = {2000},
+  doi     = {10.1137/S1052623497331063}
+}

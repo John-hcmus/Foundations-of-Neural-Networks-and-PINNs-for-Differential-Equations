@@ -1,0 +1,271 @@
+%==============================================================
+%  PREAMBLE — cấu hình gói lệnh và định dạng
+%  Thứ tự nạp gói có ý nghĩa: hyperref và cleveref phải ở cuối.
+%==============================================================
+
+%--------------------------------------------------------------
+% 1. FONT VÀ TIẾNG VIỆT (bắt buộc dùng XeLaTeX)
+%--------------------------------------------------------------
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{vietnamese}
+\setotherlanguage{english}
+
+\usepackage[headheight=15pt]{geometry}
+% Hoặc nếu đã nạp geometry từ trước:
+% \geometry{headheight=15pt}
+
+\setmainfont{TeX Gyre Termes}          % Times-like, hỗ trợ đầy đủ dấu tiếng Việt
+% \setmainfont{Liberation Serif}       % phương án thay thế nếu máy không có TeX Gyre
+\setmonofont{DejaVu Sans Mono}[Scale=0.85]   % font cho phần code
+
+% Lưu ý: KHÔNG nạp unicode-math. Gói này sẽ thay font toán và
+% làm hỏng \bm cùng một số ký hiệu của amssymb.
+
+%--------------------------------------------------------------
+% 2. TOÁN HỌC
+%--------------------------------------------------------------
+\usepackage{mathtools}      % bao trùm amsmath, bổ sung \DeclarePairedDelimiter
+\usepackage{amssymb,amsfonts}
+\usepackage{amsthm}
+\usepackage{bm}             % BẮT BUỘC: các macro \bx, \bW... dùng \bm
+\usepackage{siunitx}        % số liệu và đơn vị trong bảng kết quả
+\sisetup{output-decimal-marker={,}, exponent-product=\times}
+
+%--------------------------------------------------------------
+% 3. MÔI TRƯỜNG ĐỊNH LÝ
+%    Phân biệt rõ: định nghĩa / định lý / bổ đề / giả thiết /
+%    nhận xét / ví dụ — theo yêu cầu về chuẩn học thuật.
+%    Đánh số theo chương: "Định nghĩa 2.1".
+%--------------------------------------------------------------
+%    Tất cả dùng CHUNG một bộ đếm, đánh số theo chương:
+%    Định nghĩa 3.1, Mệnh đề 3.2, Bổ đề 3.3, ...
+%    Tên môi trường theo tiếng Việt, khớp với mã Chương 3.
+\theoremstyle{plain}
+\newtheorem{dinhly}{Định lý}[chapter]
+\newtheorem{menhde}[dinhly]{Mệnh đề}
+\newtheorem{bode}[dinhly]{Bổ đề}
+\newtheorem{hequa}[dinhly]{Hệ quả}
+
+\theoremstyle{definition}
+\newtheorem{definition}[dinhly]{Định nghĩa}
+\newtheorem{dinhnghia}[dinhly]{Định nghĩa}      % bí danh tiếng Việt
+\newtheorem{giathiet}[dinhly]{Giả thiết}
+\newtheorem{vidu}[dinhly]{Ví dụ}
+\newtheorem{baitoan}[dinhly]{Bài toán}
+
+\newtheorem{thinghiem}{Thí nghiệm}
+\theoremstyle{remark}
+\newtheorem{nhanxet}[dinhly]{Nhận xét}
+
+% amsthm đã cung cấp môi trường `proof` (kèm dấu kết thúc và \qedhere);
+% chỉ đổi tên hiển thị. Bản preamble cũ tự \newtheorem{proof} — sai,
+% vì chứng minh dùng chung bộ đếm với định lý và \qedhere không hoạt động.
+\renewcommand{\proofname}{Chứng minh}
+
+%--------------------------------------------------------------
+% 4. BỐ CỤC TRANG
+%--------------------------------------------------------------
+\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
+\usepackage{setspace}
+\setstretch{1.25}
+\usepackage{emptypage}
+\usepackage{microtype}
+
+% Header / footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+% Chuyển đổi giữa phần đầu (số La Mã) và phần thân (số Ả Rập)
+\newcommand{\frontmatterstyle}{\pagenumbering{roman}\setcounter{page}{1}}
+\newcommand{\mainmatterstyle}{\cleardoublepage\pagenumbering{arabic}\setcounter{page}{1}}
+
+%--------------------------------------------------------------
+% 5. MÀU SẮC (khai báo một lần duy nhất)
+%--------------------------------------------------------------
+\usepackage{xcolor}
+\definecolor{titleblue}{RGB}{35,75,135}      % tiêu đề chương/mục
+\definecolor{linkblue}{RGB}{0,102,204}       % liên kết ngoài
+\definecolor{codegreen}{RGB}{0,120,0}        % chú thích trong code
+\definecolor{codegray}{RGB}{110,110,110}     % số dòng
+\definecolor{codepurple}{RGB}{150,0,120}     % chuỗi ký tự
+\definecolor{backcolour}{RGB}{248,248,248}   % nền khối code
+\definecolor{XanhTieuDe}{RGB}{0,102,34}      % tiêu đề hộp ví dụ
+\definecolor{XanhNen}{RGB}{234,245,238}      % nền hộp ví dụ
+
+%--------------------------------------------------------------
+% 6. ĐỊNH DẠNG TIÊU ĐỀ
+%--------------------------------------------------------------
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{titleblue}}
+  {\chaptertitlename\ \thechapter}{16pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{28pt}
+\titleformat{\section}{\normalfont\Large\bfseries\color{titleblue}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{titleblue}}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries\color{titleblue}}{\thesubsubsection.}{0.5em}{}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+
+%--------------------------------------------------------------
+% 7. HÌNH ẢNH, BẢNG BIỂU, DANH SÁCH
+%--------------------------------------------------------------
+\usepackage{graphicx}
+\graphicspath{{Images/}}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, arrows.meta, fit, backgrounds}
+% \usepackage{pgfplots}\pgfplotsset{compat=1.18}   % bật nếu vẽ đồ thị trực tiếp trong LaTeX
+
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*, itemsep=0.4em, topsep=0.3em}
+\setlist[enumerate]{leftmargin=*, itemsep=0.4em, topsep=0.3em}
+
+%--------------------------------------------------------------
+% 8. HIỂN THỊ CODE (Python/PyTorch — không phải Matlab)
+%--------------------------------------------------------------
+\usepackage{listings}
+
+\lstdefinestyle{PythonStyle}{
+    language=Python,
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{titleblue}\bfseries,
+    commentstyle=\color{codegreen}\itshape,
+    stringstyle=\color{codepurple},
+    numbers=left,
+    numberstyle=\tiny\color{codegray},
+    stepnumber=1,
+    numbersep=10pt,
+    frame=single,
+    framesep=8pt,
+    rulecolor=\color{codegray},
+    breaklines=true,
+    breakatwhitespace=true,
+    showstringspaces=false,
+    tabsize=4,
+    columns=fullflexible,
+    keepspaces=true,
+    captionpos=b,
+    % từ khóa bổ sung của PyTorch
+    emph={torch,nn,autograd,grad,Tensor,Module,optim,Adam,LBFGS,tanh,requires\_grad},
+    emphstyle=\color{codepurple}\bfseries
+}
+\lstset{style=PythonStyle}
+\renewcommand{\lstlistingname}{Đoạn mã}
+\renewcommand{\lstlistlistingname}{Danh sách đoạn mã}
+
+% Ghi chú: listings xử lý UTF-8 kém. Nên viết chú thích trong code
+% bằng tiếng Anh không dấu; phần diễn giải tiếng Việt đặt ở prose.
+
+%--------------------------------------------------------------
+% 9. THUẬT TOÁN (mô tả training procedure của PINN)
+%--------------------------------------------------------------
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{Thuật toán}
+\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
+\renewcommand{\algorithmicensure}{\textbf{Đầu ra:}}
+\renewcommand{\algorithmicwhile}{\textbf{trong khi}}
+\renewcommand{\algorithmicdo}{\textbf{thực hiện}}
+\renewcommand{\algorithmicend}{\textbf{kết thúc}}
+\renewcommand{\algorithmicfor}{\textbf{với}}
+\renewcommand{\algorithmicif}{\textbf{nếu}}
+\renewcommand{\algorithmicthen}{\textbf{thì}}
+\renewcommand{\algorithmicelse}{\textbf{ngược lại}}
+\renewcommand{\algorithmicrepeat}{\textbf{lặp}}
+\renewcommand{\algorithmicuntil}{\textbf{cho đến khi}}
+\renewcommand{\algorithmicreturn}{\textbf{trả về}}
+
+%--------------------------------------------------------------
+% 10. HỘP ĐÓNG KHUNG
+%--------------------------------------------------------------
+\usepackage[most]{tcolorbox}
+
+\newtcolorbox{baitapbox}[1]{
+    enhanced, colback=blue!5, colframe=blue!60!black,
+    coltitle=white, fonttitle=\bfseries, title=#1
+}
+% CHÚ Ý: hai hộp dưới đây đã ĐỔI TÊN (vidu -> hopvidu, bode -> hopluuy)
+% vì `vidu` và `bode` nay là môi trường định lý dùng trong Chương 3.
+\newtcolorbox{hopvidu}[1]{
+    enhanced, colback=XanhNen, colframe=XanhTieuDe,
+    coltitle=white, fonttitle=\bfseries, title=#1
+}
+\newtcolorbox{hopluuy}[1]{
+    enhanced, colback=red!5!white, colframe=red,
+    boxrule=0.5pt, arc=2mm, title={#1}, fonttitle=\bfseries,
+    colbacktitle=red,
+    attach boxed title to top left={xshift=5mm, yshift=-2.5mm},
+    boxed title style={arc=3mm, size=small}
+}
+
+%--------------------------------------------------------------
+% 11. TÀI LIỆU THAM KHẢO (biblatex + biber)
+%--------------------------------------------------------------
+\usepackage[
+    backend=biber,
+    style=numeric,        % đổi thành authoryear nếu khoa yêu cầu
+    sorting=nyt,          % nyt: sắp theo tên tác giả; none: theo thứ tự trích dẫn
+    maxbibnames=99,
+    giveninits=true,
+    doi=true, isbn=false, url=false
+]{biblatex}
+% Nếu bản TeX trên máy không có biblatex/biber, thay ba dòng sau cho
+% khối trên và dùng bibtex:
+%   \usepackage[numbers,sort&compress]{natbib}
+%   \bibliographystyle{plain}
+% và trong main.tex thay \printbibliography bằng \bibliography{references}
+
+%--------------------------------------------------------------
+% 12. HYPERREF VÀ CLEVEREF (luôn nạp cuối cùng)
+%--------------------------------------------------------------
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=titleblue,
+    citecolor=titleblue,
+    filecolor=magenta,
+    urlcolor=linkblue,
+    bookmarksnumbered=true,
+    bookmarksopen=true
+}
+
+% GHI CHÚ: cleveref ĐÃ ĐƯỢC GỠ BỎ.
+% Gói này gọi \extras<tên ngôn ngữ> theo quy ước của babel; polyglossia
+% không định nghĩa lệnh đó cho tiếng Việt nên biên dịch báo
+% "Undefined control sequence" ngay tại \begin{document}. Đã kiểm chứng
+% bằng biên dịch thử. Luận văn dùng cách viết tường minh
+% "Mệnh đề~\ref{...}", vốn cũng là cách đang dùng trong Chương 3, nên
+% không mất mát gì.
+
+%--------------------------------------------------------------
+% 13. TIỆN ÍCH
+%--------------------------------------------------------------
+\newcommand{\ngaythangnam}[3]{ngày #1 tháng #2 năm #3}
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}   % xóa trước khi nộp
+
+\usepackage{amsmath, amssymb}
+\usepackage{bm}        % Hỗ trợ in đậm ký hiệu toán học đẹp hơn
+\usepackage{mathtools} % Hỗ trợ định nghĩa \abs chuẩn giãn cách
+
+% 1. Sửa lỗi chung \bk (chọn một trong hai cách dưới)
+\newcommand{\bk}{\mathbf{k}}  % Cách 1: dùng \mathbf thông thường
+% \newcommand{\bk}{\bm{k}}    % Cách 2: dùng \bm (đẹp hơn nếu k là biến nghiêng đậm)
+
+% 2. Phòng ngừa lỗi \abs
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+% Hoặc nếu không muốn dùng mathtools:
+% \newcommand{\abs}[1]{\left|#1\right|}

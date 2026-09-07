@@ -7,6 +7,9 @@ Bai toan ma CA BA tang cua Bang tab:ba-nguyen-nhan cung bat loi.
 
 Nghiem tham chieu: sai phan huu han bac hai + Runge--Kutta bac bon tuong minh,
 dang bao toan (u^2/2)_x sai phan trung tam, khuech tan trung tam ba diem.
+
+Cau hinh L-BFGS (max_iter = 800, history_size = 50, Wolfe manh) lay dung theo
+Doan ma 5.3 cua luan van. Rieng TN4 dung 500 vong theo dung mo ta trong Muc 5.4.
 """
 from __future__ import annotations
 import json, math, os
@@ -73,7 +76,7 @@ def sample(seed, Nr=2500, Nb=300, N0=300):
     return Xr, Xb, X0
 
 
-def run(anneal_alpha, seed=0, adam_iters=6000, lbfgs_iters=500, N_up=100,
+def run(anneal_alpha, seed=0, adam_iters=6000, lbfgs_iters=800, N_up=100,
         ref=None):
     set_seed(seed)
     net = FNN([2, 32, 32, 32, 32, 1], act="tanh")

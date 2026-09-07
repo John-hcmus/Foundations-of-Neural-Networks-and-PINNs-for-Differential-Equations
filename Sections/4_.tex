@@ -1,0 +1,1373 @@
+\chapter{Mạng nơ-ron thông tin vật lý}
+\label{chap:pinn}
+ 
+Ba chương trước đã dựng xong toàn bộ vật liệu. Chương~\ref{chap:fnn} cho một họ
+hàm tham số hoá $\Net_{\btheta}$ trơn vô hạn theo biến đầu vào, cùng công thức
+tường minh cho các đạo hàm ấy. Chương~\ref{chap:autodiff} cho cơ chế tính các đạo
+hàm đó chính xác tới độ chính xác máy, cùng các thuật toán cực tiểu hoá. Chương
+này ghép chúng lại thành một phương pháp giải phương trình vi phân, và -- quan
+trọng không kém -- phân tích những chỗ phương pháp ấy hỏng.
+ 
+Cấu trúc của chương theo ba lớp lồng nhau. Mục~\ref{sec:cau-truc-loss} xây dựng
+phương pháp: phần dư, tập điểm phối trí, hàm mục tiêu. Trong đó,
+Mục~\ref{subsec:chan-on-dinh} trả lời một câu hỏi mà tài liệu thường bỏ qua:
+\emph{vì sao cực tiểu hoá phần dư lại là việc đáng làm?} Câu trả lời không hiển
+nhiên -- phần dư nhỏ chỉ kéo theo sai số nhỏ khi bài toán vi phân có một chặn ổn
+định, và hằng số của chặn ấy chính là đại lượng suy biến trong các bài toán khó.
+Mục~\ref{sec:gradient-pathology} phân tích khó khăn ở tầng \emph{tối ưu}: nhiều
+mục tiêu cạnh tranh trong một hàm mục tiêu duy nhất.
+Mục~\ref{sec:spectral-bias} truy tiếp xuống tầng \emph{xấp xỉ}: ngay cả khi thuật
+toán tối ưu hoàn hảo, mạng vẫn có thiên hướng nội tại không học được tần số cao.
+Ba tầng này hội tụ về một kết luận định lượng thống nhất ở
+Mục~\ref{subsec:he-qua-pinn}.
+ 
+\subsubsection*{Quy ước ký hiệu bổ sung}
+ 
+Chương này giữ Bảng~\ref{tab:ky-hieu} và bổ sung Bảng~\ref{tab:ky-hieu-4}. Hai
+điểm cần lưu ý vì tài liệu gốc thường dùng khác.
+ 
+Thứ nhất, $\Lop$ \emph{chỉ} ký hiệu toán tử vi phân, nhất quán từ
+\eqref{eq:pinn-loss} của Chương~\ref{chap:fnn}; hàm mục tiêu và các thành phần
+của nó dùng chữ $J$. Nhiều tài liệu, kể cả~\cite{wang2021}, dùng $\mathcal{L}$
+cho hàm mất mát; ta tránh cách đó để không trùng ký hiệu.
+ 
+Thứ hai, vectơ tham số vật lý được ký hiệu $\bzeta$ chứ không phải $\lambda$ như
+trong~\cite{raissi2019}, bởi $\lambda$ trong luận văn này được dành cho các trọng
+số cân bằng mất mát. Hai đại lượng có bản chất hoàn toàn khác nhau -- một là dữ
+kiện (hoặc ẩn số) của bài toán vật lý, một là siêu tham số của thuật toán -- nên
+việc dùng chung ký hiệu là nguồn nhầm lẫn thực sự.
+ 
+Để đọc thuận, ta viết $u_{\btheta} := \Net_{\btheta}$ khi mạng đóng vai trò hàm
+nghiệm thử, và dành chữ $u$ không chỉ số cho nghiệm đúng.
+ 
+\begin{table}[htbp]
+\centering
+\caption{Ký hiệu bổ sung của Chương~\ref{chap:pinn}.}
+\label{tab:ky-hieu-4}
+\small
+\begin{tabular}{@{}l p{9.2cm}@{}}
+\toprule
+\textbf{Ký hiệu} & \textbf{Ý nghĩa} \\
+\midrule
+$\Omega \subset \R^{d}$, $\partial\Omega$ & miền không gian bị chặn và biên của
+  nó \\
+$\Lop[\,\cdot\,;\bzeta]$ & toán tử vi phân, phụ thuộc tham số vật lý $\bzeta$ \\
+$\Bop$ & toán tử biên (Dirichlet, Neumann hoặc Robin) \\
+$u$, $u_{\btheta} := \Net_{\btheta}$ & nghiệm đúng và nghiệm xấp xỉ bằng mạng \\
+$r_{\btheta}$ & phần dư của phương trình, \eqref{eq:residual} \\
+$e_{\btheta} := u_{\btheta} - u$ & sai số của nghiệm xấp xỉ \\
+$\Tset_r, \Tset_0, \Tset_b$ & tập điểm phối trí trong miền, tại $t=0$, trên biên \\
+$N_r, N_0, N_b$ & lực lượng của ba tập trên \\
+$J_r, J_0, J_b$ & ba thành phần mất mát, \eqref{eq:loss-r}--\eqref{eq:loss-b} \\
+$\lambda_r,\lambda_0,\lambda_b$ & trọng số cân bằng (siêu tham số của thuật
+  toán) \\
+$m$ & bậc cao nhất của đạo hàm xuất hiện trong $\Lop$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+ 
+%==============================================================================
+\section{Cấu trúc hàm mất mát}
+\label{sec:cau-truc-loss}
+%==============================================================================
+ 
+\subsection{Bài toán tổng quát}
+\label{subsec:bai-toan-tong-quat}
+ 
+Xét bài toán giá trị đầu -- giá trị biên cho một phương trình đạo hàm riêng phi
+tuyến có tham số, theo cách đặt vấn đề của Raissi và cộng sự~\cite{raissi2019}.
+Với $\Omega \subset \R^{d}$ bị chặn và $[0,T]$ là khoảng thời gian khảo sát, ta
+tìm $u : \Omega \times [0,T] \to \R$ thoả mãn
+\begin{equation}
+\frac{\partial u}{\partial t}(x,t) + \Lop\!\left[u;\, \bzeta\right](x,t) = 0,
+\qquad (x,t) \in \Omega \times (0,T],
+\label{eq:pde-general}
+\end{equation}
+kèm theo điều kiện đầu và điều kiện biên
+\begin{align}
+    u(x,0) &= u_{0}(x), && x \in \Omega, \label{eq:ic}\\
+    \Bop\!\left[u\right](x,t) &= g(x,t),
+      && (x,t) \in \partial\Omega \times (0,T].
+    \label{eq:bc}
+\end{align}
+ 
+Ở đây $\Lop[\,\cdot\,;\bzeta]$ là toán tử vi phân theo biến không gian, có thể
+phi tuyến, phụ thuộc vectơ tham số vật lý $\bzeta$; còn $\Bop$ là toán tử biên,
+là toán tử đồng nhất (điều kiện Dirichlet), toán tử đạo hàm pháp tuyến (Neumann)
+hoặc tổ hợp của chúng (Robin).
+ 
+Dạng \eqref{eq:pde-general} bao hàm hầu hết các lớp phương trình được khảo sát
+trong luận văn. Với phương trình Burgers một chiều có độ nhớt $\nu$,
+$\Lop[u] = u\,\partial_{x} u - \nu\, \partial_{xx} u$; với phương trình khuếch
+tán, $\Lop[u] = -\nu\,\partial_{xx} u$. Bài toán dừng (không phụ thuộc thời gian)
+thu được bằng cách bỏ số hạng $\partial_t u$ và điều kiện \eqref{eq:ic}; ta sẽ
+dùng trường hợp này ở Mục~\ref{subsec:chan-on-dinh} vì nó cho phép phát biểu kết
+quả gọn nhất.
+ 
+Ta giả thiết xuyên suốt rằng bài toán \eqref{eq:pde-general}--\eqref{eq:bc}
+\emph{đặt chỉnh}: nghiệm tồn tại, duy nhất và phụ thuộc liên tục vào dữ kiện. Giả
+thiết này không phải hình thức. Mục~\ref{subsec:chan-on-dinh} sẽ cho thấy chính
+mô-đun liên tục ấy -- chứ không phải bản thân sự tồn tại nghiệm -- là đại lượng
+quyết định phương pháp có hoạt động hay không.
+ 
+\subsection{Phần dư của phương trình}
+\label{subsec:phan-du}
+ 
+Ta xấp xỉ nghiệm $u$ bằng một mạng nơ-ron truyền thẳng theo
+Định nghĩa~\ref{def:fnn}, với $n_0 = d+1$ (biến vào là $(x,t)$) và $n_L = 1$:
+\begin{equation}
+u_{\btheta} : \Omega \times [0,T] \to \R,
+\qquad
+(x,t) \longmapsto u_{\btheta}(x,t),
+\qquad \btheta \in \R^{P}.
+\label{eq:network-surrogate}
+\end{equation}
+ 
+Điểm mấu chốt phân biệt PINNs với các phương pháp học máy thuần dữ liệu là định
+nghĩa sau.
+ 
+\begin{definition}[Phần dư]
+\label{def:residual}
+Giả sử $u_{\btheta} \in C^{m}$ theo biến không gian và $C^1$ theo biến thời gian,
+với $m$ là bậc cao nhất của đạo hàm trong $\Lop$. \emph{Phần dư} của phương
+trình \eqref{eq:pde-general} tại điểm $(x,t)$ là
+\begin{equation}
+r_{\btheta}(x,t)
+:= \frac{\partial u_{\btheta}}{\partial t}(x,t)
+ + \Lop\!\left[u_{\btheta};\, \bzeta\right](x,t).
+\label{eq:residual}
+\end{equation}
+\end{definition}
+ 
+Ba tính chất của $r_{\btheta}$ cần được nhấn mạnh, mỗi tính chất nối với một kết
+quả đã có ở các chương trước.
+ 
+\emph{(a) Dùng chung tham số.} Hàm $r_{\btheta}$ dùng chung $\btheta$ với
+$u_{\btheta}$: đây không phải một mạng nơ-ron thứ hai mà là kết quả của việc áp
+toán tử vi phân lên chính đồ thị tính toán của $u_{\btheta}$
+(Định nghĩa~\ref{def:comp-graph}). Do đó số tham số cần tối ưu \emph{không tăng}
+khi ta đưa thông tin vật lý vào mô hình -- điều làm cho phương pháp khả thi, vì
+theo Mệnh đề~\ref{md:chi-phi-bp}, chi phí gradient tỉ lệ với chi phí đánh giá hàm
+chứ không với $P$.
+ 
+\emph{(b) Đạo hàm theo biến đầu vào, tính bằng vi phân tự động.} Các đạo hàm
+trong \eqref{eq:residual} là đạo hàm theo $(x,t)$, không phải theo $\btheta$.
+Mệnh đề~\ref{md:ad-tai-tao} bảo đảm rằng vi phân tự động tính đúng các đại lượng
+này, tái tạo chính xác hai hệ thức truy hồi \eqref{eq:G-truy-hoi} và
+\eqref{eq:S-truy-hoi}. Khác với sai phân hữu hạn, cơ chế này không đòi hỏi lưới
+rời rạc nào và không chịu rào cản độ chính xác của
+Mệnh đề~\ref{md:fd-rao-can} -- một điểm mà Nhận xét~\ref{nx:fd-pde} đã lập luận
+là điều kiện của phương pháp chứ không phải lựa chọn cài đặt.
+ 
+\emph{(c) Ràng buộc lên hàm kích hoạt.} Giả thiết $u_{\btheta} \in C^m$ trong
+Định nghĩa~\ref{def:residual} là ràng buộc trực tiếp lên kiến trúc, không phải
+điều kiện kỹ thuật cho tiện. Theo Nhận xét~\ref{nx:bac-cao}, điều kiện cần để đạo
+hàm bậc $m$ của mạng không đồng nhất triệt tiêu là $\sigma^{(m)} \not\equiv 0$;
+và với ReLU, Hệ quả~\ref{hq:pinn-hong} cho kết luận mạnh hơn nhiều một sự ``suy
+biến'': hàm mục tiêu trở thành \emph{hằng số địa phương}, nên mọi thuật toán
+gradient đứng yên tuyệt đối. Hàm $\tanh$ thuộc $C^{\infty}(\R)$ với mọi đạo hàm
+bị chặn đều (Hệ quả~\ref{hq:tanh-chan}), nên là lựa chọn đã được biện minh chứ
+không phải quy ước; đó cũng là hàm kích hoạt dùng trong toàn bộ thực nghiệm ở
+Chương~\ref{chap:thucnghiem}.
+ 
+Toàn bộ luồng tính toán được tóm tắt trong Hình~\ref{fig:pinn-arch}.
+ 
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\small,
+  neuron/.style={circle, draw=black!55, line width=0.5pt, minimum size=5.5mm, inner sep=0pt, fill=white},
+  box/.style={rounded corners=2pt, draw=black!60, line width=0.6pt, align=center, inner sep=4.5pt, fill=white},
+  lossbox/.style={box, fill=blue!6},
+  flow/.style={-{Stealth[length=4.5pt]}, line width=0.7pt, black!70},
+  wire/.style={draw=black!20, line width=0.28pt},
+  grad/.style={-{Stealth[length=5pt]}, line width=0.8pt, dashed, red!62!black}
+]
+
+\node[box, fill=orange!10] (in) at (0,0) {$(x,t)$};
+\def\lxA{2.0} \def\lxB{3.3} \def\lxC{4.6} \def\lxD{5.9}
+
+\foreach \i in {1,2} \node[neuron] (a\i) at (\lxA, {0.75-1.5*(\i-1)}) {};
+\foreach \i in {1,...,4} \node[neuron] (b\i) at (\lxB, {1.35-0.9*(\i-1)}) {};
+\foreach \i in {1,...,4} \node[neuron] (c\i) at (\lxC, {1.35-0.9*(\i-1)}) {};
+\node[neuron] (d1) at (\lxD, 0) {};
+
+\begin{scope}[on background layer]
+  \foreach \i in {1,2} \foreach \j in {1,...,4} \draw[wire] (a\i)--(b\j);
+  \foreach \i in {1,...,4} \foreach \j in {1,...,4} \draw[wire] (b\i)--(c\j);
+  \foreach \i in {1,...,4} \draw[wire] (c\i)--(d1);
+\end{scope}
+
+\node[fit=(a1)(a2)(b1)(b4)(c1)(c4)(d1), inner sep=3pt, draw=none] (netbox) {};
+\node[font=\footnotesize, black!65] at ($(netbox.north)+(1.55,0.30)$) {mạng truyền thẳng $u_\btheta$};
+
+\draw[flow] (in) -- (a1);
+\draw[flow] (in) -- (a2);
+
+\node[box, fill=orange!10] (out) at (7.5,0) {$u_\btheta(x,t)$};
+\draw[flow] (d1) -- (out);
+
+\node[box, fill=green!7] (ad) at (10.6,0) {vi phân tự động\\[2pt] $\dfrac{\partial u_\btheta}{\partial t},\; \dfrac{\partial u_\btheta}{\partial x},\; \dfrac{\partial^{2} u_\btheta}{\partial x^{2}}$};
+\draw[flow] (out) -- (ad);
+
+\node[box, fill=green!7] (res) at (14.4,0) {phần dư\\[3pt] $r_\btheta = \dfrac{\partial u_\btheta}{\partial t} + \Lop[u_\btheta;\bzeta]$};
+\draw[flow] (ad) -- (res);
+
+\node[lossbox] (lb) at (1.7,-3.5) {$J_b=\dfrac{1}{N_b}\displaystyle\sum |\Bop[u_\btheta]-g|^{2}$};
+\node[lossbox] (l0) at (7.5,-3.5) {$J_0=\dfrac{1}{N_0}\displaystyle\sum |u_\btheta-u_0|^{2}$};
+\node[lossbox] (lr) at (13.2,-3.5) {$J_r=\dfrac{1}{N_r}\displaystyle\sum |r_\btheta|^{2}$};
+
+\draw[flow] (res.south) -- ++(0,-0.55) -| (lr.north);
+\draw[flow] (out.south) -- (l0.north);
+\draw[flow] (out.south) -- ++(0,-0.9) -| (lb.north);
+
+\node[box, fill=blue!14, line width=0.85pt] (ltot) at (7.5,-5.6) {$J(\btheta)=\lambda_r J_r+\lambda_0 J_0+\lambda_b J_b$};
+
+\draw[flow] (lb.south) |- ($(ltot.west)+(-0.9,0)$) -- (ltot.west);
+\draw[flow] (lr.south) |- ($(ltot.east)+(0.9,0)$) -- (ltot.east);
+\draw[flow] (l0.south) -- (ltot.north);
+
+\draw[grad] (ltot.west) -- ++(-1.6,0) -- (-1.5,-5.6) -- (-1.5,2.45) -- (2.0,2.45) -- (2.0,1.18);
+
+\node[font=\footnotesize, red!62!black, align=center] at (-0.55,-4.35) {cập nhật tham số\\[-1pt] $\nabla_\btheta J$};
+\end{tikzpicture}}
+\end{figure}
+ 
+\subsection{Điểm phối trí và chiến lược lấy mẫu}
+\label{subsec:collocation}
+ 
+Để đánh giá phần dư một cách số trị, ta chọn một tập hữu hạn điểm trong miền tính
+toán. Theo thuật ngữ của phương pháp trọng số dư, các điểm này được gọi là
+\emph{điểm phối trí} (collocation point). Ta xây dựng ba tập:
+\begin{align}
+\Tset_{r} &= \{(x_{r}^{i}, t_{r}^{i})\}_{i=1}^{N_{r}}
+  \subset \Omega \times (0,T], && \text{điểm trong miền,} \label{eq:Tr}\\
+\Tset_{0} &= \{x_{0}^{i}\}_{i=1}^{N_{0}} \subset \Omega,
+  && \text{điểm trên lát cắt } t=0, \label{eq:T0}\\
+\Tset_{b} &= \{(x_{b}^{i}, t_{b}^{i})\}_{i=1}^{N_{b}}
+  \subset \partial\Omega \times (0,T], && \text{điểm trên biên.} \label{eq:Tb}
+\end{align}
+ 
+Đặc điểm đáng chú ý của $\Tset_{r}$ là các điểm này \emph{không cần nhãn}. Ta
+không biết và không cần biết giá trị nghiệm đúng tại chúng; thông tin giám sát
+duy nhất là điều kiện $r_{\btheta} = 0$ do chính phương trình áp đặt. Đây là
+nguồn gốc của tên gọi ``thông tin vật lý'': phương trình đóng vai trò thay thế
+cho dữ liệu nhãn. Ngược lại, $\Tset_0$ và $\Tset_b$ \emph{có} nhãn, lấy từ
+$u_0$ và $g$.
+ 
+Về cách lấy mẫu, Raissi và cộng sự~\cite{raissi2019} dùng \emph{lấy mẫu siêu khối
+Latin} (Latin Hypercube Sampling, LHS). So với lấy mẫu ngẫu nhiên đều, LHS bảo
+đảm mỗi chiều của miền được phủ đồng đều hơn khi $N_{r}$ còn khiêm tốn, nhờ đó
+giảm phương sai của ước lượng phần dư ở \eqref{eq:mc-estimate}. Các dãy tựa ngẫu
+nhiên khác như Sobol hay Halton cho kết quả tương đương. Cần nói rõ rằng lợi thế
+này là lợi thế \emph{phương sai hữu hạn mẫu}: cả ba chiến lược đều cho cùng một
+giới hạn khi $N_r \to \infty$, và khác biệt mờ dần khi $N_r$ tăng. Ảnh hưởng của
+chiến lược lấy mẫu đến độ chính xác sẽ được so sánh trong phần thực nghiệm.
+ 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{Images/chap_4/hinh_collocation.pdf}
+\caption[Phân bố các tập điểm huấn luyện của PINNs]{Phân bố ba tập điểm huấn
+luyện trên miền $[-1,1]\times[0,1]$. Bảng (a) dùng lấy mẫu siêu khối Latin, bảng
+(b) dùng lấy mẫu ngẫu nhiên đều, cùng số điểm $N_r = 150$. Lưới nền chia miền
+thành $10\times 10$ ô nhằm làm rõ mức độ phủ: với LHS, hình chiếu của tập điểm
+lên mỗi trục toạ độ phủ đều các khoảng chia, trong khi lấy mẫu đều để lại những ô
+trống và những cụm điểm dày. Khác biệt này rõ nhất khi $N_r$ còn nhỏ và mờ dần
+khi $N_r$ tăng.}
+\label{fig:collocation}
+\end{figure}
+ 
+\subsection{Hàm mất mát tổng hợp}
+\label{subsec:loss}
+ 
+Với ba tập điểm nói trên, ta định nghĩa ba thành phần mất mát dưới dạng sai số
+bình phương trung bình:
+\begin{align}
+J_{r}(\btheta)
+  &= \frac{1}{N_{r}} \sum_{i=1}^{N_{r}}
+     \abs{r_{\btheta}\!\left(x_{r}^{i}, t_{r}^{i}\right)}^{2},
+     \label{eq:loss-r}\\[2pt]
+J_{0}(\btheta)
+  &= \frac{1}{N_{0}} \sum_{i=1}^{N_{0}}
+     \abs{u_{\btheta}\!\left(x_{0}^{i}, 0\right)
+          - u_{0}\!\left(x_{0}^{i}\right)}^{2},
+     \label{eq:loss-0}\\[2pt]
+J_{b}(\btheta)
+  &= \frac{1}{N_{b}} \sum_{i=1}^{N_{b}}
+     \abs{\Bop\!\left[u_{\btheta}\right]\!\left(x_{b}^{i}, t_{b}^{i}\right)
+          - g\!\left(x_{b}^{i}, t_{b}^{i}\right)}^{2}.
+     \label{eq:loss-b}
+\end{align}
+Việc chọn dạng bình phương không tuỳ tiện: theo
+Mệnh đề~\ref{md:gauss-mse}, sai số bình phương trung bình là hệ quả của nguyên lý
+hợp lý cực đại dưới giả thiết nhiễu Gauss đồng phương sai. Ở đây giả thiết ấy
+không có nội dung xác suất thực sự cho $J_r$ -- phần dư không phải một quan trắc
+có nhiễu -- nhưng dạng bình phương vẫn được biện minh bởi
+Nhận xét~\ref{rem:monte-carlo} dưới đây theo một cách khác hẳn.
+ 
+Hàm mất mát tổng hợp là tổ hợp tuyến tính có trọng số:
+\begin{equation}
+\boxed{\;
+J(\btheta)
+= \lambda_{r}\, J_{r}(\btheta)
++ \lambda_{0}\, J_{0}(\btheta)
++ \lambda_{b}\, J_{b}(\btheta)
+\;}
+\label{eq:total-loss}
+\end{equation}
+với $\lambda_{r}, \lambda_{0}, \lambda_{b} > 0$. Bài toán huấn luyện trở thành bài
+toán tối ưu không ràng buộc
+\begin{equation}
+\btheta^{\star} \in \arg\min_{\btheta \in \R^{P}} J(\btheta),
+\label{eq:opt-problem}
+\end{equation}
+giải bằng các thuật toán ở Mục~\ref{sec:optimizers}. Ta viết $\in$ chứ không viết
+$=$ vì theo Mệnh đề~\ref{md:khong-loi} và Nhận xét~\ref{nx:doi-xung-hoan-vi}, tập
+cực tiểu không phải một điểm mà chứa ít nhất $2^{n_1}n_1!$ phần tử tương đương.
+ 
+\begin{nhanxet}[Bản chất ước lượng Monte Carlo của $J_{r}$]
+\label{rem:monte-carlo}
+Thành phần $J_{r}$ trong \eqref{eq:loss-r} không phải một hàm mất mát giám sát
+thông thường. Nếu các điểm phối trí được lấy mẫu độc lập theo phân phối đều trên
+$\Omega \times (0,T]$ và $r_{\btheta} \in L^2$, thì theo luật số lớn mạnh
+\begin{equation}
+J_{r}(\btheta)
+\;\xrightarrow[\;N_{r} \to \infty\;]{\text{h.c.c.}}\;
+\frac{1}{\abs{\Omega}\,T}
+\int_{0}^{T}\!\!\int_{\Omega}
+\abs{r_{\btheta}(x,t)}^{2}\, dx\, dt
+= \frac{1}{\abs{\Omega}\,T}\,
+\norm{r_{\btheta}}_{L^{2}(\Omega \times (0,T))}^{2},
+\label{eq:mc-estimate}
+\end{equation}
+và với mỗi $\btheta$ cố định, $J_r(\btheta)$ là ước lượng \emph{không chệch} của
+vế phải. Cách nhìn này cho thấy PINNs thực chất là một phương pháp \emph{bình
+phương tối thiểu trong không gian hàm}, với không gian thử là tập các hàm biểu
+diễn được bởi kiến trúc đã chọn,
+$\mathcal{U}_{\btheta} = \{u_{\btheta} : \btheta \in \R^{P}\}$. Sai số tổng thể
+do đó tách thành ba nguồn: sai số xấp xỉ (do $\mathcal{U}_{\btheta}$ không chứa
+nghiệm đúng -- Định lý~\ref{dl:sobolev} bảo đảm nguồn này nhỏ tuỳ ý), sai số lấy
+mẫu (do $N_{r}$ hữu hạn) và sai số tối ưu (do thuật toán không đạt cực tiểu toàn
+cục).
+ 
+Một dè dặt quan trọng thường bị bỏ qua. Tính không chệch ở trên đòi hỏi $\btheta$
+\emph{độc lập} với mẫu $\Tset_r$. Trong thực hành, $\Tset_r$ được lấy một lần rồi
+cố định, và $\btheta^{\star}$ được tối ưu \emph{trên chính mẫu đó}; khi ấy
+$J_r(\btheta^{\star})$ là ước lượng chệch xuống của
+$\norm{r_{\btheta^\star}}^2_{L^2}$ -- đúng hiện tượng quá khớp quen thuộc, ở đây
+là quá khớp vào tập điểm phối trí. Hệ quả thực hành: giá trị $J_r$ cuối cùng
+\emph{không} phải một ước lượng đáng tin cho chuẩn phần dư; phải đánh giá lại
+$r_{\btheta^\star}$ trên một tập điểm độc lập. Ta áp dụng nguyên tắc này trong
+toàn bộ thực nghiệm ở Chương~\ref{chap:thucnghiem}. Cần lưu ý rằng chính việc cố
+định $\Tset_r$ lại là điều kiện cho phép dùng L-BFGS
+(Mục~\ref{subsec:adam-vs-lbfgs}): hai yêu cầu này xung đột nhau, và ta chọn giữ
+tập cố định rồi kiểm tra lại trên tập độc lập.
+\end{nhanxet}
+ 
+\subsection{Vì sao cực tiểu hoá phần dư là việc đáng làm}
+\label{subsec:chan-on-dinh}
+ 
+Toàn bộ phương pháp đứng trên một suy luận chưa được kiểm chứng: ta cực tiểu hoá
+$\norm{r_{\btheta}}$ nhưng cái ta thực sự quan tâm là $\norm{e_{\btheta}}$ với
+$e_{\btheta} = u_{\btheta} - u$. Hai đại lượng này không đồng nhất, và không có
+lý do tiên nghiệm nào bảo đảm phần dư nhỏ kéo theo sai số nhỏ. Mối liên hệ giữa
+chúng là một \emph{chặn ổn định} của bài toán vi phân, và mục này thiết lập nó
+cho trường hợp đơn giản nhất -- đủ để thấy hằng số của chặn phụ thuộc vào cái gì.
+ 
+\begin{menhde}[Chặn sai số qua phần dư: bài toán Poisson một chiều]
+\label{md:chan-on-dinh}
+Xét $-u'' = f$ trên $(0,1)$ với $u(0) = u(1) = 0$, và $u_{\btheta} \in C^2$ thoả
+mãn \emph{chính xác} điều kiện biên. Đặt $r_{\btheta} := -u_{\btheta}'' - f$ và
+$e_{\btheta} := u_{\btheta} - u$. Khi đó
+\begin{equation}
+\norm{e_{\btheta}'}_{L^2(0,1)} \;\le\; \frac{1}{\pi}\,
+  \norm{r_{\btheta}}_{L^2(0,1)},
+\qquad
+\norm{e_{\btheta}}_{L^2(0,1)} \;\le\; \frac{1}{\pi^{2}}\,
+  \norm{r_{\btheta}}_{L^2(0,1)} .
+\label{eq:chan-poisson}
+\end{equation}
+\end{menhde}
+ 
+\begin{proof}
+Trừ hai phương trình: $-e_{\btheta}'' = -u_{\btheta}'' + u'' = -u_{\btheta}'' - f
+= r_{\btheta}$, với $e_{\btheta}(0) = e_{\btheta}(1) = 0$. Nhân hai vế với
+$e_{\btheta}$ và lấy tích phân trên $(0,1)$; tích phân từng phần số hạng vế trái,
+số hạng biên triệt tiêu do $e_{\btheta}$ triệt tiêu tại hai đầu mút:
+\[
+\int_0^1 \big(e_{\btheta}'\big)^2\,dx
+ = \int_0^1 r_{\btheta}\, e_{\btheta}\,dx
+ \;\le\; \norm{r_{\btheta}}_{L^2}\,\norm{e_{\btheta}}_{L^2},
+\]
+bất đẳng thức cuối là Cauchy--Schwarz. Bất đẳng thức Poincaré trên $(0,1)$ với
+điều kiện biên thuần nhất cho $\norm{e_{\btheta}}_{L^2} \le
+\tfrac{1}{\pi}\norm{e_{\btheta}'}_{L^2}$, trong đó hằng số $1/\pi$ là tối ưu (đạt
+tại $e_{\btheta}(x) = \sin\pi x$, hàm riêng ứng với trị riêng nhỏ nhất $\pi^2$
+của $-d^2/dx^2$). Thay vào:
+\[
+\norm{e_{\btheta}'}^2_{L^2}
+ \le \norm{r_{\btheta}}_{L^2}\cdot\tfrac{1}{\pi}\norm{e_{\btheta}'}_{L^2},
+\]
+chia hai vế cho $\norm{e_{\btheta}'}_{L^2}$ (trường hợp bằng $0$ là tầm thường)
+được bất đẳng thức thứ nhất; áp Poincaré lần nữa được bất đẳng thức thứ hai.
+\end{proof}
+ 
+Mệnh đề~\ref{md:chan-on-dinh} là lời biện minh mà phương pháp cần: nó biến việc
+cực tiểu hoá một đại lượng \emph{tính được} ($r_{\btheta}$, không cần biết
+nghiệm) thành một chặn cho đại lượng \emph{quan tâm} ($e_{\btheta}$, không tính
+được). Hằng số $1/\pi^2 \approx 0{,}101$ thậm chí có lợi: phần dư bị \emph{giảm}
+đi khi chuyển sang sai số.
+ 
+Kết quả sau cho thấy tình hình đảo ngược hoàn toàn với bài toán nhiễu kỳ dị.
+ 
+\begin{menhde}[Chặn ổn định suy biến với bài toán đối lưu--khuếch tán]
+\label{md:chan-suy-bien}
+Xét $-\nu u'' + u' = f$ trên $(0,1)$ với $u(0) = u(1) = 0$ và $\nu > 0$, và
+$u_{\btheta} \in C^2$ thoả mãn chính xác điều kiện biên. Với
+$r_{\btheta} := -\nu u_{\btheta}'' + u_{\btheta}' - f$,
+\begin{equation}
+\norm{e_{\btheta}'}_{L^2} \le \frac{1}{\pi\,\nu}\,\norm{r_{\btheta}}_{L^2},
+\qquad
+\norm{e_{\btheta}}_{L^2} \le \frac{1}{\pi^{2}\,\nu}\,\norm{r_{\btheta}}_{L^2}.
+\label{eq:chan-suy-bien}
+\end{equation}
+\end{menhde}
+ 
+\begin{proof}
+Như trên, $-\nu e_{\btheta}'' + e_{\btheta}' = r_{\btheta}$ với
+$e_{\btheta}(0) = e_{\btheta}(1) = 0$. Nhân với $e_{\btheta}$, lấy tích phân và
+tích phân từng phần:
+\[
+\nu\int_0^1 \big(e_{\btheta}'\big)^2 dx
+ + \int_0^1 e_{\btheta}'\,e_{\btheta}\,dx
+ = \int_0^1 r_{\btheta}\,e_{\btheta}\,dx .
+\]
+Số hạng đối lưu triệt tiêu:
+$\int_0^1 e_{\btheta}'e_{\btheta}\,dx
+= \big[\tfrac12 e_{\btheta}^2\big]_0^1 = 0$ do điều kiện biên. Phần còn lại lặp
+lại đúng lập luận Cauchy--Schwarz và Poincaré của
+Mệnh đề~\ref{md:chan-on-dinh}, với thừa số $\nu$ ở vế trái.
+\end{proof}
+ 
+\begin{nhanxet}[Đọc hai mệnh đề trên cùng nhau]
+\label{nx:doc-chan}
+So sánh \eqref{eq:chan-poisson} với \eqref{eq:chan-suy-bien}: hằng số ổn định
+tăng theo $1/\nu$. Với $\nu = 0{,}01/\pi \approx 3{,}18\times10^{-3}$ -- giá trị
+độ nhớt dùng cho phương trình Burgers ở Mục~\ref{sec:spectral-bias} -- thừa số
+khuếch đại là $1/(\pi^2\nu) \approx 31{,}8$. Nói cách khác, để đạt cùng một sai
+số $\norm{e_{\btheta}}$, bài toán nhiễu kỳ dị đòi hỏi phần dư nhỏ hơn khoảng ba
+trăm lần so với bài toán Poisson.
+ 
+Đây là điểm cần nhấn mạnh vì nó thường bị lẫn với thiên kiến phổ. Ngay cả với một
+thuật toán tối ưu hoàn hảo và một lớp hàm biểu diễn được nghiệm, việc đưa hàm mục
+tiêu xuống một mức $J_r$ cho trước \emph{không} bảo đảm sai số nhỏ như nhau giữa
+hai bài toán. Mục~\ref{subsec:he-qua-pinn} sẽ cho thấy tính chất này cộng hưởng
+với thiên kiến phổ theo chiều bất lợi.
+ 
+Ba giới hạn của hai mệnh đề trên cần nêu rõ. Thứ nhất, cả hai giả thiết điều kiện
+biên được thoả \emph{chính xác}; với ràng buộc mềm
+(Nhận xét~\ref{rem:soft-constraint}), vế phải phải cộng thêm một số hạng tỉ lệ
+với sai số biên. Thứ hai, cả hai là bài toán tuyến tính một chiều; với toán tử
+phi tuyến như Burgers, chặn tương ứng chỉ tồn tại địa phương và hằng số phụ thuộc
+nghiệm. Thứ ba, chúng chặn sai số theo chuẩn $L^2$, còn cái ta thường báo cáo là
+sai số tương đối theo chuẩn vô cùng. Không kết quả nào trong luận văn cho phép
+chuyển đổi tự động giữa các chuẩn ấy; ta dẫn hai mệnh đề như \emph{cơ sở khái
+niệm} cho phương pháp và như một dự báo định lượng về vai trò của $\nu$, không
+như một chặn hậu nghiệm áp dụng được cho các thí nghiệm.
+\end{nhanxet}
+ 
+\subsection{Ràng buộc mềm và ràng buộc cứng}
+\label{subsec:rang-buoc}
+ 
+\begin{nhanxet}[Ràng buộc mềm và hệ quả]
+\label{rem:soft-constraint}
+Công thức \eqref{eq:total-loss} áp đặt điều kiện đầu và điều kiện biên dưới dạng
+\emph{ràng buộc mềm}: chúng chỉ được phạt trong hàm mục tiêu chứ không được thoả
+mãn chính xác. Đây là khác biệt căn bản so với phương pháp phần tử hữu hạn, nơi
+điều kiện Dirichlet được áp cứng lên không gian thử bằng cách chọn cơ sở triệt
+tiêu trên biên.
+ 
+Hai hệ quả. Thứ nhất, nghiệm số thu được nói chung \emph{không} thoả mãn chính
+xác điều kiện biên, nên giả thiết của Mệnh đề~\ref{md:chan-on-dinh} không thoả
+và chặn sai số phải được bổ sung số hạng biên. Thứ hai, và nghiêm trọng hơn, việc
+gộp nhiều mục tiêu cạnh tranh vào một hàm mục tiêu duy nhất tạo ra chính vấn đề
+được phân tích ở Mục~\ref{sec:gradient-pathology}.
+\end{nhanxet}
+ 
+Hướng khắc phục triệt để là dựng nghiệm thử thoả mãn điều kiện biên theo cấu
+trúc, tức \emph{ràng buộc cứng}.
+ 
+\begin{bode}[Nghiệm thử với ràng buộc cứng]
+\label{bd:rang-buoc-cung}
+Cho $G \in C^{m}$ thoả $G|_{\partial\Omega} = g$ và $D \in C^{m}$ thoả
+$D|_{\partial\Omega} = 0$. Đặt
+\begin{equation}
+\hat{u}_{\btheta}(x,t) := G(x,t) + D(x,t)\, u_{\btheta}(x,t).
+\label{eq:hard-constraint}
+\end{equation}
+Khi đó $\hat{u}_{\btheta}$ thoả mãn điều kiện biên Dirichlet \eqref{eq:bc}
+\emph{với mọi} $\btheta \in \R^P$, nên $J_b \equiv 0$ và thành phần này bị loại
+khỏi \eqref{eq:total-loss}.
+\end{bode}
+ 
+\begin{proof}
+Với $(x,t) \in \partial\Omega\times(0,T]$ ta có $D(x,t) = 0$, nên
+$\hat u_{\btheta}(x,t) = G(x,t) = g(x,t)$ bất kể giá trị $u_{\btheta}(x,t)$.
+Tính trơn của $\hat u_{\btheta}$ suy từ tính trơn của $G$, $D$ và
+$u_{\btheta}$ cùng quy tắc tích.
+\end{proof}
+ 
+Bổ đề~\ref{bd:rang-buoc-cung} loại bỏ hoàn toàn một mục tiêu cạnh tranh và khôi
+phục giả thiết của Mệnh đề~\ref{md:chan-on-dinh}. Cái giá là việc dựng $G$ và $D$
+tường minh chỉ khả thi với hình học đơn giản: trên $\Omega = (a,b)$ ta có thể lấy
+$D(x) = (x-a)(b-x)$, nhưng trên một miền hai chiều có góc hoặc biên cong, việc
+tìm $D$ trơn triệt tiêu đúng trên $\partial\Omega$ và khác không bên trong đã là
+một bài toán riêng. Ngoài ra, \eqref{eq:hard-constraint} thay đổi lớp hàm thử: độ
+trơn và thang độ của $\hat u_{\btheta}$ bị chi phối bởi $D$, nên các phân tích ở
+Chương~\ref{chap:fnn} về $u_{\btheta}$ không chuyển sang $\hat u_{\btheta}$ một
+cách tự động. Luận văn dùng ràng buộc mềm cho các thí nghiệm chính và ràng buộc
+cứng như một đối chứng.
+ 
+\subsection{Bài toán thuận và bài toán ngược}
+\label{subsec:thuan-nguoc}
+ 
+Khung hàm mất mát \eqref{eq:total-loss} bao trùm cả hai lớp bài toán được Raissi
+và cộng sự~\cite{raissi2019} khảo sát.
+ 
+\paragraph{Bài toán thuận.}
+Tham số vật lý $\bzeta$ được cho trước; ẩn số duy nhất là $\btheta$. Bài toán tối
+ưu chính là \eqref{eq:opt-problem}. Toàn bộ thông tin giám sát nằm ở điều kiện
+đầu, điều kiện biên và phương trình. Đây là trường hợp của hai thực nghiệm ở
+Chương~\ref{chap:thucnghiem}.
+ 
+\paragraph{Bài toán ngược.}
+Tham số $\bzeta$ chưa biết và cần được xác định từ một tập quan trắc rời rạc
+$\{(x^{i}, t^{i}, u^{i})\}_{i=1}^{N_{u}}$ nằm rải rác trong miền, chứ không chỉ
+trên biên. Hàm mục tiêu trở thành
+\begin{equation}
+J(\btheta, \bzeta)
+= \underbrace{\frac{1}{N_{u}} \sum_{i=1}^{N_{u}}
+   \abs{u_{\btheta}(x^{i}, t^{i}) - u^{i}}^{2}}_{\text{khớp dữ liệu quan trắc}}
++ \underbrace{\frac{1}{N_{r}} \sum_{j=1}^{N_{r}}
+   \abs{r_{\btheta,\bzeta}(x_{r}^{j}, t_{r}^{j})}^{2}}_{\text{ràng buộc vật lý}},
+\label{eq:inverse-loss}
+\end{equation}
+và ta tối ưu \emph{đồng thời} theo cặp $(\btheta, \bzeta)$. Điểm đáng chú ý là
+$\bzeta$ được xử lý hoàn toàn giống một tham số của mạng: theo
+Định nghĩa~\ref{def:comp-graph}, nó là một đỉnh nguồn trong đồ thị tính toán và
+nhận gradient qua cùng cơ chế \eqref{eq:chain-graph}, không cần một thuật toán
+riêng. Đây là ưu thế nổi bật so với các phương pháp bài toán ngược cổ điển, vốn
+đòi hỏi giải lặp bài toán thuận nhiều lần.
+ 
+\begin{vidu}[Phát hiện tham số của phương trình Burgers]
+\label{vd:burgers-inverse}
+Xét phương trình Burgers dưới dạng tham số hoá
+\begin{equation}
+\frac{\partial u}{\partial t}
++ \zeta_{1}\, u\, \frac{\partial u}{\partial x}
+- \zeta_{2}\, \frac{\partial^{2} u}{\partial x^{2}} = 0,
+\label{eq:burgers-param}
+\end{equation}
+với giá trị đúng $\zeta_{1} = 1$ và
+$\zeta_{2} = 0{,}01/\pi \approx 3{,}1831\times 10^{-3}$. Raissi và cộng
+sự~\cite{raissi2019} huấn luyện trên $N_u = 2000$ điểm quan trắc rải trong miền
+không gian--thời gian, với mạng $9$ lớp ẩn, $20$ nơ-ron mỗi lớp. Kết quả nhận
+dạng: với dữ liệu sạch, $\zeta_1 = 0{,}99915$ và
+$\zeta_2 = 3{,}1794\times10^{-3}$, tức sai số tương đối $0{,}09\%$ và
+$0{,}12\%$; với dữ liệu nhiễu Gauss $1\%$, $\zeta_1 = 1{,}00042$ và
+$\zeta_2 = 3{,}2098\times10^{-3}$, tức $0{,}04\%$ và $0{,}84\%$.
+ 
+Hai kết luận, và một dè dặt. Kết luận thứ nhất: ràng buộc vật lý đóng vai trò
+chính quy hoá mạnh, giúp bài toán ngược vốn đặt không chỉnh trở nên ổn định.
+Kết luận thứ hai: sai số của $\zeta_2$ luôn lớn hơn sai số của $\zeta_1$ khoảng
+một bậc, và điều này không ngẫu nhiên -- $\zeta_2$ nhân với $\partial_{xx}u$, đại
+lượng khó ước lượng nhất từ dữ liệu, đúng theo tinh thần
+Nhận xét~\ref{nx:fd-pde}. Dè dặt: các bảng khảo sát độ nhạy
+trong~\cite{raissi2019} cho thấy độ chính xác suy giảm nhanh khi mức nhiễu tăng
+lên $5\%$ hoặc $10\%$, và khi mạng quá nông; con số dưới $1\%$ ở trên đặc trưng
+cho cấu hình cụ thể vừa nêu, không phải cho phương pháp nói chung.
+\end{vidu}
+ 
+%==============================================================================
+\section{Không gian hàm mất mát và bệnh lý gradient}
+\label{sec:gradient-pathology}
+%==============================================================================
+ 
+Mục trước xây dựng hàm mất mát \eqref{eq:total-loss} như một tổng có trọng số.
+Cách đặt vấn đề này đơn giản về hình thức nhưng ẩn chứa một khó khăn tối ưu
+nghiêm trọng, được Wang, Teng và Perdikaris~\cite{wang2021} phân tích hệ thống
+dưới tên gọi \emph{bệnh lý gradient} (gradient pathology).
+ 
+\subsection{Sự cạnh tranh giữa các thành phần mất mát}
+\label{subsec:canh-tranh}
+ 
+Để thuận tiện, ta viết lại \eqref{eq:total-loss} dưới dạng thu gọn
+\begin{equation}
+J(\btheta)
+= J_{r}(\btheta)
++ \sum_{i=1}^{M} \lambda_{i}\, J_{i}(\btheta),
+\label{eq:loss-compact}
+\end{equation}
+trong đó ta đã chuẩn hoá $\lambda_{r} = 1$ -- hợp lệ vì \eqref{eq:opt-problem}
+bất biến dưới phép nhân $J$ với một hằng số dương -- và gộp các thành phần điều
+kiện đầu, điều kiện biên vào họ $\{J_{i}\}_{i=1}^{M}$. Bước cập nhật của thuật
+toán hạ gradient là
+\begin{equation}
+\btheta_{n+1}
+= \btheta_{n}
+- \eta \left[
+    \nabla_{\btheta} J_{r}(\btheta_{n})
+    + \sum_{i=1}^{M} \lambda_{i}\, \nabla_{\btheta} J_{i}(\btheta_{n})
+  \right].
+\label{eq:gd-update}
+\end{equation}
+ 
+Hướng cập nhật là \emph{tổng} của các gradient thành phần. Nếu các gradient này
+có độ lớn chênh lệch nhau nhiều bậc, thành phần trội chi phối hoàn toàn quỹ đạo
+tối ưu, còn các thành phần còn lại bị bỏ qua trên thực tế. Đó là bản chất của
+bệnh lý gradient. Cần thấy rằng đây không phải hiện tượng riêng của PINNs mà là
+đặc tính chung của mọi phương pháp phạt; điều đặc thù ở đây là \emph{nguyên nhân}
+gây mất cân bằng, được truy nguyên ở hai mục sau.
+ 
+\subsection{Dòng gradient và tính cứng của hệ}
+\label{subsec:dong-gradient}
+ 
+Xét giới hạn liên tục của \eqref{eq:gd-update} khi tốc độ học $\eta \to 0$, ta
+thu được hệ phương trình vi phân thường mô tả \emph{dòng gradient}:
+\begin{equation}
+\frac{d\btheta}{ds} = -\nabla_{\btheta} J\big(\btheta(s)\big),
+\qquad \btheta(0) = \btheta_{0}.
+\label{eq:gradient-flow}
+\end{equation}
+Hạ gradient với bước $\eta$ chính là lược đồ Euler hiện áp dụng cho
+\eqref{eq:gradient-flow}, nên các kết luận cổ điển về ổn định của Euler hiện áp
+dụng được trực tiếp. Tuyến tính hoá quanh một điểm dừng $\btheta^{\star}$ cho
+\begin{equation}
+\frac{d}{ds}\,\delta\btheta
+\approx -\, \bm{H}\, \delta\btheta,
+\qquad
+\bm{H} = \nabla^{2}_{\btheta} J(\btheta^{\star}),
+\label{eq:linearized-flow}
+\end{equation}
+với nghiệm phân rã theo các trị riêng $\mu_{1} \ge \cdots \ge \mu_{P} \ge 0$ của
+$\bm{H}$. Trên không gian con sinh bởi các hướng riêng có $\mu_i > 0$, điều kiện
+ổn định của Euler hiện buộc $\eta < 2/\mu_{1}$, trong khi tốc độ hội tụ theo
+hướng riêng chậm nhất bị chi phối bởi trị riêng dương nhỏ nhất $\mu_{\min}^{+}$.
+Số vòng lặp cần thiết vì vậy tỉ lệ với số điều kiện hiệu dụng
+$\kappa_{\mathrm{eff}} = \mu_{1}/\mu_{\min}^{+}$.
+ 
+\begin{nhanxet}[Vì sao phải viết $\mu_{\min}^{+}$ chứ không phải $\mu_P$]
+Với mạng dư thừa tham số, $\bm{H}$ tại một cực tiểu nói chung \emph{suy biến}:
+các hướng riêng ứng với trị riêng $0$ là những hướng trong không gian tham số mà
+dọc theo đó hàm biểu diễn không đổi. Nhận xét~\ref{nx:doi-xung-hoan-vi} đã cho
+một nguồn sinh ra chúng. Dọc các hướng ấy, dòng \eqref{eq:gradient-flow} đứng
+yên và không gây khó khăn gì; số điều kiện có ý nghĩa do đó phải được lấy trên
+phần bù trực giao của nhân $\bm{H}$. Viết $\kappa = \mu_1/\mu_P$ như một số tài
+liệu là không đúng khi $\mu_P = 0$.
+\end{nhanxet}
+ 
+Wang và cộng sự chỉ ra rằng với PINNs, hệ \eqref{eq:gradient-flow} là một hệ
+\emph{cứng} (stiff): phổ của $\bm{H}$ trải rộng qua nhiều bậc độ lớn, và độ cứng
+ấy bị chi phối bởi thành phần phần dư. Bằng chứng số trên bài toán Helmholtz
+trong~\cite{wang2021} cho thấy nhiều trị riêng của $\nabla^2_{\btheta}J_r$ đạt
+tới cỡ $10^{5}$, trong khi phổ của $\nabla^2_{\btheta}J_b$ vẫn ở thang nhỏ; hệ
+quả quan sát được là $J_r$ dao động mạnh ngay cả khi dùng hạ gradient toàn phần,
+còn $J_b$ giảm đều. Nguồn gốc giải tích của hiện tượng này nằm ở chính cấu trúc
+của $J_r$, vốn chứa đạo hàm bậc cao của mạng theo biến đầu vào; ta quay lại ở
+Mục~\ref{subsec:he-qua-pinn}.
+ 
+\subsection{Biểu hiện và hệ quả của bệnh lý gradient}
+\label{subsec:bieu-hien}
+ 
+Quan sát thực nghiệm cốt lõi trong~\cite{wang2021}: khi khảo sát phân bố độ lớn
+của các gradient lan truyền ngược tại từng lớp ẩn, phân bố của
+$\nabla_{\btheta} J_{r}$ tập trung ở những giá trị lớn hơn nhiều bậc so với phân
+bố của $\lambda_{i} \nabla_{\btheta} J_{i}$. Hiện tượng trầm trọng hơn khi độ sâu
+mạng tăng -- phù hợp với Mệnh đề~\ref{md:tich-gradient}, theo đó tín hiệu ngược
+đi qua nhiều lớp bị nhân với một tích các thừa số nhỏ hơn $1$ -- và khi bài toán
+có tính cứng cao, chẳng hạn độ nhớt nhỏ trong phương trình Burgers.
+ 
+Hệ quả nghiêm trọng hơn vẻ ngoài kỹ thuật của vấn đề, và có thể phát biểu dưới
+góc nhìn tính đặt chỉnh như sau.
+ 
+\begin{nhanxet}[Vì sao gradient biên bị lấn át lại dẫn đến nghiệm sai]
+\label{rem:ill-posedness}
+Phương trình \eqref{eq:pde-general} khi tách rời khỏi các điều kiện
+\eqref{eq:ic}--\eqref{eq:bc} là bài toán \emph{đặt không chỉnh}: tập nghiệm của
+nó là một họ vô hạn hàm. Tương ứng, tập
+\begin{equation}
+\mathcal{M}_{r}
+ = \left\{ \btheta \in \R^{P} : J_{r}(\btheta) = 0 \right\}
+\label{eq:manifold-r}
+\end{equation}
+nói chung là một tập có số chiều lớn trong không gian tham số. Vai trò của các
+thành phần $J_{i}$ là \emph{chọn ra} một điểm trên tập đó, tương ứng với nghiệm
+vật lý.
+ 
+Khi $\nabla_{\btheta} J_{i}$ bị lấn át, quá trình tối ưu vẫn giảm $J_{r}$ rất
+hiệu quả và tiến về $\mathcal{M}_{r}$, nhưng trôi tự do trên đó. Mạng thu được
+thoả mãn phương trình vi phân với sai số nhỏ song vi phạm điều kiện biên: nó xấp
+xỉ \emph{một nghiệm nào đó} của phương trình chứ không phải nghiệm ta cần. Điều
+nguy hiểm là giá trị hàm mục tiêu tổng vẫn có thể trông rất nhỏ, khiến người dùng
+lầm tưởng mô hình đã hội tụ tốt.
+ 
+Nối với Mục~\ref{subsec:chan-on-dinh}: đây chính là trường hợp giả thiết của
+Mệnh đề~\ref{md:chan-on-dinh} bị vi phạm nặng. Phần dư nhỏ không còn kéo theo sai
+số nhỏ, vì chặn ổn định đòi hỏi điều kiện biên được thoả. Bởi vậy việc theo dõi
+\emph{riêng rẽ} từng thành phần $J_{r}, J_{0}, J_{b}$ trong quá trình huấn luyện
+là bắt buộc, và ta áp dụng nguyên tắc này trong toàn bộ thực nghiệm ở
+Chương~\ref{chap:thucnghiem}. Một giá trị $J$ tổng nhỏ, tự nó, không phải bằng
+chứng của hội tụ.
+\end{nhanxet}
+ 
+\subsection{Cân bằng tốc độ học thích nghi}
+\label{subsec:annealing}
+ 
+Trước khi trình bày thuật toán, cần trả lời một câu hỏi hiển nhiên: nếu
+$\lambda_i$ là siêu tham số khó chọn, sao không để thuật toán tự học chúng bằng
+chính hạ gradient?
+ 
+\begin{bode}[Không thể học $\lambda_i$ bằng cực tiểu hoá $J$]
+\label{bd:lambda-tam-thuong}
+Xét $J$ ở dạng \eqref{eq:loss-compact} như một hàm của cặp
+$(\btheta, \bm{\lambda})$ với $\bm{\lambda} \in \R^{M}_{>0}$. Khi đó
+\begin{equation}
+\frac{\partial J}{\partial \lambda_{i}} = J_{i}(\btheta) \;\ge\; 0 ,
+\label{eq:dJ-dlambda}
+\end{equation}
+nên hạ gradient theo $\lambda_i$ là đơn điệu không tăng, và nếu
+$J_i(\btheta) > 0$ thì nó đẩy $\lambda_{i}$ về $0$. Cực tiểu của $J$ theo
+$\bm{\lambda}$ trên $\R^M_{\ge 0}$ đạt tại $\bm{\lambda} = \bm{0}$, tức tại đó
+mọi ràng buộc bị loại bỏ hoàn toàn.
+\end{bode}
+ 
+\begin{proof}
+$J$ affine theo từng $\lambda_i$ với hệ số $J_i(\btheta)$, cho
+\eqref{eq:dJ-dlambda}; các $J_i$ là trung bình của các bình phương nên không âm.
+Bước cập nhật $\lambda_i \gets \lambda_i - \eta J_i$ giảm ngặt khi $J_i > 0$.
+\end{proof}
+ 
+Bổ đề~\ref{bd:lambda-tam-thuong} nói rằng trọng số cân bằng \emph{không thể} là
+biến tối ưu của cùng bài toán: mọi ràng buộc đều làm hàm mục tiêu tăng, nên cách
+rẻ nhất để giảm $J$ là bỏ ràng buộc. Chúng phải được xác định bằng một quy tắc
+bên ngoài. Wang và cộng sự~\cite{wang2021} đề xuất một quy tắc dựa trên thống kê
+gradient, gọi là \emph{cân bằng tốc độ học} (learning rate annealing): chọn
+$\lambda_{i}$ sao cho độ lớn đặc trưng của $\lambda_{i}\nabla_{\btheta} J_{i}$
+tương đương với độ lớn đặc trưng của $\nabla_{\btheta} J_{r}$.
+ 
+Cụ thể, tại vòng lặp thứ $n$ ta tính giá trị đề xuất
+\begin{equation}
+\hat{\lambda}_{i}
+= \frac{\norm{\nabla_{\btheta} J_{r}(\btheta_{n})}_{\infty}}
+       {\dfrac{1}{P}\norm{\nabla_{\btheta} J_{i}(\btheta_{n})}_{1}} ,
+\label{eq:lambda-hat}
+\end{equation}
+trong đó tử số là giá trị tuyệt đối \emph{lớn nhất trong các thành phần} của
+vectơ gradient phần dư, còn mẫu số là trung bình cộng các giá trị tuyệt đối của
+các thành phần gradient thứ $i$. Cần đọc \eqref{eq:lambda-hat} đúng: cả hai phép
+lấy cực đại và trung bình đều thực hiện \emph{trên các thành phần của một vectơ
+trong $\R^P$}, không phải trên biến $\btheta$. Việc dùng chuẩn vô cùng ở tử số và
+chuẩn $L^1$ chuẩn hoá ở mẫu số là một lựa chọn bất đối xứng có chủ ý: nó cân bằng
+\emph{đỉnh} của gradient phần dư với \emph{mức nền} của gradient ràng buộc, cho
+$\hat\lambda_i$ lớn hơn so với việc so hai trung bình.
+ 
+Trọng số thực tế được cập nhật theo trung bình trượt để giảm dao động:
+\begin{equation}
+\lambda_{i}^{(n+1)}
+= (1-\alpha)\, \lambda_{i}^{(n)}
++ \alpha\, \hat{\lambda}_{i},
+\qquad \alpha \in (0,1).
+\label{eq:lambda-update}
+\end{equation}
+Bài báo gốc khuyến nghị $\alpha = 0{,}1$ và báo cáo độ nhạy rất thấp với tham số
+này trong khoảng $[0{,}05;\,0{,}2]$. Giá trị nhỏ của $\alpha$ là điều kiện để
+\eqref{eq:lambda-update} thực sự làm trơn: hằng số thời gian của trung bình trượt
+là $1/\alpha \approx 10$ lần cập nhật, trong khi $\alpha$ gần $1$ sẽ khiến
+$\lambda_i^{(n+1)} \approx \hat\lambda_i$ và mọi tác dụng làm trơn biến mất.
+ 
+\begin{algorithm}[htbp]
+\caption{Huấn luyện PINNs với cân bằng tốc độ học thích nghi}
+\label{alg:annealing}
+\begin{algorithmic}[1]
+\Require Kiến trúc $u_{\btheta}$; tốc độ học $\eta = 10^{-3}$; hệ số trung bình
+  trượt $\alpha = 0{,}1$; chu kỳ cập nhật $N_{\text{up}}$; số vòng $N_{\max}$
+\State Khởi tạo $\btheta_{0}$ theo Xavier \eqref{eq:xavier-uniform}; đặt
+  $\lambda_{i}^{(0)} = 1$ với mọi $i$
+\For{$n = 0, 1, \dots, N_{\max}-1$}
+  \If{$n \bmod N_{\text{up}} = 0$}
+    \State Tính riêng rẽ $\nabla_{\btheta}J_{r}(\btheta_{n})$ và
+           $\nabla_{\btheta}J_{i}(\btheta_{n})$, $i=1,\dots,M$
+    \State $\hat{\lambda}_{i} \gets
+           \norm{\nabla_{\btheta}J_{r}(\btheta_{n})}_{\infty}
+           \big/ \big(\tfrac{1}{P}\norm{\nabla_{\btheta}J_{i}
+           (\btheta_{n})}_{1}\big)$
+           \Comment{\eqref{eq:lambda-hat}, tách khỏi đồ thị}
+    \State $\lambda_{i}^{(n+1)} \gets
+           (1-\alpha)\lambda_{i}^{(n)} + \alpha\hat{\lambda}_{i}$
+  \Else
+    \State $\lambda_{i}^{(n+1)} \gets \lambda_{i}^{(n)}$
+  \EndIf
+  \State $\btheta_{n+1} \gets \btheta_{n} - \eta\,\nabla_{\btheta}
+         \Big[J_{r}(\btheta_{n})
+         + \sum_{i} \lambda_{i}^{(n+1)} J_{i}(\btheta_{n})\Big]$
+\EndFor
+\State \Return $\btheta_{N_{\max}}$
+\end{algorithmic}
+\end{algorithm}
+ 
+Hai chi tiết cài đặt cần nói rõ, vì cả hai đều là nguồn lỗi thường gặp.
+ 
+\emph{Thứ nhất, phải tách $\hat\lambda_i$ khỏi đồ thị tính toán.} Đại lượng
+$\hat{\lambda}_{i}$ trong \eqref{eq:lambda-hat} được tính \emph{từ} các gradient,
+nên bản thân nó là một hàm của $\btheta_n$ và nằm trong đồ thị. Nếu không tách
+(trong PyTorch: \texttt{detach}), lượt ngược ở dòng 10 sẽ chảy qua $\hat\lambda_i$
+và sinh ra các số hạng đạo hàm bậc hai của $J$ theo $\btheta$ -- vừa không nằm
+trong ý định của thuật toán, vừa làm đồ thị dài thêm đáng kể theo tinh thần
+Nhận xét~\ref{nx:chi-phi-bac-cao}. Cần phân biệt điều này với
+Bổ đề~\ref{bd:lambda-tam-thuong}: bổ đề nói vì sao $\lambda_i$ không được là
+\emph{tham số học}, còn ở đây ta nói vì sao nó cũng không được là \emph{đỉnh có
+gradient} trong đồ thị. Hai lỗi khác nhau, cùng dẫn tới hành vi sai.
+ 
+\emph{Thứ hai, chu kỳ cập nhật.} Tính riêng rẽ gradient của từng thành phần đắt
+hơn tính gradient của tổng: theo Mệnh đề~\ref{md:chi-phi-bp}, mỗi lượt ngược tốn
+xấp xỉ chi phí một lượt xuôi, nên $M+1$ lượt riêng rẽ đắt gấp $M+1$ lần. Đây là
+lý do chỉ cập nhật sau mỗi $N_{\text{up}}$ vòng lặp (thường $10$ hoặc $100$),
+khiến chi phí phụ trội chia đều ra thành không đáng kể.
+ 
+\subsection{Kiến trúc mạng có cổng}
+\label{subsec:gated}
+ 
+Song song với cơ chế cân bằng trọng số, Wang và cộng sự đề xuất một biến thể kiến
+trúc nhằm giảm nhẹ hiện tượng gradient suy giảm theo độ sâu. Kiến trúc bổ sung
+hai đường mã hoá $U$ và $V$ được tính \emph{một lần} từ đầu vào, sau đó trộn vào
+mọi lớp ẩn qua một cơ chế cổng:
+\begin{align}
+U &= \sigma\!\left(X W^{(1)} + b^{(1)}\right),
+\qquad
+V = \sigma\!\left(X W^{(2)} + b^{(2)}\right),
+\label{eq:encoders}\\[3pt]
+H^{(1)} &= \sigma\!\left(X W^{h} + b^{h}\right),
+\label{eq:first-hidden}\\[3pt]
+Z^{(k)} &= \sigma\!\left(H^{(k)} W^{z,k} + b^{z,k}\right),
+&& k = 1, \dots, L,
+\label{eq:gate}\\[3pt]
+H^{(k+1)} &= \left(1 - Z^{(k)}\right) \odot U + Z^{(k)} \odot V,
+&& k = 1, \dots, L,
+\label{eq:mix}\\[3pt]
+u_{\btheta}(X) &= H^{(L+1)} W + b,
+\label{eq:output-improved}
+\end{align}
+trong đó $\odot$ là tích Hadamard và $\sigma = \tanh$. Bộ trọng số $W^{h}, b^{h}$
+của lớp ẩn đầu tiên là riêng biệt, không dùng chung với $W^{z,1}, b^{z,1}$ của
+cổng thứ nhất; hai phép nhân có kích thước khác nhau.
+ 
+Cơ chế \eqref{eq:mix} tạo đường tắt trực tiếp từ đầu vào tới mọi lớp ẩn, theo
+tinh thần kết nối dư của mạng ResNet. Lập luận về vì sao nó giúp: theo
+Mệnh đề~\ref{md:tich-gradient}, tín hiệu ngược đi từ lớp $L$ về lớp $1$ bị nhân
+với một tích $L-1$ ma trận, và tích ấy suy giảm theo cấp số nhân. Trong
+\eqref{eq:mix}, $U$ và $V$ nhận gradient \emph{trực tiếp} từ mọi lớp $k$ chứ
+không phải qua chuỗi dài, nên đường ngắn nhất từ hàm mục tiêu về $W^{(1)},
+W^{(2)}$ có độ dài $\mathcal{O}(1)$ thay vì $\mathcal{O}(L)$. Hình~\ref{fig:gated-arch}
+thể hiện cấu trúc này.
+ 
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\small,
+  blk/.style={rounded corners=2pt, draw=black!60, line width=0.6pt,
+              align=center, inner sep=4.5pt, minimum height=8mm, fill=white},
+  enc/.style={blk, fill=orange!12},
+  hid/.style={blk, fill=blue!7},
+  gate/.style={blk, fill=green!9},
+  mix/.style={circle, draw=black!65, line width=0.7pt, minimum size=7mm,
+              inner sep=0pt, fill=yellow!14},
+  flow/.style={-{Stealth[length=4.5pt]}, line width=0.7pt, black!70},
+  side/.style={-{Stealth[length=4pt]}, line width=0.6pt, orange!65!black},
+]
+\node[blk, fill=black!5] (X) at (0,0) {$X=(x,t)$};
+\node[enc] (U) at (3.1, 2.3) {$U=\sigma\!\left(XW^{(1)}+b^{(1)}\right)$};
+\node[enc] (V) at (3.1,-2.3) {$V=\sigma\!\left(XW^{(2)}+b^{(2)}\right)$};
+\draw[flow] (X.north) |- (U.west);
+\draw[flow] (X.south) |- (V.west);
+\node[hid]  (H1) at (3.1, 0) {$H^{(1)}$};
+\node[gate] (Z1) at (5.6, 0) {$Z^{(1)}$};
+\node[mix]  (M1) at (7.7, 0) {};
+\node[hid]  (H2) at (9.5, 0) {$H^{(2)}$};
+\node       (dots) at (11.0,0) {$\cdots$};
+\node[gate] (ZL) at (12.5, 0) {$Z^{(L)}$};
+\node[mix]  (ML) at (14.6, 0) {};
+\node[hid]  (HL) at (16.5, 0) {$H^{(L+1)}$};
+\node[blk, fill=black!5] (OUT) at (19.1, 0) {$u_\btheta = H^{(L+1)}W+b$};
+\draw[flow] (X)   -- (H1);   \draw[flow] (H1)  -- (Z1);
+\draw[flow] (Z1)  -- (M1);   \draw[flow] (M1)  -- (H2);
+\draw[flow] (H2)  -- (dots); \draw[flow] (dots)-- (ZL);
+\draw[flow] (ZL)  -- (ML);   \draw[flow] (ML)  -- (HL);
+\draw[flow] (HL)  -- (OUT);
+\node at (M1) {\scriptsize $\odot$};
+\node at (ML) {\scriptsize $\odot$};
+\draw[side] (U.south) -- (M1.north);
+\draw[side] (V.north) -- (M1.south);
+\draw[side] (U.east) -- ++(0.7,0) -| (ML.north);
+\draw[side] (V.east) -- ++(0.7,0) -| (ML.south);
+\node[align=center, font=\footnotesize, black!75] (rule) at (11.0,-3.15)
+  {quy tắc trộn tại mỗi nút $\odot$:\quad
+   $H^{(k+1)}=\left(1-Z^{(k)}\right)\odot U + Z^{(k)}\odot V$};
+\draw[decorate, decoration={brace, amplitude=4pt, mirror},
+      draw=black!45, line width=0.5pt]
+  ($(M1.south)+(-0.45,-0.75)$) -- ($(ML.south)+(0.45,-0.75)$);
+\node[font=\footnotesize, orange!65!black, align=center] at (3.1,3.35)
+  {hai bộ mã hoá dùng chung, tính một lần từ đầu vào};
+\end{tikzpicture}}
+\caption[Kiến trúc truyền thẳng có cổng]{Kiến trúc truyền thẳng có cổng theo đề
+xuất của Wang và cộng sự~\cite{wang2021}. Hai bộ mã hoá $U$ và $V$ được tính một
+lần duy nhất từ đầu vào rồi trộn vào mọi lớp ẩn qua cổng $Z^{(k)}$ theo công thức
+\eqref{eq:mix}. Các đường nối màu cam là đường tắt nối trực tiếp đầu vào với từng
+lớp sâu, rút ngắn quãng đường lan truyền ngược tới $W^{(1)}, W^{(2)}$ từ
+$\mathcal{O}(L)$ xuống $\mathcal{O}(1)$.}
+\label{fig:gated-arch}
+\end{figure}
+ 
+\begin{nhanxet}
+\label{nx:hai-huong-bo-tro}
+Cơ chế cân bằng trọng số và kiến trúc có cổng giải quyết hai khía cạnh khác nhau
+của cùng một vấn đề và có thể kết hợp: cơ chế thứ nhất tác động lên \emph{tỉ lệ}
+giữa các gradient thành phần, cơ chế thứ hai tác động lên \emph{đường truyền} của
+gradient qua độ sâu. Trên bài toán Helmholtz, \cite{wang2021} báo cáo sai số
+tương đối $L^2$ giảm từ $1{,}81\times10^{-1}$ (PINN gốc) xuống
+$1{,}27\times10^{-2}$ khi dùng cân bằng thích nghi -- cải thiện hơn một bậc độ
+lớn.
+ 
+Cần giữ đúng phạm vi của kết luận: cả hai kỹ thuật đều tác động ở tầng
+\emph{tối ưu}. Không kỹ thuật nào trong số đó thay đổi hằng số ổn định của
+Mệnh đề~\ref{md:chan-suy-bien}, cũng không thay đổi khả năng biểu diễn tần số cao
+của lớp hàm -- nguyên nhân gốc rễ mà ta phân tích ngay sau đây.
+\end{nhanxet}
+ 
+%==============================================================================
+\section{Thiên kiến phổ}
+\label{sec:spectral-bias}
+%==============================================================================
+ 
+Mục~\ref{sec:gradient-pathology} phân tích khó khăn của PINNs từ góc độ tối ưu.
+Mục này đi sâu hơn một tầng, tới góc độ \emph{lý thuyết xấp xỉ}: ngay cả khi
+thuật toán tối ưu hoạt động hoàn hảo, bản thân mạng nơ-ron truyền thẳng vẫn có
+một thiên hướng nội tại khiến nó học các thành phần tần số cao rất chậm. Hiện
+tượng này được Rahaman và cộng sự~\cite{rahaman2019} gọi là \emph{thiên kiến phổ}
+(spectral bias).
+ 
+\subsection{Đặt vấn đề: thang độ dài nhỏ và tần số cao}
+\label{subsec:thang-do-dai}
+ 
+Nhiều bài toán vi phân có nghiệm chứa cấu trúc biến thiên nhanh trên một thang độ
+dài rất nhỏ. Hai lớp điển hình, cả hai đều đã xuất hiện ở
+Mục~\ref{subsec:chan-on-dinh}.
+ 
+\emph{Lớp biên trong bài toán nhiễu kỳ dị.} Phương trình $-\nu u'' + u' = f$ trên
+$[0,1]$ với $0 < \nu \ll 1$ -- chính là bài toán của
+Mệnh đề~\ref{md:chan-suy-bien} -- có nghiệm chứa một lớp biên bề dày
+$\mathcal{O}(\nu)$ gần $x = 1$.
+ 
+\emph{Lớp trong của phương trình Burgers.} Với điều kiện đầu
+$u(x,0) = -\sin(\pi x)$ trên $[-1,1]$ và độ nhớt
+$\nu = 0{,}01/\pi \approx 3{,}18 \times 10^{-3}$, nghiệm phát triển một lớp
+chuyển tiếp dốc quanh $x = 0$. Nghiệm tham chiếu tính bằng phương pháp giả phổ
+Fourier cho thấy độ dốc đạt cực đại $\max\abs{u_x} \approx 151$ tại
+$t \approx 0{,}51$, tương ứng bề dày lớp
+\begin{equation}
+\delta := \frac{2 \max_{x} \abs{u}}{\max_{x} \abs{u_x}}
+\approx 1{,}3 \times 10^{-2} \approx 4\nu .
+\label{eq:layer-width}
+\end{equation}
+ 
+Theo nguyên lý bất định trong giải tích Fourier, một cấu trúc có bề rộng $\delta$
+trong miền không gian tương ứng với các thành phần phổ có tần số cỡ
+$\abs{k} \sim 1/\delta$. Với lớp trong của Burgers, từ \eqref{eq:layer-width} ta
+được $\abs{k} \sim 77$: các tần số cỡ $10^{2}$ đóng vai trò quyết định, cao hơn
+hai bậc so với tần số $\abs{k} = 1$ của điều kiện đầu $-\sin(\pi x)$. Câu hỏi đặt
+ra là: một mạng nơ-ron truyền thẳng biểu diễn các tần số như vậy tốt đến đâu?
+ 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{Images/chap_4/hinh_burgers.pdf}
+\caption[Lớp trong của nghiệm phương trình Burgers]{Nghiệm tham chiếu của phương
+trình Burgers với $\nu = 0{,}01/\pi$, tính bằng phương pháp giả phổ Fourier
+($N = 2048$ chế độ, tích phân thời gian RK4 với thừa số tích phân). Bảng (a): bản
+đồ nhiệt của $u(x,t)$; lớp chuyển tiếp hình thành quanh $x=0$ và đạt độ dốc lớn
+nhất khoảng $t \approx 0{,}51$. Bảng (b): lát cắt tại ba thời điểm, kèm khung
+phóng to quanh $x = 0$. Ở tỉ lệ đầy đủ, lớp trong hầu như không nhìn thấy được --
+chính đặc điểm này khiến nó đòi hỏi các thành phần phổ tần số cao, vốn là những
+thành phần mà mạng nơ-ron học chậm nhất (Định lý~\ref{dl:spectral-decay}).}
+\label{fig:burgers}
+\end{figure}
+ 
+\subsection{Phân tích Fourier của mạng ReLU}
+\label{subsec:fourier-relu}
+ 
+Rahaman và cộng sự tiếp cận câu hỏi trên bằng cách phân tích trực tiếp phổ Fourier
+của hàm mà mạng biểu diễn. Điểm khởi đầu là một tính chất cấu trúc đã được chứng
+minh ở Chương~\ref{chap:fnn}.
+ 
+\begin{bode}[Biểu diễn tuyến tính từng khúc]
+\label{bd:cpwl}
+Mọi mạng truyền thẳng $f_{\btheta} : \R^{d} \to \R$ dùng hàm kích hoạt
+$\mathrm{ReLU}$ đều là hàm tuyến tính liên tục từng khúc: tồn tại phân hoạch hữu
+hạn miền xác định thành các đa diện lồi $\{P_{i}\}_{i=1}^{R}$ sao cho
+\begin{equation}
+f_{\btheta}(x) = \sum_{i=1}^{R}
+\mathbf{1}_{P_{i}}(x) \left( \bm{W}_{i}\, x + b_{i} \right),
+\label{eq:cpwl}
+\end{equation}
+trong đó $\mathbf{1}_{P_{i}}$ là hàm chỉ báo của $P_{i}$, còn $\bm{W}_{i}, b_{i}$
+là các tích tương ứng của các ma trận trọng số theo mẫu kích hoạt trên $P_{i}$.
+\end{bode}
+ 
+Đây chính là Định lý~\ref{dl:relu-tuyen-tinh}, phát biểu lại dưới dạng công thức
+tường minh; chứng minh đã cho ở Mục~\ref{subsec:relu}.
+ 
+Từ biểu diễn \eqref{eq:cpwl}, phổ Fourier được ước lượng bằng cách khai thác
+quan hệ giữa đạo hàm và phép nhân trong miền tần số. Nếu $\widetilde{f}$ là biến
+đổi Fourier của $f$ thì $\widetilde{\partial^{\alpha} f}(k)
+= (2\pi i k)^{\alpha}\widetilde{f}(k)$, nên
+$\widetilde{f}(k) = \widetilde{\partial^{\alpha}f}(k)/(2\pi i k)^{\alpha}$: mỗi
+bậc đạo hàm mà ta ``lấy ra được'' của $f$ cho thêm một thừa số $1/\abs{k}$ trong
+ước lượng phổ. Với $f_{\btheta}$ tuyến tính từng khúc, sau $d+1$ bậc thì đạo hàm
+suy rộng trở thành một tổ hợp các phân bố delta trên các mặt của phân hoạch --
+đúng hiện tượng đã gặp ở Mệnh đề~\ref{md:dirac} cho trường hợp một chiều -- và
+biến đổi Fourier của một tổ hợp hữu hạn các delta thì bị chặn đều. Kết quả dẫn
+tới định lý sau.
+ 
+\begin{dinhly}[Suy giảm phổ của mạng ReLU~\cite{rahaman2019}]
+\label{dl:spectral-decay}
+Cho $f_{\btheta}$ là mạng ReLU như ở Bổ đề~\ref{bd:cpwl}, xét trên một miền bị
+chặn. Biến đổi Fourier $\widetilde{f}_{\btheta}(k)$ của nó thoả mãn
+\begin{equation}
+\abs{\widetilde{f}_{\btheta}(k)}
+\;\le\;
+\frac{C\, L_{\btheta}}{\norm{k}^{\,d+1}},
+\label{eq:fourier-decay}
+\end{equation}
+trong đó $C$ chỉ phụ thuộc miền xác định và số mảnh của phân hoạch, còn
+$L_{\btheta}$ bị chặn bởi một đa thức theo chuẩn của các ma trận trọng số
+$\{\bW^{(\ell)}\}$.
+\end{dinhly}
+ 
+\begin{nhanxet}[Ba điều \eqref{eq:fourier-decay} nói và một điều nó không nói]
+\label{nx:doc-dinh-ly-pho}
+Việc đọc đúng định lý này quan trọng, vì nó thường được diễn giải quá mạnh.
+ 
+Thứ nhất, giả thiết miền bị chặn là cần thiết: một hàm tuyến tính từng khúc trên
+toàn $\R^d$ không khả tích, nên biến đổi Fourier chỉ có nghĩa theo nghĩa phân bố
+hoặc sau khi hạn chế miền.
+ 
+Thứ hai, \eqref{eq:fourier-decay} là một \emph{chặn trên}. Tự nó, nó không chứng
+minh rằng mạng \emph{không thể} biểu diễn tần số cao; nó chỉ ràng buộc biên độ
+phổ với chuẩn tham số. Sức nặng của lập luận nằm ở việc đảo ngược quan hệ ấy, tức
+Hệ quả~\ref{hq:parameter-cost}.
+ 
+Thứ ba, định lý phát biểu cho ReLU. Mạng $\tanh$ dùng trong luận văn không thuộc
+phạm vi của nó, và thực tế phổ của mạng $\tanh$ suy giảm còn nhanh hơn -- theo
+Mệnh đề~\ref{md:tanh-giai-tich}, $\tanh$ giải tích trên một dải, nên hàm hợp
+tương ứng trơn hơn hẳn tuyến tính từng khúc. Kết luận định tính (tần số cao đắt
+đỏ) chuyển sang được; hằng số và số mũ cụ thể thì không. Ta dẫn
+Định lý~\ref{dl:spectral-decay} như bằng chứng cho cơ chế, không như một chặn áp
+dụng trực tiếp cho kiến trúc của luận văn.
+\end{nhanxet}
+ 
+\begin{hequa}[Cái giá tham số của tần số cao]
+\label{hq:parameter-cost}
+Để $f_{\btheta}$ biểu diễn được một thành phần phổ có biên độ $A$ tại tần số $k$,
+chuẩn tham số phải thoả mãn
+\begin{equation}
+L_{\btheta} \;\ge\; \frac{A}{C}\,\norm{k}^{\,d+1}.
+\label{eq:param-cost}
+\end{equation}
+\end{hequa}
+ 
+\begin{proof}
+Nếu $\abs{\widetilde f_{\btheta}(k)} = A$ thì \eqref{eq:fourier-decay} cho
+$A \le C L_{\btheta}/\norm{k}^{d+1}$; chuyển vế.
+\end{proof}
+ 
+Tần số càng cao thì mạng càng buộc phải dùng trọng số lớn, và cái giá tăng theo
+luỹ thừa $d+1$. Điều này có hai hệ luỵ thực hành, cả hai nối trực tiếp với
+Chương~\ref{chap:fnn}.
+ 
+Thứ nhất, khởi tạo Xavier \eqref{eq:xavier-uniform} cho chuẩn trọng số nhỏ theo
+thiết kế -- đó chính là mục đích của nó, giữ $\bz^{(\ell)}$ trong vùng gần tuyến
+tính của $\tanh$ để tránh bão hoà (Mệnh đề~\ref{md:tich-gradient}). Nhưng
+\eqref{eq:param-cost} nói rằng biểu diễn tần số cao đòi hỏi chuẩn trọng số
+\emph{lớn}. Hai yêu cầu này xung đột: quá trình huấn luyện phải đi một quãng
+đường dài trong không gian tham số, xuất phát từ vùng ``an toàn'' về gradient
+hướng tới vùng ``đắt'' về chuẩn.
+ 
+Thứ hai, mọi cơ chế chính quy hoá dựa trên chuẩn tham số -- suy giảm trọng số,
+dừng sớm -- đều \emph{trực tiếp cản trở} việc học tần số cao. Với bài toán có lớp
+biên, chính quy hoá không chỉ vô ích mà còn phản tác dụng.
+ 
+\subsection{Thiên kiến trong động lực học huấn luyện}
+\label{subsec:dong-luc-hoc}
+ 
+Định lý~\ref{dl:spectral-decay} nói về khả năng biểu diễn tại một bộ tham số cố
+định. Rahaman và cộng sự bổ sung một kết quả thứ hai về \emph{quá trình} học: các
+thành phần tần số thấp không chỉ dễ biểu diễn hơn mà còn được học \emph{trước},
+và bền vững hơn dưới nhiễu loạn tham số. Thực nghiệm của họ trên bài toán hồi quy
+hàm nhiều tần số cho thấy các thành phần phổ được khớp gần như tuần tự từ thấp
+lên cao.
+ 
+\begin{nhanxet}[Góc nhìn bổ sung qua nhân tiếp tuyến nơ-ron]
+\label{rem:ntk-view}
+Kết luận trên có thể được củng cố bằng một lập luận độc lập qua nhân tiếp tuyến
+nơ-ron (Neural Tangent Kernel). Xét bài toán hồi quy với mất mát bình phương và
+dòng gradient \eqref{eq:gradient-flow}. Trong chế độ bề rộng lớn, nơi nhân tiếp
+tuyến xấp xỉ không đổi trong suốt quá trình huấn luyện, khai triển sai số
+$e(s) = u_{\btheta(s)} - u$ theo hệ hàm riêng $\{\phi_{j}\}$ của toán tử nhân,
+với các trị riêng $\varkappa_{1} \ge \varkappa_{2} \ge \cdots \ge 0$, cho
+\begin{equation}
+\langle e(s), \phi_{j} \rangle
+= \langle e(0), \phi_{j} \rangle\, e^{-\varkappa_{j} s}.
+\label{eq:ntk-decay}
+\end{equation}
+Vì phổ $\{\varkappa_{j}\}$ suy giảm nhanh khi tần số của $\phi_{j}$ tăng, các
+thành phần sai số tần số cao phân rã với hằng số thời gian lớn hơn nhiều bậc. Đây
+chính là thiên kiến phổ nhìn từ động lực học tối ưu, và nó cũng giải thích tính
+cứng của hệ \eqref{eq:gradient-flow} đã nêu ở Mục~\ref{subsec:dong-gradient}: tỉ
+số $\varkappa_1/\varkappa_{\min}^{+}$ lớn chính là hệ quả của phổ suy giảm nhanh.
+ 
+Hai giả thiết phải nêu rõ. Kết quả \eqref{eq:ntk-decay} đòi hỏi chế độ tuyến tính
+hoá (bề rộng lớn, tham số dịch chuyển ít), điều không được bảo đảm cho các mạng
+kích thước vừa dùng trong thực nghiệm; và nó là kết quả cho \emph{hồi quy}, chưa
+phải cho hàm mục tiêu phần dư. Ta dẫn nó như một lời giải thích cơ chế thống nhất
+giữa hai mục, không như một định lý về mô hình đang xét.
+\end{nhanxet}
+ 
+\subsection{Hệ quả đối với PINNs: ba nguyên nhân cộng hưởng}
+\label{subsec:he-qua-pinn}
+ 
+Với PINNs, thiên kiến phổ nghiêm trọng hơn so với hồi quy thông thường, vì hàm
+mục tiêu chứa \emph{đạo hàm} của mạng.
+ 
+\begin{menhde}[Khuếch đại phổ của toán tử vi phân]
+\label{md:khuech-dai}
+Giả sử $\Lop$ tuyến tính với hệ số hằng và bậc cao nhất $m$, ký hiệu
+$\Lop = \sum_{\abs{\alpha}\le m} c_\alpha \partial^{\alpha}$. Với
+$e_{\btheta} = u_{\btheta} - u$ và $r_{\btheta} = \Lop[e_{\btheta}]$ (bỏ qua số
+hạng thời gian),
+\begin{equation}
+\widetilde{r}_{\btheta}(k)
+ = p(2\pi i k)\, \widetilde{e}_{\btheta}(k),
+\qquad
+p(\xi) := \sum_{\abs{\alpha}\le m} c_\alpha\, \xi^{\alpha},
+\label{eq:residual-amplification}
+\end{equation}
+nên với các $k$ lớn, $\abs{\widetilde{r}_{\btheta}(k)} \sim
+\norm{k}^{m}\,\abs{\widetilde{e}_{\btheta}(k)}$, sai khác một hằng số bằng modul
+của hệ số dẫn đầu.
+\end{menhde}
+ 
+\begin{proof}
+Biến đổi Fourier biến $\partial^{\alpha}$ thành phép nhân với
+$(2\pi i k)^{\alpha}$; lấy tổ hợp tuyến tính với các hệ số $c_\alpha$ cho
+\eqref{eq:residual-amplification}. Khi $\norm{k}\to\infty$, ký hiệu chính (các số
+hạng bậc $m$) trội hơn mọi số hạng bậc thấp hơn.
+\end{proof}
+ 
+Với $\Lop$ phi tuyến như Burgers, \eqref{eq:residual-amplification} chỉ đúng cho
+bài toán đã tuyến tính hoá quanh nghiệm; số hạng $u\partial_x u$ còn sinh thêm
+hiện tượng trộn tần số mà phân tích tuyến tính không mô tả được. Ta dùng
+Mệnh đề~\ref{md:khuech-dai} như phân tích ký hiệu chính, không như một đẳng thức
+cho bài toán đầy đủ.
+ 
+Quan hệ \eqref{eq:residual-amplification} tạo ra một mâu thuẫn mang tính cấu
+trúc. Toán tử vi phân \emph{khuếch đại} sai số tần số cao với hệ số
+$\norm{k}^{m}$, làm số điều kiện của bài toán tối ưu xấu đi đáng kể -- đây chính
+là nguồn gốc giải tích của tính cứng đã mô tả ở \eqref{eq:linearized-flow}, và
+giải thích vì sao~\cite{wang2021} quan sát thấy phổ của
+$\nabla^2_{\btheta}J_r$ trải tới $10^5$ trong khi phổ của
+$\nabla^2_{\btheta}J_b$ vẫn nhỏ: $J_b$ không chứa đạo hàm nào. Mặt khác, theo
+Định lý~\ref{dl:spectral-decay} và Hệ quả~\ref{hq:parameter-cost}, mạng lại có xu
+hướng nội tại là \emph{không} biểu diễn đúng những tần số ấy.
+ 
+Ghép với Mục~\ref{subsec:chan-on-dinh}, ta thu được bức tranh đầy đủ gồm ba
+nguyên nhân độc lập cùng chỉ về một hướng, tóm tắt ở Bảng~\ref{tab:ba-nguyen-nhan}.
+ 
+\begin{table}[htbp]
+\centering
+\caption{Ba nguyên nhân độc lập khiến PINNs suy giảm độ chính xác trên bài toán
+có thang độ dài nhỏ, và tầng phân tích tương ứng.}
+\label{tab:ba-nguyen-nhan}
+\small
+\begin{tabular}{@{}l l p{6.4cm}@{}}
+\toprule
+\textbf{Tầng} & \textbf{Kết quả} & \textbf{Nội dung} \\
+\midrule
+Bài toán vi phân & Mệnh đề~\ref{md:chan-suy-bien}
+  & Hằng số ổn định tỉ lệ $1/\nu$: cùng một phần dư cho sai số lớn gấp
+    $\mathcal{O}(1/\nu)$ lần. \\
+\addlinespace
+Tối ưu & \eqref{eq:linearized-flow}, \eqref{eq:residual-amplification}
+  & Toán tử vi phân khuếch đại tần số cao theo $\norm{k}^m$, làm phổ Hessian
+    trải rộng và hệ dòng gradient trở nên cứng. \\
+\addlinespace
+Xấp xỉ & Hệ quả~\ref{hq:parameter-cost}
+  & Biểu diễn tần số $k$ đòi hỏi chuẩn tham số cỡ $\norm{k}^{d+1}$, ngược chiều
+    với khởi tạo và với mọi chính quy hoá. \\
+\bottomrule
+\end{tabular}
+\end{table}
+ 
+Ba nguyên nhân này cộng hưởng theo chiều bất lợi: bài toán đòi hỏi độ chính xác
+cao nhất ở đúng những tần số mà mô hình học chậm nhất, và ở đúng chế độ tham số
+mà chặn ổn định suy biến. Điều này lý giải một quan sát phổ biến trong tài liệu:
+PINNs cho kết quả rất tốt với các bài toán trơn có nghiệm biến thiên chậm, nhưng
+suy giảm nhanh khi độ nhớt giảm, khi hệ số nhiễu kỳ dị nhỏ đi, hoặc khi nghiệm có
+dao động tần số cao. Ta sẽ kiểm chứng định lượng nhận định này qua hai bài toán
+ODE ở Chương~\ref{chap:thucnghiem}.
+ 
+Cũng cần rút ra một kết luận phương pháp luận từ Bảng~\ref{tab:ba-nguyen-nhan}:
+vì ba nguyên nhân nằm ở ba tầng khác nhau, không kỹ thuật nào tác động lên một
+tầng có thể sửa được hai tầng còn lại. Cân bằng trọng số
+(Thuật toán~\ref{alg:annealing}) chỉ chạm tới tầng giữa; nó không thể cứu một bài
+toán mà hằng số ổn định đã suy biến.
+ 
+\subsection{Các hướng khắc phục}
+\label{subsec:khac-phuc}
+ 
+Nhận diện được nguyên nhân, ta có thể phân loại các kỹ thuật cải thiện đã được đề
+xuất theo cơ chế tác động, như tóm tắt ở Bảng~\ref{tab:remedies}. Điểm chung của
+chúng: không kỹ thuật nào loại bỏ thiên kiến phổ, chúng chỉ dịch chuyển hoặc mở
+rộng dải tần mà mô hình xử lý hiệu quả.
+ 
+\begin{table}[htbp]
+\centering
+\caption{Phân loại các kỹ thuật khắc phục thiên kiến phổ trong PINNs.}
+\label{tab:remedies}
+\small
+\begin{tabular}{@{}p{4.0cm} p{4.0cm} p{5.4cm}@{}}
+\toprule
+\textbf{Kỹ thuật} & \textbf{Cơ chế tác động} & \textbf{Ghi chú} \\
+\midrule
+Nhúng đặc trưng Fourier &
+Đưa sẵn các hàm cơ sở $\sin(2\pi Bx)$, $\cos(2\pi Bx)$ vào đầu vào &
+Dịch phổ hiệu dụng của mạng về vùng tần số cao; hiệu quả phụ thuộc mạnh vào việc
+chọn thang $B$, vốn đòi hỏi biết trước thang độ dài của nghiệm \\
+\addlinespace
+Hàm kích hoạt thích nghi &
+Thêm hệ số co giãn $a$ khả huấn luyện: $\sigma(a z)$ &
+Cho phép mạng tự điều chỉnh thang tần số; chi phí bổ sung không đáng kể; tương
+đương một cách tham số hoá lại chuẩn trọng số trong \eqref{eq:param-cost} \\
+\addlinespace
+Phân rã miền (cPINN, XPINN) &
+Chia miền thành các miền con, mỗi miền một mạng riêng &
+Mỗi mạng chỉ cần biểu diễn dải tần hẹp; phát sinh điều kiện ghép nối, tức thêm
+thành phần mất mát và thêm bệnh lý gradient \\
+\addlinespace
+Hành quân theo thời gian &
+Giải tuần tự trên các khoảng thời gian ngắn &
+Tránh phải học lớp trong ngay từ đầu; phù hợp bài toán tiến hoá; sai số tích luỹ
+qua các khoảng \\
+\addlinespace
+Lấy mẫu thích nghi (RAR) &
+Bổ sung điểm phối trí tại nơi phần dư lớn &
+Tập trung tài nguyên vào vùng có cấu trúc dốc~\cite{lu2021}; giảm sai số lấy mẫu
+trong \eqref{eq:mc-estimate} nhưng không đổi lớp hàm \\
+\bottomrule
+\end{tabular}
+\end{table}
+ 
+Đọc Bảng~\ref{tab:remedies} cùng Bảng~\ref{tab:ba-nguyen-nhan} cho một tiêu chí
+lựa chọn: nhúng đặc trưng Fourier và hàm kích hoạt thích nghi tác động lên tầng
+xấp xỉ; phân rã miền và hành quân theo thời gian tác động lên tầng bài toán bằng
+cách thay bài toán khó bằng một dãy bài toán dễ hơn; lấy mẫu thích nghi tác động
+lên sai số lấy mẫu, tức một nguồn thứ tư không nằm trong ba nguyên nhân trên. Việc
+lựa chọn vì vậy phụ thuộc vào chỗ nào là nút thắt của bài toán cụ thể -- và việc
+xác định nút thắt ấy đòi hỏi theo dõi riêng rẽ từng thành phần mất mát cùng sai số
+trên tập điểm độc lập, đúng như Nhận xét~\ref{rem:monte-carlo} và
+Nhận xét~\ref{rem:ill-posedness} đã lập luận.
+ 
+%==============================================================================
+\section*{Kết luận chương}
+\addcontentsline{toc}{section}{Kết luận chương}
+%==============================================================================
+ 
+Chương này đã trình bày mô hình PINNs theo ba tầng phân tích nối tiếp; các kết
+quả chính được tổng hợp ở Bảng~\ref{tab:tong-ket-4}.
+ 
+Ở tầng thứ nhất, ta xây dựng hàm mất mát \eqref{eq:total-loss} từ định nghĩa phần
+dư \eqref{eq:residual} và các tập điểm phối trí, đồng thời chỉ ra rằng $J_{r}$ về
+bản chất là ước lượng Monte Carlo của chuẩn $L^{2}$ của phần dư -- kèm cảnh báo
+rằng ước lượng ấy mất tính không chệch ngay khi $\btheta$ được tối ưu trên chính
+tập điểm đó. Quan trọng hơn, Mệnh đề~\ref{md:chan-on-dinh} và
+Mệnh đề~\ref{md:chan-suy-bien} thiết lập mắt xích logic mà phương pháp cần: phần
+dư nhỏ kéo theo sai số nhỏ khi và chỉ khi bài toán có chặn ổn định, với hằng số
+tỉ lệ $1/\nu$. Cùng một khung hàm mất mát phục vụ được cả bài toán thuận lẫn bài
+toán ngược, trong đó tham số vật lý được xử lý hoàn toàn như tham số mạng.
+ 
+Ở tầng thứ hai, ta phân tích khó khăn tối ưu phát sinh từ việc gộp nhiều mục tiêu
+cạnh tranh. Bệnh lý gradient khiến các thành phần điều kiện biên bị lấn át, và do
+bài toán vi phân tách rời khỏi điều kiện biên là đặt không chỉnh, hậu quả là mạng
+hội tụ về một nghiệm sai với giá trị hàm mục tiêu trông vẫn nhỏ.
+Bổ đề~\ref{bd:lambda-tam-thuong} giải thích vì sao trọng số cân bằng không thể là
+biến tối ưu của chính bài toán, do đó phải được xác định bằng một quy tắc bên
+ngoài như Thuật toán~\ref{alg:annealing}.
+ 
+Ở tầng thứ ba, ta truy nguyên khó khăn về giới hạn biểu diễn của chính mạng.
+Định lý~\ref{dl:spectral-decay} cho thấy phổ Fourier của mạng ReLU suy giảm theo
+$\norm{k}^{-(d+1)}$, nên biểu diễn tần số cao đòi hỏi chuẩn tham số lớn -- ngược
+chiều với khởi tạo Xavier và với mọi chính quy hoá.
+ 
+Đóng góp tổng hợp của chương là Bảng~\ref{tab:ba-nguyen-nhan}: ba nguyên nhân độc
+lập, ở ba tầng khác nhau, cùng làm PINNs suy giảm trên đúng lớp bài toán có thang
+độ dài nhỏ. Vì chúng nằm ở ba tầng, không kỹ thuật khắc phục nào tác động lên một
+tầng có thể thay thế cho hai tầng còn lại -- một kết luận có hệ quả trực tiếp lên
+cách thiết kế và đọc thực nghiệm.
+ 
+\begin{table}[htbp]
+\centering
+\caption{Tổng kết các kết quả chính của Chương~\ref{chap:pinn}.}
+\label{tab:tong-ket-4}
+\small
+\begin{tabular}{@{}l p{8.2cm}@{}}
+\toprule
+\textbf{Kết quả} & \textbf{Nội dung và vai trò} \\
+\midrule
+Định nghĩa~\ref{def:residual}
+  & Phần dư dùng chung tham số với mạng; đòi hỏi $u_{\btheta}\in C^m$, nối với
+    Hệ quả~\ref{hq:pinn-hong}. \\
+Nhận xét~\ref{rem:monte-carlo}
+  & $J_r$ là ước lượng Monte Carlo của $\norm{r_\btheta}_{L^2}^2$; mất tính
+    không chệch khi tối ưu trên chính tập mẫu. \\
+\textbf{Mệnh đề~\ref{md:chan-on-dinh}}
+  & \textbf{Chặn ổn định} $\norm{e_\btheta}_{L^2}\le \pi^{-2}
+    \norm{r_\btheta}_{L^2}$ cho bài toán Poisson: cơ sở biện minh cho việc cực
+    tiểu hoá phần dư. \\
+\textbf{Mệnh đề~\ref{md:chan-suy-bien}}
+  & \textbf{Hằng số ổn định suy biến như $1/\nu$} với bài toán đối lưu--khuếch
+    tán -- tầng thứ nhất của Bảng~\ref{tab:ba-nguyen-nhan}. \\
+Bổ đề~\ref{bd:rang-buoc-cung}
+  & Nghiệm thử $G + D\,u_\btheta$ thoả điều kiện biên với mọi $\btheta$; loại
+    $J_b$ khỏi hàm mục tiêu. \\
+Nhận xét~\ref{rem:ill-posedness}
+  & Gradient biên bị lấn át $\Rightarrow$ trôi trên $\mathcal{M}_r$ $\Rightarrow$
+    nghiệm sai với $J$ nhỏ; bắt buộc theo dõi riêng từng thành phần. \\
+Bổ đề~\ref{bd:lambda-tam-thuong}
+  & $\partial J/\partial\lambda_i = J_i \ge 0$: trọng số cân bằng không học được
+    bằng hạ gradient. \\
+Định lý~\ref{dl:spectral-decay}, Hệ quả~\ref{hq:parameter-cost}
+  & Phổ mạng ReLU suy giảm theo $\norm{k}^{-(d+1)}$; biểu diễn tần số $k$ đòi hỏi
+    chuẩn tham số cỡ $\norm{k}^{d+1}$. \\
+Mệnh đề~\ref{md:khuech-dai}
+  & Toán tử vi phân khuếch đại phổ sai số theo $\norm{k}^{m}$ -- nguồn gốc giải
+    tích của tính cứng. \\
+\textbf{Bảng~\ref{tab:ba-nguyen-nhan}}
+  & \textbf{Ba nguyên nhân độc lập ở ba tầng}, cùng chỉ về một hướng bất lợi. \\
+\bottomrule
+\end{tabular}
+\end{table}
+ 
+Ba tầng phân tích này định hình trực tiếp thiết kế thực nghiệm ở
+Chương~\ref{chap:thucnghiem}, nơi ta cài đặt PINNs bằng PyTorch và đánh giá định
+lượng cả độ chính xác lẫn hành vi hội tụ của từng thành phần mất mát, trên nhiều
+hạt giống ngẫu nhiên theo yêu cầu của Nhận xét~\ref{nx:doi-xung-hoan-vi}.
+ 

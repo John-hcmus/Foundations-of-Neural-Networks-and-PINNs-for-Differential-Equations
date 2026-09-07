@@ -1,0 +1,299 @@
+\chapter{Mở đầu}
+\label{chap:modau}
+\section{Bối cảnh}
+\label{sec:boi-canh}
+\subsection{Giới hạn của phương pháp số cổ điển}
+Việc mô hình hoá và dự báo động lực học của các hệ đa vật lý, đa quy mô vẫn là
+một bài toán mở của khoa học hiện đại. Các hệ thực tế thường chịu chi phối đồng
+thời của nhiều quá trình vật lý, hoá học và sinh học tương tác trên những thang
+không--thời gian rất khác nhau. Hệ Trái Đất là ví dụ điển hình: các quá trình chi
+phối nó trải rộng trên $17$ bậc độ lớn về thang không--thời
+gian~\cite{karniadakis2021}.
+ 
+Trong nhiều thập kỷ, việc giải số các phương trình đạo hàm riêng đã đóng vai trò
+trung tâm trong nghiên cứu và mô phỏng các hệ vật lý. Các phương pháp cổ điển --
+sai phân hữu hạn, phần tử hữu hạn, phương pháp phổ và các phương pháp không lưới
+-- đã đạt nhiều thành công từ địa vật lý, cơ học chất lưu đến lý sinh và khoa học
+vật liệu. Tuy nhiên, với các hệ phi tuyến, đa quy mô và có tầng bậc thang không
+đồng nhất, các phương pháp này vẫn vấp phải chi phí tính toán rất lớn và nhiều
+nguồn bất định.
+ 
+Ba giới hạn cụ thể đáng được nêu riêng, vì cả ba đều là động lực trực tiếp cho
+hướng tiếp cận của luận văn~\cite{karniadakis2021}.
+ 
+\emph{Thứ nhất, bài toán ngược.} Khi mục tiêu không chỉ là tìm nghiệm của một
+phương trình đã biết mà còn phải ước lượng tham số chưa biết, tính chất vật liệu,
+hoặc chính cơ chế vật lý còn thiếu, các phương pháp cổ điển đòi hỏi công thức hoá
+riêng, thuật toán mới và mã nguồn phức tạp. Chi phí thường ở mức không chấp nhận
+được, vì mỗi bước lặp của bài toán ngược lại đòi hỏi giải trọn vẹn một bài toán
+thuận.
+ 
+\emph{Thứ hai, điều kiện biên khuyết hoặc nhiễu.} Các phương pháp số cổ điển giả
+thiết điều kiện đầu và điều kiện biên được cho đầy đủ và chính xác. Trong nhiều
+hệ thực tế, các thông tin này bị thiếu, gián đoạn hoặc nhiễu; khi đó việc áp dụng
+trực tiếp các phương pháp truyền thống là bất khả thi.
+ 
+\emph{Thứ ba, lời nguyền số chiều.} Với các bài toán nhiều chiều, mọi phương pháp
+dựa trên lưới đều chịu chi phí tăng theo hàm mũ của số chiều. Đây là giới hạn có
+bản chất toán học chứ không phải giới hạn của cài đặt, và
+Nhận xét~\ref{nx:loi-nguyen} của Chương~\ref{chap:fnn} sẽ định lượng nó bằng cách
+đối chiếu bậc xấp xỉ $\mathcal{O}(m^{-s/d})$ của các phương pháp tuyến tính cổ
+điển với bậc $\mathcal{O}(m^{-1/2})$ không phụ thuộc số chiều của mạng nơ-ron.
+ 
+\subsection{Dữ liệu quan sát và giới hạn của học máy thuần dữ liệu}
+ 
+Song song với những khó khăn trên, sự phát triển của hệ thống cảm biến, thiết bị
+đo đạc và công nghệ viễn thám đã tạo ra khối lượng dữ liệu quan sát chưa từng có.
+Dữ liệu đến từ cảm biến mặt đất, thiết bị quan trắc trên biển và trên không, cùng
+các hệ thống vệ tinh; chúng có độ phân giải, độ chính xác và mức tin cậy khác
+nhau, tạo thành các tập dữ liệu \emph{đa độ trung thực} với phạm vi bao phủ rộng
+trên cả không gian lẫn thời gian~\cite{karniadakis2021}.
+ 
+Sự dồi dào ấy mở ra cơ hội cho các phương pháp dựa trên dữ liệu. Học máy có khả
+năng khai thác không gian dữ liệu nhiều chiều, phát hiện tương quan phức tạp và
+xử lý những bài toán đặt không chỉnh; học sâu nói riêng cung cấp công cụ tự động
+trích xuất đặc trưng từ dữ liệu có cấu trúc phức tạp. Các phương pháp này đã được
+dùng để phát hiện hiện tượng khí hậu cực đoan, dự báo lượng mưa và phân tích dữ
+liệu trong khoa học vật liệu.
+ 
+Tuy nhiên, mô hình học máy \emph{thuần dữ liệu} có một giới hạn cơ bản khi áp dụng
+cho hệ vật lý: nó có thể đạt sai số nhỏ trên tập quan sát mà vẫn đưa ra dự đoán
+vô lý về mặt vật lý khi ngoại suy, đơn giản vì không có gì ràng buộc nó tuân theo
+các định luật bảo toàn hay cấu trúc toán học chi phối hệ. Thêm vào đó, trong nhiều
+bài toán khoa học, dữ liệu quan sát thưa, không đồng nhất và chứa nhiễu -- đúng
+\emph{chế độ ít dữ liệu} mà Raissi và cộng sự~\cite{raissi2019} nêu là nơi các
+công cụ học sâu tiêu chuẩn thiếu tính vững và không có bảo đảm hội tụ nào.
+ 
+\subsection{Nhúng vật lý vào quá trình học}
+ 
+Từ hai nhận định đối lập trên -- phương pháp số cổ điển mạnh về cấu trúc nhưng
+yếu khi dữ kiện khuyết, học máy mạnh về dữ liệu nhưng mù về cấu trúc -- hướng
+tiếp cận tự nhiên là kết hợp cả hai: đưa tri thức tiên nghiệm về hệ vào chính quá
+trình học. Tri thức ấy có thể là định luật vật lý, nguyên lý bảo toàn, quan hệ
+toán học hay kiến thức chuyên ngành; việc tích hợp nó thu hẹp không gian nghiệm
+và hướng quá trình tối ưu về những nghiệm phù hợp quy luật vật lý. Đây là nội
+dung của \emph{học máy khoa học}.
+ 
+Karniadakis và cộng sự~\cite{karniadakis2021} phân loại ba con đường nhúng vật lý,
+và sự phân loại này định vị chính xác phạm vi của luận văn.
+ 
+\emph{Thiên kiến quan sát} (observational bias) đưa vật lý vào qua chính dữ liệu:
+huấn luyện trên dữ liệu đã hàm chứa quy luật vật lý cho phép mô hình học được các
+hàm và trường phản ánh cấu trúc ấy. Cách này đơn giản về khái niệm nhưng đòi hỏi
+khối lượng dữ liệu lớn, mà chi phí thu thập trong khoa học và kỹ thuật thường rất
+cao.
+ 
+\emph{Thiên kiến quy nạp} (inductive bias) đưa vật lý vào qua \emph{kiến trúc}:
+thiết kế mạng sao cho mọi dự đoán \emph{đương nhiên} thoả một tập ràng buộc. Đây
+là cách nguyên tắc nhất vì ràng buộc được thoả một cách chặt chẽ, nhưng nó thường
+chỉ áp dụng được cho các nhóm đối xứng tương đối đơn giản đã biết trước, và dẫn
+tới cài đặt phức tạp khó mở rộng.
+ 
+\emph{Thiên kiến học} (learning bias) đưa vật lý vào qua \emph{hàm mục tiêu}: chọn
+hàm mất mát và ràng buộc sao cho quá trình huấn luyện ưu tiên các nghiệm tuân theo
+vật lý. Bằng các ràng buộc phạt mềm, định luật vật lý chỉ được thoả \emph{xấp
+xỉ}; đổi lại, đây là nền linh hoạt nhất, cho phép đưa vào một lớp rất rộng các
+ràng buộc dạng tích phân, vi phân hay thậm chí phân thứ.
+ 
+Ba con đường này không loại trừ nhau. Luận văn tập trung vào con đường thứ ba, và
+sự lựa chọn ấy có cái giá của nó: Nhận xét~\ref{rem:soft-constraint} của
+Chương~\ref{chap:pinn} sẽ chỉ ra rằng phạt mềm khiến điều kiện biên không được
+thoả chính xác, còn Mục~\ref{sec:gradient-pathology} phân tích khó khăn tối ưu
+phát sinh khi nhiều mục tiêu cạnh tranh bị gộp vào một hàm mục tiêu duy nhất.
+Bổ đề~\ref{bd:rang-buoc-cung} trình bày lựa chọn thay thế theo tinh thần thiên
+kiến quy nạp, để đối chiếu.
+ 
+\subsection{Mạng nơ-ron thông tin vật lý}
+ 
+Đại diện tiêu biểu của con đường thứ ba là \emph{mạng nơ-ron thông tin vật lý}
+(physics-informed neural network, PINN). Ý tưởng cốt lõi rất gọn: biểu diễn nghiệm
+chưa biết bằng một mạng nơ-ron, rồi đưa chính phương trình chi phối vào hàm mất
+mát dưới dạng \emph{phần dư}. Với bài toán tham số hoá dạng
+
+\begin{equation*}
+    u_t + \Lop\left[u; \bzeta\right] = 0,
+\end{equation*}
+
+theo cách viết của Raissi và cộng sự~\cite{raissi2019}, mạng $u_{\btheta}$ được
+huấn luyện để làm nhỏ đồng thời phần dư của phương trình tại một tập điểm trong
+miền và sai lệch so với điều kiện đầu, điều kiện biên. Điểm đáng chú ý là các
+điểm trong miền \emph{không cần nhãn}: thông tin giám sát tại đó do chính phương
+trình cung cấp. Chương~\ref{chap:pinn} xây dựng đầy đủ khung này.
+ 
+Ý tưởng dùng mạng nơ-ron làm hàm thử cho phương trình vi phân không mới; nó đã
+xuất hiện từ những năm 1990 với các công trình của Dissanayake và
+Phan-Thien~\cite{dissanayake1994} và của Lagaris cùng cộng sự~\cite{lagaris1998}.
+Điều làm nó trở nên khả thi ở quy mô hiện nay là hai tiến bộ công cụ: vi phân tự
+động, cho phép tính đạo hàm theo biến đầu vào chính xác tới độ chính xác máy mà
+không cần lưới; và các khung tính toán khả vi cùng phần cứng hiện đại.
+Chương~\ref{chap:autodiff} dành trọn cho hai công cụ này, và
+Mệnh đề~\ref{md:fd-rao-can} sẽ định lượng vì sao sai phân hữu hạn \emph{không}
+thay thế được vi phân tự động trong bối cảnh này.
+ 
+PINNs đặc biệt phù hợp với các bài toán mà vật lý và dữ liệu chỉ được biết một
+phần. Ở một cực, phương trình và tham số đã xác định đầy đủ, dữ liệu chỉ cung cấp
+điều kiện đầu hoặc điều kiện biên -- đó là \emph{bài toán thuận}. Ở cực kia, có
+nhiều dữ liệu quan sát nhưng chưa rõ phương trình chi phối. Phần lớn bài toán thực
+tế nằm giữa: một phần tri thức vật lý đã biết, còn một số tham số hoặc quan hệ cấu
+thành cần được suy luận từ dữ liệu -- đó là \emph{bài toán ngược}. Cùng một khung
+hàm mất mát phục vụ được cả hai, vì tham số vật lý được xử lý hoàn toàn như tham
+số của mạng; Mục~\ref{subsec:thuan-nguoc} trình bày điều này.
+ 
+Cuối cùng, cần nói ngay rằng PINNs không phải một phương pháp không có nhược điểm,
+và chính các nhược điểm ấy chiếm phần lớn dung lượng của luận văn. Karniadakis và
+cộng sự~\cite{karniadakis2021} nêu thẳng rằng mạng kết nối đầy đủ gặp khó khăn khi
+học các hàm tần số cao -- hiện tượng gọi là \emph{thiên kiến phổ} -- và rằng các
+đặc trưng tần số cao trong nghiệm sinh ra gradient dốc, khiến PINNs thường không
+phạt được chính xác phần dư. Chương~\ref{chap:pinn} truy nguyên hiện tượng này tới
+ba nguyên nhân độc lập ở ba tầng khác nhau (Bảng~\ref{tab:ba-nguyen-nhan}), và
+Chương~\ref{chap:thucnghiem} kiểm chứng chúng bằng số liệu.
+ 
+%==============================================================================
+\section{Mục tiêu nghiên cứu}
+\label{sec:muc-tieu}
+%==============================================================================
+ 
+\subsection{Mục tiêu tổng quát}
+ 
+Luận văn hướng tới việc trình bày một cách hệ thống nền tảng toán học, thuật toán
+và thực nghiệm của PINNs khi được dùng làm công cụ giải phương trình vi phân;
+đồng thời cài đặt và đánh giá định lượng phương pháp này trên các bài toán chuẩn
+mực, nhằm xác lập một đánh giá cân bằng -- dựa trên số liệu và chứng minh chứ
+không dựa trên kỳ vọng -- về phạm vi mà PINNs thực sự mang lại lợi thế so với giải
+tích số cổ điển.
+ 
+Hai chữ ``cân bằng'' cần được hiểu theo nghĩa mạnh. Luận văn báo cáo đầy đủ cả
+những kết quả không đạt kỳ vọng, và trong một trường hợp, một kết quả tiêu cực đã
+dẫn tới việc phải siết lại cách phát biểu của chính chương lý thuyết
+(Nhận xét~\ref{nx:hieu-chinh}).
+ 
+\subsection{Mục tiêu cụ thể}
+ 
+Từ mục tiêu tổng quát, luận văn đặt ra năm nhiệm vụ.
+ 
+\begin{enumerate}[label=\textbf{MT\arabic*.},leftmargin=*,itemsep=5pt]
+\item \textbf{Hệ thống hoá cơ sở toán học của mạng nơ-ron truyền thẳng.} Trình bày
+kiến trúc, tính chất xấp xỉ phổ quát và vai trò của hàm kích hoạt, làm nền tảng
+cho việc dùng mạng nơ-ron như một không gian hàm thử thay cho không gian phần tử
+hữu hạn hay không gian phổ. Trọng tâm đặt vào một câu hỏi mà tài liệu học sâu tổng
+quát bỏ qua: \emph{đạo hàm bậc cao của mạng theo biến đầu vào có dạng tường minh
+nào}, và điều kiện nào trên hàm kích hoạt là \emph{cần} để chúng không đồng nhất
+triệt tiêu (Chương~\ref{chap:fnn}).
+ 
+\item \textbf{Làm rõ cơ chế vi phân tự động và thuật toán tối ưu.} Phân tích cách
+vi phân tự động cho phép tính chính xác tới độ chính xác máy các đạo hàm riêng bậc
+cao xuất hiện trong toán tử $\Lop$, và so sánh các thuật toán tối ưu dùng phổ biến
+trong huấn luyện PINNs, đặc biệt là cặp Adam và L-BFGS
+(Chương~\ref{chap:autodiff}).
+ 
+\item \textbf{Xây dựng phương pháp PINNs một cách chặt chẽ.} Thiết lập đầy đủ công
+thức của mô hình thời gian liên tục, từ định nghĩa phần dư \eqref{eq:residual} tới
+hàm mục tiêu tổng hợp \eqref{eq:total-loss}; làm rõ điều kiện để việc cực tiểu hoá
+phần dư là hợp lý; và phân tích khó khăn của phương pháp ở cả tầng tối ưu lẫn tầng
+xấp xỉ (Chương~\ref{chap:pinn}).
+ 
+\item \textbf{Cài đặt và thực nghiệm trên PyTorch.} Xây dựng một cài đặt PINNs
+hoàn chỉnh, minh bạch về mã nguồn, và áp dụng cho các bài toán cụ thể; báo cáo sai
+số $L^2$ tương đối, sai số $L^{\infty}$, đường cong hội tụ và chi phí tính toán
+thực đo (Chương~\ref{chap:thucnghiem}).
+ 
+\item \textbf{Khảo sát độ nhạy và phân tích hạn chế.} Đánh giá ảnh hưởng của hàm
+kích hoạt, trọng số trong hàm mất mát và lựa chọn thuật toán tối ưu tới độ chính
+xác; đối chiếu từng dự báo lý thuyết với số liệu đo được trong
+Bảng~\ref{tab:doi-chieu}, và nêu thẳng những hạn chế của chính thiết kế thực
+nghiệm ở Mục~\ref{sec:hanche}.
+\end{enumerate}
+ 
+\subsection{Phạm vi và giới hạn}
+\label{subsec:pham-vi}
+ 
+Để bảo đảm chiều sâu, luận văn giới hạn phạm vi như sau.
+ 
+Về \emph{lớp bài toán}, trọng tâm đặt vào bài toán thuận; bài toán ngược chỉ được
+trình bày ở mức tổng quan (Mục~\ref{subsec:thuan-nguoc}) nhằm cho thấy tính thống
+nhất của khung phương pháp.
+ 
+Về \emph{cơ chế nhúng vật lý}, luận văn tập trung vào thiên kiến học, tức cưỡng
+bức bằng phạt mềm; thiên kiến quy nạp chỉ được nhắc tới khi cần đối chiếu, qua
+dạng nghiệm thử ràng buộc cứng ở Bổ đề~\ref{bd:rang-buoc-cung}.
+ 
+Về \emph{mô hình thời gian}, luận văn chỉ xét mô hình thời gian liên tục của
+Raissi và cộng sự. Mô hình thời gian rời rạc dựa trên các lược đồ Runge--Kutta ẩn
+nằm ngoài phạm vi.
+ 
+Về \emph{kiến trúc}, chỉ xét mạng truyền thẳng kết nối đầy đủ. Các họ kiến trúc
+khác -- mạng tích chập, mạng đồ thị, hay các toán tử nơ-ron như DeepONet và Fourier
+neural operator -- không được đề cập, ngoại trừ kiến trúc có cổng ở
+Mục~\ref{subsec:gated}, vốn được đưa vào vì nó là một phần của phân tích bệnh lý
+gradient chứ không phải như một kiến trúc độc lập.
+ 
+Về \emph{công cụ}, toàn bộ phần thực nghiệm được cài đặt bằng PyTorch, không dùng
+thư viện PINNs đóng gói sẵn, nhằm giữ cho mọi thành phần của thuật toán đều minh
+bạch và kiểm chứng được.
+ 
+Cuối cùng, về \emph{tham vọng lý thuyết}: luận văn không đặt mục tiêu chứng minh
+định lý mới về hội tụ hay ước lượng sai số cho PINNs, và các kết quả lớn của lĩnh
+vực chỉ được trích dẫn cùng diễn giải. Tuy vậy, luận văn \emph{có} cung cấp chứng
+minh đầy đủ cho một số phát biểu mà tài liệu thường chỉ nêu định tính -- chẳng hạn
+sự sụp đổ gradient của kiến trúc ReLU (Hệ quả~\ref{hq:pinn-hong}), chặn ổn định
+nối phần dư với sai số (Mệnh đề~\ref{md:chan-on-dinh}), sàn nhiễu của bước học
+hằng số (Mệnh đề~\ref{md:san-nhieu}), và chế độ phản hồi dương của quy tắc cân
+bằng trọng số (Bổ đề~\ref{bd:phan-hoi-duong}). Các chứng minh này sơ cấp và không
+phải đóng góp lý thuyết mới của lĩnh vực; giá trị của chúng nằm ở chỗ biến những
+khẳng định mơ hồ thành những phát biểu có giả thiết rõ ràng và kiểm chứng được.
+ 
+\subsection{Đóng góp dự kiến}
+ 
+Trong phạm vi đã nêu, luận văn có ba đóng góp.
+ 
+\emph{Thứ nhất}, một trình bày mạch lạc bằng tiếng Việt về PINNs, đi từ cơ sở toán
+học của mạng nơ-ron truyền thẳng tới công thức đầy đủ của mô hình thời gian liên
+tục, với notation nhất quán xuyên suốt và mọi khẳng định đều truy được về một mệnh
+đề cụ thể. Đây là nội dung hiện còn tương đối thiếu trong tài liệu học thuật tiếng
+Việt.
+ 
+\emph{Thứ hai}, một cài đặt PyTorch độc lập kèm kết quả thực nghiệm định lượng,
+tái lập được, có thể dùng làm điểm khởi đầu cho các nghiên cứu tiếp theo.
+ 
+\emph{Thứ ba}, một phân tích đối chiếu có hệ thống giữa lý thuyết và số liệu
+(Bảng~\ref{tab:doi-chieu}), qua đó chỉ ra cụ thể những tình huống PINNs phát huy
+hiệu quả và những tình huống phương pháp gặp khó khăn. Phần đối chiếu này cho một
+kết luận phương pháp luận đáng chú ý: mọi hạng mục khớp trọn vẹn với thực nghiệm
+đều tương ứng với một mệnh đề đã được chứng minh, còn mọi hạng mục phải điều chỉnh
+đều tương ứng với chỗ suy luận tiệm cận hoặc ghép hai kết quả rời rạc.
+ 
+%==============================================================================
+\section{Bố cục luận văn}
+\label{sec:bo-cuc}
+%==============================================================================
+ 
+Bốn chương còn lại được tổ chức theo một mạch nối tiếp: mỗi chương chỉ dùng kết
+quả của các chương trước, và mỗi lựa chọn thiết kế ở chương sau đều truy được về
+một mệnh đề ở chương trước.
+ 
+\textbf{Chương~\ref{chap:fnn}} thiết lập cơ sở toán học của mạng truyền thẳng, với
+trọng tâm khác hẳn tài liệu học sâu tổng quát: đạo hàm của mạng theo \emph{biến
+đầu vào}. Hai hệ thức truy hồi cho Jacobi và Hessian
+(Mệnh đề~\ref{md:jacobian}, \ref{md:hessian}) là công cụ trung tâm cho mọi tính
+toán phần dư về sau. Chương kết thúc bằng một cấu hình kiến trúc được biện minh
+từng thành phần -- hàm kích hoạt $\tanh$, khởi tạo Xavier, độ chệch bằng không,
+lớp ra tuyến tính -- dùng cố định cho toàn bộ phần thực nghiệm.
+ 
+\textbf{Chương~\ref{chap:autodiff}} trình bày hai công cụ tính toán: vi phân tự
+động và các thuật toán tối ưu. Kết quả then chốt là
+Mệnh đề~\ref{md:ad-tai-tao}, chứng minh rằng vi phân tự động tái tạo \emph{đúng}
+hai hệ thức truy hồi của Chương~\ref{chap:fnn} mà không cần lập trình tường minh
+đạo hàm bậc hai của hàm kích hoạt. Chiến lược huấn luyện hai giai đoạn
+Adam~$\to$~L-BFGS được biện minh bằng ba lập luận cụ thể chứ không bằng kinh
+nghiệm thực hành.
+ 
+\textbf{Chương~\ref{chap:pinn}} xây dựng phương pháp PINNs theo ba tầng: cấu trúc
+hàm mất mát, khó khăn ở tầng tối ưu, và giới hạn ở tầng xấp xỉ. Đóng góp tổng hợp
+của chương là Bảng~\ref{tab:ba-nguyen-nhan}: ba nguyên nhân độc lập, nằm ở ba tầng
+khác nhau, cùng làm PINNs suy giảm trên đúng lớp bài toán có thang độ dài nhỏ.
+ 
+\textbf{Chương~\ref{chap:thucnghiem}} cài đặt toàn bộ khung ấy trên PyTorch và
+kiểm chứng bằng năm thí nghiệm, mỗi thí nghiệm trả lời một câu hỏi cụ thể với tiêu
+chí thành công xác định trước. Kết quả được tổng hợp ở Bảng~\ref{tab:doi-chieu},
+và những hạn chế của chính thiết kế thực nghiệm được nêu thẳng ở
+Mục~\ref{sec:hanche}.

@@ -81,6 +81,13 @@ cực}:
       không đúng phổ quát: với toán tử elliptic thuần tuý, hàm mục tiêu phần dư
       \emph{ưu tiên} tần số cao và chính tần số thấp mới bị bỏ rơi. Cách phát
       biểu đã được siết lại ở Nhận xét~\ref{nx:hieu-chinh}.
+\item \textbf{Một cách đọc bị siết lại về tầng thứ nhất của
+      Bảng~\ref{tab:ba-nguyen-nhan}.} Mục~\ref{sec:tn7} xác nhận chặn của
+      Mệnh đề~\ref{md:chan-suy-bien} ở cả $15$ trường hợp, nhưng không tìm được
+      bằng chứng rằng tỉ số quan sát được tăng theo $1/\nu$: số mũ ước lượng
+      trải từ $-0{,}730$ tới $+0{,}049$ tuỳ hạt giống. Hệ quả:
+      hằng số ổn định là một \emph{chặn} đã chứng minh, không phải một
+      \emph{cơ chế} đã quan sát (Nhận xét~\ref{nx:doc-tn7}).
 \item \textbf{Một chế độ hỏng chứng minh được của quy tắc cân bằng trọng số.}
       Thuật toán~\ref{alg:annealing} làm giảm độ chính xác trên cả hai bài toán
       khảo sát. Truy nguyên dẫn tới Bổ đề~\ref{bd:phan-hoi-duong}: quy tắc
@@ -146,9 +153,13 @@ dư trong vài trăm vòng lặp đầu --- là hướng cụ thể và khả th
 \paragraph{Củng cố phương pháp luận thực nghiệm.} Ba việc rẻ và có giá trị ngay:
 lặp mỗi cấu hình trên $5$--$10$ hạt giống rồi báo cáo trung vị cùng khoảng phân
 vị (Mục~\ref{sec:hanche}); áp dụng lấy mẫu thích nghi RAR cho bài toán Burgers;
-và mở rộng phép kiểm chứng chặn ổn định ở Mục~\ref{sec:tn6} sang bài toán đối
-lưu--khuếch tán để đo trực tiếp sự suy biến theo $1/\nu$ mà
-Mệnh đề~\ref{md:chan-suy-bien} dự báo.
+và tách riêng tầng thứ nhất của Bảng~\ref{tab:ba-nguyen-nhan} bằng một thiết kế
+khác với Mục~\ref{sec:tn7}. Phép quét $\nu$ ở đó cho thấy tỉ số
+$\norm{e_{\btheta}}/\norm{r_{\btheta}}$ do huấn luyện sinh ra không đo được hằng
+số ổn định, vì hướng của sai số do chính quá trình tối ưu quyết định chứ không
+phải do bài toán. Cách sạch hơn là \emph{dựng} sai số theo hướng hàm riêng
+$\sin \pi x$ --- hướng làm chặn Poincaré trở nên chặt --- rồi đo trực tiếp tỉ số
+ấy theo $\nu$.
 
 \paragraph{Mở rộng phạm vi.} Cuối cùng, hai mở rộng nằm ngoài phạm vi luận văn
 nhưng nối liền với nó: bài toán ngược, nơi khung hàm mất mát \eqref{eq:total-loss}

@@ -11,16 +11,16 @@ chứng đó.
 Mục tiêu không dừng ở chỗ trình bày một cài đặt chạy được. Mỗi thí nghiệm dưới
 đây được thiết kế để trả lời một câu hỏi cụ thể do Chương~\ref{chap:pinn} đặt ra,
 với tiêu chí thành công hoặc thất bại xác định \emph{trước} khi chạy. Ta báo cáo
-đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong chín hạng mục đối chiếu
+đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong mười hạng mục đối chiếu
 ở Mục~\ref{sec:doi-chieu}, năm khớp trọn vẹn, một khớp về hướng nhưng không về
-độ lớn, một buộc phải siết lại cách phát biểu, một chỉ là tương quan chưa giải
-thích được, và một cho kết quả trái với kỳ vọng.
+độ lớn, \emph{hai} buộc phải siết lại cách phát biểu, một chỉ là tương quan chưa
+giải thích được, và một cho kết quả trái với kỳ vọng.
 Phần điều chỉnh được ghi rõ thay vì bỏ qua; theo quan điểm của luận văn, một kết
 quả tiêu cực được phân tích đúng nguyên nhân có giá trị ngang một kết quả khớp.
  
 Cấu trúc chương: Mục~\ref{sec:trienkhai} mô tả kiến trúc cài đặt trên
 PyTorch~\cite{paszke2019} và cấu hình chung. Các
-Mục~\ref{sec:tn1}--\ref{sec:tn6} trình bày sáu thí nghiệm.
+Mục~\ref{sec:tn1}--\ref{sec:tn7} trình bày bảy thí nghiệm.
 Mục~\ref{sec:doi-chieu} đối chiếu toàn bộ lý thuyết với số liệu, và
 Mục~\ref{sec:hanche} nêu thẳng những hạn chế của thiết kế thực nghiệm này.
  
@@ -1114,6 +1114,111 @@ $\lambda_b$ không được chọn cẩn thận.
 \end{nhanxet}
 
 %==============================================================================
+\section{Thí nghiệm 7: hằng số ổn định có thực sự suy biến theo $1/\nu$?}
+\label{sec:tn7}
+%==============================================================================
+
+\begin{thinghiem}[Kiểm chứng Mệnh đề~\ref{md:chan-suy-bien}]
+\label{tn:nu}
+Mệnh đề~\ref{md:chan-suy-bien} là \emph{tầng thứ nhất} của
+Bảng~\ref{tab:ba-nguyen-nhan}: hằng số nối phần dư với sai số tỉ lệ $1/\nu$, nên
+cùng một phần dư cho sai số lớn gấp $\mathcal{O}(1/\nu)$ lần khi $\nu$ nhỏ. Toàn
+bộ lập luận cộng hưởng ba tầng đứng trên đó. Câu hỏi ở đây không phải ``chặn có
+đúng không'' --- nó đã được chứng minh --- mà là câu hỏi mạnh hơn:
+\emph{tỉ số $\norm{e_{\btheta}}/\norm{r_{\btheta}}$ quan sát được có thực sự tăng
+theo $1/\nu$ hay không?} Nếu không, tầng thứ nhất vẫn là một chặn đúng nhưng
+không phải cơ chế đang vận hành.
+\end{thinghiem}
+
+\textbf{Thiết lập.} Chính bài toán của mệnh đề, với nghiệm chế tạo có dạng đóng:
+\begin{equation}
+-\nu u'' + u' = 1 \ \text{ trên } (0,1), \quad u(0)=u(1)=0,
+\qquad
+u^{\star}(x) = x - \frac{e^{(x-1)/\nu} - e^{-1/\nu}}{1 - e^{-1/\nu}} .
+\label{eq:tn7-nghiem}
+\end{equation}
+Nghiệm này có một lớp biên bề dày $\mathcal{O}(\nu)$ gần $x=1$. Dạng viết trên
+được chọn để ổn định về số: dạng thông thường $(1-e^{x/\nu})/(e^{1/\nu}-1)$ tràn
+số ngay khi $\nu \le 0{,}05$. Ta dùng ràng buộc cứng
+$\hat u_{\btheta} = x(1-x)u_{\btheta}$ như ở Mục~\ref{sec:tn6}, để giả thiết của
+mệnh đề được thoả theo cấu trúc. Quét $\nu \in \{1;\,0{,}3;\,0{,}1;\,0{,}03;\,
+0{,}01\}$ trên \emph{ba} hạt giống.
+
+\begin{table}[H]
+\centering
+\caption[Quét $\nu$ cho bài toán đối lưu--khuếch tán]{Quét $\nu$ trên ba hạt
+giống. Cột ``tỉ số'' là $\norm{e_{\btheta}}_{L^2}/\norm{r_{\btheta}}_{L^2}$;
+``hội tụ'' đếm số hạt giống đưa được $\norm{r_{\btheta}}_{L^2}$ xuống dưới
+$10^{-2}$.}
+\label{tab:tn7}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}r r r l r r c@{}}
+\toprule
+$\nu$ & bề dày lớp & tỉ số (trung vị) & khoảng & chặn $1/(\pi^2\nu)$
+& chặn lỏng gấp & hội tụ \\
+\midrule
+$1$      & $0{,}424$ & $0{,}0081$ & $[0{,}0039;\ 0{,}0085]$ & $0{,}101$ & $12$  & $3/3$ \\
+$0{,}3$  & $0{,}297$ & $0{,}0083$ & $[0{,}0081;\ 0{,}0128]$ & $0{,}338$ & $41$  & $3/3$ \\
+$0{,}1$  & $0{,}149$ & $0{,}0114$ & $[0{,}0111;\ 0{,}0167]$ & $1{,}013$ & $89$  & $3/3$ \\
+$0{,}03$ & $0{,}054$ & $0{,}0212$ & $[0{,}0064;\ 0{,}0520]$ & $3{,}377$ & $159$ & $3/3$ \\
+$0{,}01$ & $0{,}019$ & $0{,}0003$ & $[0{,}0002;\ 0{,}0005]$ & $10{,}132$& ---   & $\mathbf{0/3}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Kết quả.} Ba kết luận, và kết luận thứ hai là một \emph{kết quả âm tính}.
+
+\emph{(a) Chặn đúng, không có ngoại lệ.} Tỉ số nằm dưới $1/(\pi^2\nu)$ ở cả
+$15$ trường hợp (năm giá trị $\nu$ nhân ba hạt giống).
+
+\emph{(b) Nhưng tỉ số quan sát được \textbf{không} tăng theo $1/\nu$ một cách
+kiểm chứng được.} Hồi quy log--log của tỉ số theo $\nu$ trên các điểm hội tụ cho
+ba số mũ hoàn toàn khác nhau tuỳ hạt giống: $-0{,}730$, $-0{,}237$ và
+$+0{,}049$. Trung vị $-0{,}237$, khoảng $[-0{,}730;\ +0{,}049]$ --- một hạt
+giống thậm chí cho số mũ \emph{dương}. So với dự báo $-1$ của chặn, ước lượng
+này không cho phép kết luận gì. Thay đổi ngân sách huấn luyện cũng làm số mũ
+nhảy: cùng hạt giống $0$, $8\,000$ vòng cho $-0{,}730$ còn $20\,000$ vòng cho
+$-0{,}535$.
+
+Điều thực sự đo được là chặn \emph{ngày càng lỏng} khi $\nu$ giảm: từ chỗ lỏng
+gấp $12$ lần tại $\nu = 1$ tới lỏng gấp $159$ lần tại $\nu = 0{,}03$.
+
+\emph{(c) Tại $\nu = 0{,}01$ không hạt giống nào hội tụ.} Phần dư dừng ở
+$\norm{r_{\btheta}}_{L^2} = 0{,}135$, $0{,}619$ và $0{,}676$ --- lớn hơn hai tới
+ba bậc so với các giá trị $\nu$ khác. Tăng ngân sách gấp $2{,}5$ lần không cứu
+được, thậm chí làm tệ hơn ($0{,}135 \to 0{,}197$ với hạt giống $0$).
+
+\begin{nhanxet}[Đọc kết quả âm tính này cho đúng]
+\label{nx:doc-tn7}
+Kết quả (b) \emph{không} bác bỏ Mệnh đề~\ref{md:chan-suy-bien}. Mệnh đề cho một
+chặn \emph{trên} đúng với mọi hàm trong $H^1_0(0,1)$, và hằng số $1/(\pi^2\nu)$
+là tối ưu trên toàn lớp ấy --- đạt được khi sai số trùng hàm riêng ứng với trị
+riêng nhỏ nhất. Sai số của mạng nơ-ron không có dạng ấy, nên chặn không được đạt
+tới. Chặn vẫn đúng; nó chỉ không chặt, và càng không chặt khi $\nu$ nhỏ.
+
+Điều bị siết lại là cách \emph{đọc} tầng thứ nhất của
+Bảng~\ref{tab:ba-nguyen-nhan}. Bảng ấy liệt kê ba nguyên nhân độc lập cùng làm
+PINNs suy giảm; với tầng thứ nhất, luận văn ngầm hiểu rằng hằng số ổn định là
+\emph{cơ chế đang vận hành}. Thí nghiệm này không tìm được bằng chứng cho cách
+hiểu đó trong dải $\nu \in [0{,}03;\ 1]$, và ở $\nu = 0{,}01$ thì không thể tìm
+được, vì tầng \emph{tối ưu} hỏng trước: muốn đo hằng số ổn định thì phải có phần
+dư nhỏ, mà đúng ở chế độ ấy PINN không đưa phần dư xuống được.
+
+Phát biểu đúng của tầng thứ nhất vì vậy là: \emph{chặn ổn định suy biến theo
+$1/\nu$ là một sự thật đã chứng minh về bài toán vi phân, và nó nói rằng phần dư
+nhỏ \textbf{không còn bảo đảm} sai số nhỏ khi $\nu$ nhỏ; nhưng nó không nói
+rằng sai số quan sát được sẽ tăng theo $1/\nu$, và luận văn không có bằng chứng
+thực nghiệm cho điều mạnh hơn ấy.}
+
+Kết luận (c) lại là bằng chứng trực tiếp cho chính \emph{sự cộng hưởng} mà
+Mục~\ref{subsec:he-qua-pinn} lập luận, chỉ theo một đường khác với dự kiến: ở
+$\nu$ nhỏ, tầng tối ưu và tầng xấp xỉ hỏng \emph{trước khi} tầng bài toán kịp
+biểu hiện. Ba tầng vẫn cộng hưởng; chỉ có thứ tự xuất hiện là ngược với hình
+dung ban đầu.
+\end{nhanxet}
+
+%==============================================================================
 \section{Đối chiếu lý thuyết và thực nghiệm}
 \label{sec:doi-chieu}
 %==============================================================================
@@ -1164,14 +1269,21 @@ Mệnh đề~\ref{md:chan-on-dinh}
 & $\norm{e}_{L^2}\le \pi^{-2}\norm{r}_{L^2}$ khi điều kiện biên thoả chính xác
 & tỉ số $\le 0{,}026$ trên bốn bậc độ lớn của $\norm{r}$; vi phạm $96$ lần khi
   $\lambda_b = 0{,}01$
-& \textbf{Khớp}, và giả thiết biên tỏ ra thiết yếu \\
+& \textbf{Khớp}, và giả thiết biên tỏ ra thiết yếu \\[4pt]
+Mệnh đề~\ref{md:chan-suy-bien}
+& hằng số ổn định tỉ lệ $1/\nu$
+& chặn đúng $15/15$; nhưng số mũ của tỉ số quan sát được là
+  $-0{,}730 / -0{,}237 / +0{,}049$ tuỳ hạt giống, và $0/3$ hạt giống hội tụ tại
+  $\nu = 0{,}01$
+& \textbf{Chặn khớp, cơ chế không} (Nhận xét~\ref{nx:doc-tn7}) \\
 \bottomrule
 \end{tabular}
 \end{table}
  
-Trong chín hạng mục: năm khớp trọn vẹn, một khớp về hướng nhưng không rút được
-kết luận định lượng, một cần siết lại cách phát biểu, một chỉ là tương quan chưa
-giải thích được, và một cho kết quả tiêu cực nhưng đã truy được nguyên nhân.
+Trong mười hạng mục: năm khớp trọn vẹn, một khớp về hướng nhưng không rút được
+kết luận định lượng, \emph{hai} cần siết lại cách phát biểu, một chỉ là tương
+quan chưa giải thích được, và một cho kết quả tiêu cực nhưng đã truy được nguyên
+nhân.
  
 Mức khớp này ủng hộ khung lý thuyết của Chương~\ref{chap:pinn} một cách
 \emph{có điều kiện}, và điều kiện ấy đáng được nêu rõ: bốn trong năm hạng mục
@@ -1181,11 +1293,14 @@ Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh}); hạng m�
 Định nghĩa~\ref{dn:rho}, vốn là một \emph{tiêu chí chẩn đoán} do luận văn đặt ra
 chứ không phải một mệnh đề, nên nó kiểm chứng tính hữu dụng của tiêu chí chứ
 không kiểm chứng một dự báo lý thuyết. Ngược lại, cả ba hạng mục có vấn đề đều
-tương ứng với những chỗ luận văn dùng \emph{suy luận tiệm cận} hoặc \emph{ghép
-hai kết quả rời rạc}:
+tương ứng với những chỗ luận văn dùng \emph{suy luận tiệm cận}, \emph{ghép hai
+kết quả rời rạc}, hoặc đọc một \emph{chặn trên} như thể nó là cơ chế đang vận
+hành:
 giả thuyết \eqref{eq:pho-hieu-dung} ghép $\abs{P}^2$ với
 $\widehat{\varkappa}$; kết luận ở Mục~\ref{subsec:he-qua-pinn} ngầm giả định thừa
-số nào thắng; quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$ không có chứng minh nào cả.
+số nào thắng; quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$ không có chứng minh nào cả; và tầng thứ
+nhất của Bảng~\ref{tab:ba-nguyen-nhan} đọc hằng số của một chặn trên như thể nó
+là cơ chế quyết định (Nhận xét~\ref{nx:doc-tn7}).
  
 Đây là bài học phương pháp luận của chương, và nó nhất quán với ranh giới mà
 Chương~\ref{chap:fnn} đã vạch giữa lý thuyết xấp xỉ và lý thuyết tối ưu: những gì
@@ -1264,12 +1379,14 @@ lập luận ở Mục~\ref{ssec:ad-pytorch} --- nhưng nó có nghĩa là tuyê
 được'' chỉ chặt chẽ khi cố định \emph{cả} hạt giống, \emph{cả} số luồng và
 \emph{cả} phiên bản thư viện.
 
-\item \emph{Chặn ổn định mới được kiểm chứng ở trường hợp đơn giản nhất.}
-Mục~\ref{sec:tn6} đã kiểm chứng Mệnh đề~\ref{md:chan-on-dinh} trên bài toán
-Poisson. Nhưng Mệnh đề~\ref{md:chan-suy-bien} --- vốn mới là tầng thứ nhất của
-Bảng~\ref{tab:ba-nguyen-nhan} --- thì chưa: sự suy biến của hằng số ổn định theo
-$1/\nu$ đòi hỏi quét $\nu$ trên bài toán đối lưu--khuếch tán, và phép quét ấy
-chưa được thực hiện. Đây là bổ sung có giá trị nhất còn lại cho chương này.
+\item \emph{Không đo được hằng số ổn định ở chế độ $\nu$ rất nhỏ.}
+Mục~\ref{sec:tn7} đã quét $\nu$ trên bài toán đối lưu--khuếch tán, nhưng phép đo
+chỉ có nghĩa ở những $\nu$ mà huấn luyện đưa được phần dư xuống thấp. Tại
+$\nu = 0{,}01$ không hạt giống nào làm được điều đó, nên chính chế độ mà
+Mệnh đề~\ref{md:chan-suy-bien} nói tới lại là chế độ không kiểm chứng được bằng
+PINN. Muốn tách riêng tầng thứ nhất cần một cách khác --- chẳng hạn dựng sai số
+\emph{nhân tạo} theo hướng hàm riêng $\sin\pi x$ rồi đo trực tiếp tỉ số, thay vì
+để quá trình huấn luyện quyết định hướng của sai số.
 \end{enumerate}
  
 %==============================================================================

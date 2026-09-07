@@ -116,6 +116,10 @@ P = \sum_{\ell=1}^{L} \left( n_\ell\, n_{\ell-1} + n_\ell \right).
 \end{equation}
 \end{definition}
  
+Cách trình bày trên theo Chương 6 của Goodfellow và cộng
+sự~\cite{goodfellow2016}; Hammad~\cite{hammad2024} trình bày cùng cấu trúc với
+nhiều ví dụ tính toán chi tiết hơn, hữu ích khi đối chiếu từng bước.
+
 Các lớp $\ell = 1,\dots,L-1$ được gọi là \emph{lớp ẩn}, lớp $\ell = L$ là
 \emph{lớp ra}. Ba điểm trong Định nghĩa~\ref{def:fnn} cần được nói rõ, vì mỗi
 điểm là một lựa chọn chứ không phải một tất yếu.
@@ -905,7 +909,10 @@ Chương~\ref{chap:thucnghiem}.
 \label{subsec:yeu-cau}
  
 Trong tài liệu học sâu, việc chọn hàm kích hoạt thường được trình bày như một
-vấn đề kinh nghiệm. Trong bài toán phương trình vi phân, phần lớn lựa chọn bị
+vấn đề kinh nghiệm --- xem chẳng hạn Mục 6.2.2 của Goodfellow và cộng
+sự~\cite{goodfellow2016} hay phần khảo sát hàm kích hoạt
+của Hammad~\cite{hammad2024}, nơi các hàm được so sánh chủ yếu theo hiệu quả
+huấn luyện. Trong bài toán phương trình vi phân, phần lớn lựa chọn bị
 ràng buộc bởi các kết quả đã thiết lập ở Mục~\ref{sec:cautruc}. Tổng hợp Hệ
 quả~\ref{hq:suy-bien}, Hệ quả~\ref{hq:relu-hessian} và Định lý~\ref{dl:sobolev},
 hàm kích hoạt $\sigma$ cần thoả mãn:

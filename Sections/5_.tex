@@ -11,8 +11,8 @@ chứng đó.
 Mục tiêu không dừng ở chỗ trình bày một cài đặt chạy được. Mỗi thí nghiệm dưới
 đây được thiết kế để trả lời một câu hỏi cụ thể do Chương~\ref{chap:pinn} đặt ra,
 với tiêu chí thành công hoặc thất bại xác định \emph{trước} khi chạy. Ta báo cáo
-đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong mười hạng mục đối chiếu
-ở Mục~\ref{sec:doi-chieu}, năm khớp trọn vẹn, một khớp về hướng nhưng không về
+đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong mười hai hạng mục đối chiếu
+ở Mục~\ref{sec:doi-chieu}, bảy khớp trọn vẹn, một khớp về hướng nhưng không về
 độ lớn, \emph{hai} buộc phải siết lại cách phát biểu, một chỉ là tương quan chưa
 giải thích được, và một cho kết quả trái với kỳ vọng.
 Phần điều chỉnh được ghi rõ thay vì bỏ qua; theo quan điểm của luận văn, một kết
@@ -20,7 +20,7 @@ quả tiêu cực được phân tích đúng nguyên nhân có giá trị ngang
  
 Cấu trúc chương: Mục~\ref{sec:trienkhai} mô tả kiến trúc cài đặt trên
 PyTorch~\cite{paszke2019} và cấu hình chung. Các
-Mục~\ref{sec:tn1}--\ref{sec:tn7} trình bày bảy thí nghiệm.
+Mục~\ref{sec:tn1}--\ref{sec:tn9} trình bày chín thí nghiệm.
 Mục~\ref{sec:doi-chieu} đối chiếu toàn bộ lý thuyết với số liệu, và
 Mục~\ref{sec:hanche} nêu thẳng những hạn chế của thiết kế thực nghiệm này.
  
@@ -62,6 +62,33 @@ hằng đúng như Nhận xét~\ref{nx:chi-phi-bac-cao} dự báo. Cần lưu ý
 $\texttt{torch.ones\_like(y)}$ ở đối số thứ ba chính là vectơ mầm $\bm{w}$ trong
 định nghĩa biến liên hợp \eqref{eq:adjoint}: hàm này thực hiện một tích
 vectơ--Jacobi \eqref{eq:vjp}, không dựng ma trận Jacobi.
+
+\begin{nhanxet}[Vì sao viết lại thay vì dùng thư viện đóng gói]
+\label{nx:vi-sao-tu-viet}
+Đã có thư viện PINNs trưởng thành, tiêu biểu là DeepXDE của Lu và cộng
+sự~\cite{lu2021}. Phần~2 của bài báo ấy mô tả một thiết kế tách bài toán thành
+các thành phần độc lập --- hình học miền, đối tượng điều kiện biên, đối tượng dữ
+liệu, và một lớp mô hình lo phần huấn luyện --- rồi ghép chúng lại. Cách tổ chức ấy là đúng cho \emph{người dùng}
+phương pháp: nó giấu đi đúng những chi tiết mà luận văn này lấy làm đối tượng
+khảo sát.
+
+Ba thí nghiệm của chương này chỉ đặt ra được khi ta cầm trực tiếp các chi tiết
+đó. Thí nghiệm~\ref{tn:relu} cần đọc $\nabla_{\btheta}J_r$ \emph{trước} khi bộ
+tối ưu chạm vào nó, để thấy nó bằng đúng không. Mục~\ref{sec:tn4} và~\ref{sec:tn5} cần tách
+riêng gradient của từng thành phần mất mát ở mỗi vòng lặp --- một phép đo không
+nằm trong giao diện huấn luyện thông thường. Và cùng hai mục ấy cần
+can thiệp vào chính quy tắc cập nhật $\lambda_i$ để quan sát chế độ phản hồi
+dương của Bổ đề~\ref{bd:phan-hoi-duong}. Nói ngắn gọn: thư viện tối ưu hoá cho
+việc \emph{giải} phương trình, còn luận văn này cần quan sát \emph{cơ chế} của
+bộ giải.
+
+Điều đi vay từ~\cite{lu2021} là các quy ước đo và đối chiếu, chứ không phải mã
+nguồn: dùng sai số $L^2$ tương đối làm chỉ tiêu chính, đối chiếu thẳng với một
+bộ giải cổ điển trên cùng bài toán (Mục~\ref{sec:tn9}), và lấy phần dư làm tín
+hiệu chẩn đoán --- ý tưởng đứng sau lấy mẫu thích nghi RAR ở
+Bảng~\ref{tab:remedies}, mà Mục~\ref{sec:hanche} ghi nhận là hướng đáng thử
+trước tiên cho bài toán Burgers.
+\end{nhanxet}
  
 \subsection{Mạng nơ-ron và khởi tạo}
  
@@ -873,12 +900,19 @@ Hình~\ref{fig:tn6}(a) cho phép so sánh trực tiếp hai bài toán:
 \max\rho_b\big|_{\text{khuếch tán}} = 25{,}4,
 \label{eq:so-sanh-rho}
 \end{equation}
-tức chênh nhau $69{,}2$ lần. Quan trọng hơn con số tuyệt đối là \emph{xu hướng}:
+tức chênh nhau $69{,}2$ lần. Bên cạnh con số tuyệt đối là \emph{xu hướng}:
 với Burgers, $\rho_b$ \emph{tăng} từ $14{,}4$ tại khởi tạo lên $1\,758{,}2$ sau
-$6\,000$ vòng, trong khi với khuếch tán nó giảm. Đây đúng là điều kiện thứ hai
-trong Định nghĩa~\ref{dn:rho}, và nó chỉ xuất hiện ở bài toán cứng -- kết quả này
-xác nhận bệnh lý gradient là hiện tượng \emph{phụ thuộc bài toán}, không phải đặc
-tính cố hữu của mọi PINN.
+$6\,000$ vòng, trong khi ở lần chạy này thì với khuếch tán nó giảm. Đây đúng là
+điều kiện thứ hai trong Định nghĩa~\ref{dn:rho}, và nó chỉ xuất hiện ở bài toán
+cứng -- kết quả này xác nhận bệnh lý gradient là hiện tượng \emph{phụ thuộc bài
+toán}, không phải đặc tính cố hữu của mọi PINN.
+
+Hai phát biểu trên không có cùng độ vững, và Mục~\ref{sec:tn8} sẽ tách chúng ra.
+Tách biệt về \emph{độ lớn} lặp lại được ở cả năm hạt giống: hai khoảng giá trị
+của $\max\rho_b$ không giao nhau. Còn chiều biến thiên trên bài toán khuếch tán
+thì \emph{không}: $\rho_b$ giảm ở $3/5$ hạt giống chứ không phải $5/5$. Cách
+phát biểu đúng được nêu ở Kết quả (b) của Mục~\ref{sec:tn8}; ở đây ta ghi nhận
+trước để con số $69{,}2$ không bị đọc như một hằng số của bài toán.
  
 \textbf{Kết quả 2: cơ chế khuếch đại -- quan sát chưa có chứng minh.} Ta đo
 $\norm{\bW^{(1)}}_F$ tăng từ $1{,}83$ lên $3{,}68$, tức
@@ -888,7 +922,11 @@ hệ giữa chuẩn trọng số lớp vào và mức mất cân bằng gradient
  
 Cần nói rõ giới hạn của quan sát này. Luận văn \emph{không} có mệnh đề nào chứng
 minh $\rho_b \sim \norm{\bW^{(1)}}^2$; đây là một tương quan quan sát được trên
-một lần chạy, không phải một dự báo được kiểm chứng. Hệ số $4{,}04$ cũng không
+một lần chạy, không phải một dự báo được kiểm chứng. Và khi thực sự kiểm chứng
+nó trên năm hạt giống ở Nhận xét~\ref{nx:tuong-quan-hong}, tương quan \emph{không
+tái lập được} --- hệ số tương quan trên thang log chỉ còn $0{,}24$. Đoạn dưới đây
+vì vậy nên được đọc như một giả thuyết đã bị dữ liệu bác bỏ một phần, chứ không
+phải một quan sát đang chờ giải thích. Hệ số $4{,}04$ cũng không
 giải thích được hệ số $122$, nên nếu có một quan hệ luỹ thừa thì số mũ phải lớn
 hơn $1$ đáng kể. Một hướng giải thích khả dĩ, phù hợp với
 Mệnh đề~\ref{md:jacobian}: $\partial_{xx}u_{\btheta}$ theo truy hồi
@@ -1219,19 +1257,323 @@ dung ban đầu.
 \end{nhanxet}
 
 %==============================================================================
+\section{Thí nghiệm 8: những kết luận nào sống sót qua năm hạt giống?}
+\label{sec:tn8}
+%==============================================================================
+
+\begin{thinghiem}[Làm đúng việc mà hạn chế thứ nhất đề nghị]
+\label{tn:hatgiong}
+Hạn chế \emph{đầu tiên} mà Mục~\ref{sec:hanche} tự nêu là mọi số liệu đều đến từ
+một hạt giống duy nhất, và hệ quả thực hành được rút ra ở đó là ``các chênh lệch
+dưới hai lần không nên được coi là có ý nghĩa''. Cả hai phát biểu ấy đều chưa
+được kiểm chứng --- bản thân con số ``hai lần'' cũng chỉ là ước lượng. Thí
+nghiệm này lặp lại nguyên vẹn TN4 và TN5 trên \emph{năm} hạt giống, cho cả hai
+chiến lược trọng số, rồi hỏi một câu duy nhất: \emph{kết luận nào của chương này
+sống sót, và kết luận nào chỉ là một lần rút thăm may mắn?}
+\end{thinghiem}
+
+\textbf{Thiết lập.} Cấu hình giữ nguyên hoàn toàn so với Mục~\ref{sec:tn4} và
+Mục~\ref{sec:tn5}; chỉ hạt giống thay đổi, chạy $s \in \{0,1,2,3,4\}$. Mỗi bài
+toán chạy hai chiến lược --- trọng số cố định $\lambda_b = 1$, và ủ trọng số
+theo Thuật toán~\ref{alg:annealing} --- thành $20$ lần huấn luyện. Ta báo cáo
+\emph{trung vị} cùng \emph{khoảng} $[\min;\max]$ thay vì một giá trị.
+
+\begin{table}[H]
+\centering
+\caption[Độ phân tán của sai số giữa năm hạt giống]{Sai số $\varepsilon_{L^2}$
+trên năm hạt giống. Cột ``max/min'' là hệ số giữa lần chạy tốt nhất và tệ nhất
+của \emph{cùng} một cấu hình.}
+\label{tab:tn8-eps}
+\small
+\begin{tabular}{@{}l l r l r@{}}
+\toprule
+\textbf{Bài toán} & \textbf{Chiến lược} & \textbf{trung vị} & \textbf{khoảng}
+& \textbf{max/min} \\
+\midrule
+Khuếch tán & trọng số cố định & $1{,}57\times10^{-4}$
+  & $[1{,}14;\ 2{,}68]\times10^{-4}$ & $2{,}4$ \\
+Khuếch tán & ủ trọng số       & $3{,}66\times10^{-3}$
+  & $[2{,}22;\ 6{,}22]\times10^{-3}$ & $2{,}8$ \\
+\addlinespace
+Burgers    & trọng số cố định & $1{,}38\times10^{-1}$
+  & $[7{,}93\times10^{-3};\ 2{,}09\times10^{-1}]$ & $\mathbf{26{,}4}$ \\
+Burgers    & ủ trọng số       & $3{,}64\times10^{-1}$
+  & $[3{,}44;\ 3{,}96]\times10^{-1}$ & $1{,}1$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Kết quả (a): độ phân tán tự nó phụ thuộc bài toán, và trên Burgers thì
+rất lớn.} Với bài toán khuếch tán, hệ số $2{,}4$ giữa lần chạy tốt nhất và tệ
+nhất xác nhận đúng ngưỡng ``hai lần'' mà Mục~\ref{sec:hanche} đoán. Với Burgers
+thì không: hệ số là $26{,}4$ --- hạt giống $4$ cho
+$\varepsilon_{L^2} = 7{,}93\times10^{-3}$ còn hạt giống $1$ cho
+$2{,}09\times10^{-1}$, trên \emph{cùng} một cấu hình, \emph{cùng} một số vòng
+lặp. Ngưỡng đọc số của chương này vì thế phải khác nhau theo bài toán: khoảng ba
+lần với khuếch tán, và \emph{một bậc độ lớn} với Burgers.
+
+\begin{table}[H]
+\centering
+\caption[Chỉ số mất cân bằng gradient trên năm hạt giống]{Chỉ số $\rho_b$ ở
+chiến lược trọng số cố định. ``Đúng chiều'' đếm số hạt giống mà $\rho_b$ biến
+thiên theo chiều mà Mục~\ref{sec:tn5} kết luận: \emph{tăng} với Burgers,
+\emph{giảm} với khuếch tán.}
+\label{tab:tn8-rho}
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}l r l r l c@{}}
+\toprule
+\textbf{Bài toán} & \multicolumn{2}{c}{$\max\rho_b$}
+& \multicolumn{2}{c}{$\rho_b$ cuối$/$đầu} & \textbf{đúng chiều} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+& trung vị & khoảng & trung vị & khoảng & \\
+\midrule
+Khuếch tán & $29{,}0$   & $[19{,}5;\ 96{,}5]$   & $0{,}60$ & $[0{,}41;\ 1{,}26]$
+  & $\mathbf{3/5}$ \\
+Burgers    & $1\,374$   & $[603;\ 4\,070]$      & $58{,}1$ & $[13{,}2;\ 236]$
+  & $5/5$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Kết quả (b): tách biệt về \emph{độ lớn} thì sống sót, tách biệt về
+\emph{chiều} thì không.} Hai khoảng của $\max\rho_b$ không giao nhau: giá trị
+lớn nhất của khuếch tán là $96{,}5$, còn giá trị nhỏ nhất của Burgers là $603$.
+Kết luận ``bệnh lý gradient chỉ xuất hiện ở bài toán cứng'' vì vậy vững, với hệ
+số cách biệt ít nhất $6$ lần và trung vị $47$ lần --- con số $69{,}2$ ở
+\eqref{eq:so-sanh-rho} nằm trong khoảng ấy, nhưng bản thân \emph{tỉ số} cũng
+trải từ $6$ tới $209$ lần tuỳ cặp hạt giống.
+
+Ngược lại, phát biểu về \emph{chiều} chỉ đúng một nửa. Với Burgers, $\rho_b$
+tăng ở cả $5/5$ hạt giống, trung vị tăng $58$ lần --- vững chắc. Với khuếch tán,
+$\rho_b$ \emph{giảm} chỉ ở $3/5$ hạt giống; hai hạt giống còn lại cho $\rho_b$
+tăng nhẹ (hệ số tới $1{,}26$). Cách nói ``xu hướng ngược nhau'' ở
+Mục~\ref{sec:tn5} do đó phải được siết lại thành: \emph{với bài toán cứng
+$\rho_b$ tăng mạnh và đơn điệu; với bài toán lành mạnh nó chỉ dao động quanh giá
+trị khởi tạo, không có xu hướng rõ rệt.}
+
+\textbf{Kết quả (c): ủ trọng số thất bại ở $10/10$ lần chạy.} Đây là kết quả
+vững nhất của chương. Với khuếch tán, ủ trọng số làm sai số xấu đi trung vị
+$19{,}6$ lần $[12{,}8;\ 39{,}7]$; với Burgers, trung vị $2{,}5$ lần
+$[1{,}8;\ 45{,}9]$. Không có \emph{một} cặp đối chứng nào trong mười cặp mà ủ
+trọng số tốt hơn trọng số cố định.
+
+Chi tiết đáng chú ý nhất nằm ở cột ``max/min'' của
+Bảng~\ref{tab:tn8-eps}: trên Burgers, ủ trọng số \emph{giảm} độ phân tán từ
+$26{,}4$ xuống $1{,}1$ trong khi nâng sai số lên. Nó hội tụ rất \emph{đáng tin
+cậy} về một nghiệm tồi. Điều này khớp chính xác với
+Bổ đề~\ref{bd:phan-hoi-duong}: $\lambda_b$ chạy tới $3{,}7\times10^{4}$ --
+$1{,}4\times10^{5}$ ở mọi hạt giống, tại đó số hạng phần dư trong
+\eqref{eq:total-loss} bị át hoàn toàn, nên mạng thực chất chỉ còn khớp điều kiện
+biên --- một bài toán dễ, ít phụ thuộc khởi tạo, và sai.
+
+\begin{nhanxet}[Một tương quan không tái lập được]
+\label{nx:tuong-quan-hong}
+Mục~\ref{sec:tn5} ghi nhận rằng $\norm{\bW^{(1)}}_F^2$ và $\rho_b$ cùng tăng, và
+nói rõ đó là ``một tương quan quan sát được trên một lần chạy''. Năm hạt giống
+cho phép kiểm tra chính điều đó, và câu trả lời là \emph{không}:
+
+\begin{center}
+\small
+\begin{tabular}{@{}l r r r r r@{}}
+\toprule
+hạt giống & $0$ & $1$ & $2$ & $3$ & $4$ \\
+\midrule
+$\big(\norm{\bW^{(1)}}_{\text{cuối}}/\norm{\bW^{(1)}}_{\text{đầu}}\big)^2$
+  & $3{,}44$ & $5{,}32$ & $4{,}37$ & $2{,}30$ & $4{,}16$ \\
+$\rho_b$ cuối$/$đầu
+  & $39{,}8$ & $235{,}7$ & $13{,}2$ & $58{,}1$ & $68{,}0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Hệ số tương quan trên thang log chỉ là $0{,}24$. Hạt giống $2$ có mức tăng chuẩn
+trọng số lớn thứ hai nhưng mức tăng $\rho_b$ \emph{nhỏ nhất}; hạt giống $3$ có
+mức tăng chuẩn trọng số nhỏ nhất nhưng mức tăng $\rho_b$ vẫn nằm giữa bảng. Với $n = 5$ ta không kết luận là \emph{không có} quan hệ, nhưng kết
+luận được điều cần thiết: \emph{dữ liệu hiện có không ủng hộ quan hệ ấy}, và
+việc nó trông thuyết phục ở Mục~\ref{sec:tn5} là do chỉ nhìn một hạt giống. Đây
+đúng là chế độ hỏng mà Nhận xét~\ref{nx:doi-xung-hoan-vi} cảnh báo, quan sát
+được ngay trong chính luận văn này.
+\end{nhanxet}
+
+\begin{nhanxet}[Quy tắc đọc lại toàn chương]
+\label{nx:doc-tn8}
+Thí nghiệm này thay ngưỡng ``hai lần'' của Mục~\ref{sec:hanche} bằng một quy tắc
+đo được, và ngưỡng ấy \emph{phụ thuộc bài toán}: chênh lệch dưới khoảng ba lần
+trên bài toán khuếch tán, và dưới khoảng một bậc độ lớn trên bài toán Burgers,
+không nên được coi là có ý nghĩa nếu chỉ dựa trên một hạt giống.
+
+Áp quy tắc ấy vào Bảng~\ref{tab:doi-chieu}: mọi kết luận ở đó dựa trên chênh
+lệch từ một bậc độ lớn trở lên đều đứng vững, trừ hai chỗ đã nêu --- phát biểu
+về chiều biến thiên của $\rho_b$ trên bài toán lành mạnh, và quan hệ
+$\rho_b$--$\norm{\bW^{(1)}}^2$. Riêng con số $\varepsilon_{L^2}$ của Burgers cần
+được đọc như một \emph{khoảng} chứ không phải một giá trị: giá trị
+$2{,}84\times10^{-2}$ mà Mục~\ref{sec:tn5} báo cáo nằm trong khoảng năm hạt
+giống, nhưng ở phía thuận lợi của nó, và trung vị là $1{,}38\times10^{-1}$.
+
+Bài học phương pháp luận thì rộng hơn một chương: \emph{chi phí của việc lặp năm
+hạt giống là hai mươi lần huấn luyện, tức khoảng một giờ máy; cái giá của việc
+không lặp là hai kết luận sai.}
+\end{nhanxet}
+
+%==============================================================================
+\section{Thí nghiệm 9: chi phí tính toán thực đo}
+\label{sec:tn9}
+%==============================================================================
+
+\begin{thinghiem}[Đo chi phí, và đối chiếu với phương pháp cổ điển]
+\label{tn:chiphi}
+Mục tiêu \textbf{MT4} ở Mục~\ref{subsec:mt-cu-the} hứa báo cáo ``chi phí
+tính toán thực đo'', nhưng tới đây chương thực nghiệm chưa đưa ra một con số
+thời gian nào. Thí nghiệm này trả nốt lời hứa đó, đồng thời kiểm chứng hai dự
+báo định lượng của Chương~\ref{chap:autodiff} --- Mệnh đề~\ref{md:chi-phi-bp}
+($c \le 3$) và Nhận xét~\ref{nx:chi-phi-bac-cao} (đồ thị tối ưu dài gấp bốn đến
+sáu lần đồ thị xuôi) --- và trả lời câu hỏi mà một phép đối chiếu với phương
+pháp cổ điển bắt buộc phải trả lời, theo đúng lối lập bảng của công trình
+gốc~\cite{raissi2019} và của DeepXDE~\cite{lu2021}: \emph{với chính bài toán
+này, PINN có rẻ hơn một bộ giải cổ điển không?}
+\end{thinghiem}
+
+\textbf{Thiết lập.} Mọi phép đo chạy trên cùng một máy, cùng một tiến trình, với
+\texttt{OMP\_NUM\_THREADS=1} để loại bỏ dao động do số luồng
+(xem Phụ lục~\ref{app:code}). Bài toán là Burgers của Mục~\ref{sec:tn5}
+($\nu = 0{,}01/\pi$), mạng $[2, 32, 32, 32, 32, 1]$ với $P = 3\,297$ tham số,
+$N_r = 2\,500$ điểm phối trí. Mỗi số là trung bình của $20$ lần gọi sau ba lần
+làm nóng.
+
+\textbf{Kết quả (a): chi phí một bước.} Tách một bước huấn luyện thành ba mức
+chồng lên nhau.
+
+\begin{table}[H]
+\centering
+\caption[Chi phí một bước huấn luyện PINN]{Chi phí một bước huấn luyện, tách
+theo ba mức. Cột cuối là bội số so với lượt xuôi thuần tuý.}
+\label{tab:tn9-buoc}
+\small
+\begin{tabular}{@{}l r r@{}}
+\toprule
+\textbf{Mức} & \textbf{Thời gian} & \textbf{Bội số} \\
+\midrule
+Lượt xuôi thuần tuý $u_{\btheta}(X)$        & $2{,}81$ ms  & $1{,}00$ \\
+$+$ đạo hàm bậc hai theo $x$ (tính $J_r$)   & $11{,}50$ ms & $4{,}10$ \\
+$+$ gradient theo tham số (bước đầy đủ)     & $30{,}35$ ms & $10{,}81$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Hai dự báo lý thuyết đều khớp.
+
+\emph{Nhận xét~\ref{nx:chi-phi-bac-cao} dự báo bốn đến sáu lần; đo được
+$4{,}10$.} Đây đúng là đại lượng mà nhận xét nói tới: tỉ số giữa đồ thị có đạo
+hàm bậc hai và đồ thị xuôi thuần tuý, cho phương trình bậc hai.
+
+\emph{Mệnh đề~\ref{md:chi-phi-bp} dự báo $c \le 3$; đo được $c = 2{,}64$.}
+Hằng số $c$ của mệnh đề là tỉ số giữa chi phí lấy $\nabla_{\btheta}J$ và chi phí
+đánh giá $J$ --- ở đây là $30{,}35 / 11{,}50 = 2{,}64$, chứ không phải bội số
+$10{,}81$ ở cột cuối. Lấy riêng lượt ngược thì hết $18{,}85$ ms, tức $1{,}64$
+lần đồ thị mà nó phải đi ngược. Con số $10{,}81$ là \emph{tích} của hai hiệu
+ứng: đạo hàm bậc cao kéo dài đồ thị $4{,}10$ lần, rồi lan truyền ngược nhân
+tiếp $2{,}64$ lần. Đây là dạng định lượng của điều
+Nhận xét~\ref{nx:chi-phi-bac-cao} phát biểu định tính --- một bước PINN đắt hơn
+hẳn một bước hồi quy cùng kích thước mạng.
+
+\textbf{Kết quả (b): PINN so với sai phân hữu hạn.} Câu hỏi thật sự nằm ở đây.
+Cấu hình trọng số cố định của Mục~\ref{sec:tn5} chạy $6\,000$ vòng Adam và $800$
+vòng L-BFGS trong $183{,}6$ giây, đạt $\varepsilon_{L^2} = 8{,}19\times10^{-2}$.
+Ta hỏi: bộ giải sai phân hữu hạn của Mục~\ref{sec:tn5} cần bao lâu để
+đạt \emph{cùng} mức sai số ấy?
+
+\begin{table}[H]
+\centering
+\caption[Chi phí PINN so với sai phân hữu hạn]{Chi phí để đạt cùng mức sai số
+trên bài toán Burgers. Sai số của cả hai đo so với cùng một nghiệm tham chiếu
+$N_x = 2\,047$.}
+\label{tab:tn9-fd}
+\small
+\begin{tabular}{@{}l r r@{}}
+\toprule
+\textbf{Phương pháp} & \textbf{Thời gian} & $\varepsilon_{L^2}$ \\
+\midrule
+PINN, $6\,000$ Adam $+\ 800$ L-BFGS   & $183{,}6$ s & $8{,}19\times10^{-2}$ \\
+Sai phân hữu hạn, $N_x = 63$          & $0{,}97$ s  & $7{,}24\times10^{-2}$ \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\emph{PINN chậm hơn $189$ lần ở cùng mức sai số.}} \\
+\midrule
+Nghiệm tham chiếu, $N_x = 2\,047$     & $2{,}13$ s  & --- (chuẩn) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Hàng cuối bảng đáng dừng lại: chính nghiệm tham chiếu --- lời giải chính xác
+nhất của bài toán Burgers trong toàn chương này, cái chuẩn dùng để chấm điểm mọi
+kết quả PINN --- được tính trong $2{,}13$ giây, tức nhanh hơn $86$ lần so với
+thời gian PINN cần để đạt sai số $8\%$.
+
+Hơn nữa, tỉ số $189$ là ước lượng \textbf{có lợi cho PINN}. Bộ giải sai phân
+dùng bước thời gian cố định $\Delta t = 5\times10^{-5}$, chọn cho lưới
+$N_x = 2\,047$ để thoả điều kiện ổn định; với $N_x = 63$ thì bước ấy nhỏ hơn
+mức cần thiết hàng bậc, nên $0{,}97$ giây còn xa mới là chi phí tối thiểu. Ta
+không tinh chỉnh xuống nữa, vì con số đã đủ nói lên điều cần nói.
+
+\begin{nhanxet}[Đọc kết quả này cho đúng: PINN thua ở đâu và vì sao không mâu
+thuẫn]
+\label{nx:doc-tn9}
+Kết quả (b) là kết quả bất lợi rõ rệt nhất cho PINNs trong toàn luận văn, và nó
+cần được đặt đúng chỗ.
+
+Mục~\ref{subsec:gioi-han-co-dien} nêu \emph{ba} động lực cho hướng tiếp cận PINNs: bài
+toán ngược, điều kiện biên khuyết hoặc nhiễu, và lời nguyền số chiều. Không động
+lực nào trong ba là ``rẻ hơn ở chiều thấp''. Bài toán Burgers một chiều với điều
+kiện đầu và điều kiện biên cho đầy đủ, chính xác, trên một hình chữ nhật, là bài
+toán \emph{thuận}, \emph{đủ dữ liệu}, ở $d = 1$ --- tức nằm ngoài cả ba động
+lực, và đúng vào chế độ mà sai phân hữu hạn gần như tối ưu. Vậy nên kết quả này
+không mâu thuẫn với Chương~\ref{chap:modau}; nó \emph{định lượng phạm vi} của
+chương ấy. Điều nó bác bỏ là một cách đọc sai --- khá phổ biến --- rằng PINNs là
+một bộ giải phương trình vi phân nhanh hơn.
+
+Ba lợi thế mà phép đo này \emph{không} bắt được, và vì vậy không được coi là đã
+bị phủ nhận: (i) chi phí lưới tăng theo $\mathcal{O}(N^d)$, nên tỉ số $189$ ở
+$d=1$ có thể đảo chiều khi $d$ lớn --- đây chính là nội dung
+Nhận xét~\ref{nx:loi-nguyen}, một lập luận tiệm cận theo $d$ chứ không phải một
+phép đo; (ii) PINN cho một hàm khả vi mọi nơi, trong khi sai phân cho giá trị
+trên lưới --- tuy ở mức sai số $8\%$ thì lợi thế này mỏng, vì nội suy lưới sai
+phân rẻ hơn nhiều; (iii) bài toán ngược chỉ cần thêm một số hạng vào hàm mục
+tiêu, trong khi phương pháp cổ điển đòi hỏi cả một bộ máy liên hợp
+(Mục~\ref{subsec:thuan-nguoc}).
+
+Kết luận trung thực là: \emph{trên lớp bài toán mà luận văn này thực nghiệm,
+PINNs đắt hơn hai bậc so với phương pháp cổ điển ở cùng độ chính xác; giá trị
+của phương pháp phải được biện minh bằng ba động lực ở
+Mục~\ref{subsec:gioi-han-co-dien}, không bằng chi phí.} Mọi thí nghiệm của chương này
+đều nằm ngoài ba động lực ấy --- đó là một hạn chế của thiết kế thực nghiệm, ghi
+ở Mục~\ref{sec:hanche}, chứ không phải một phát hiện về phương pháp.
+\end{nhanxet}
+
+%==============================================================================
 \section{Đối chiếu lý thuyết và thực nghiệm}
 \label{sec:doi-chieu}
 %==============================================================================
  
-\begin{table}[H]
-\centering
-\caption{Đối chiếu giữa các kết quả lý thuyết và số liệu đo được.}
-\label{tab:doi-chieu}
+\begingroup
 \small
-\begin{tabular}{@{}p{2.9cm}p{3.7cm}p{3.9cm}p{3.0cm}@{}}
+\setlength{\LTcapwidth}{\textwidth}
+\begin{longtable}{@{}p{2.9cm}p{3.7cm}p{3.9cm}p{3.0cm}@{}}
+\caption{Đối chiếu giữa các kết quả lý thuyết và số liệu đo được.}
+\label{tab:doi-chieu} \\
 \toprule
 \textbf{Kết quả} & \textbf{Dự báo} & \textbf{Đo được} & \textbf{Kết luận} \\
 \midrule
+\endfirsthead
+\multicolumn{4}{@{}l}{\emph{Bảng~\thetable{} (tiếp theo)}} \\
+\toprule
+\textbf{Kết quả} & \textbf{Dự báo} & \textbf{Đo được} & \textbf{Kết luận} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r@{}}{\emph{(xem tiếp trang sau)}} \\
+\endfoot
+\bottomrule
+\endlastfoot
 Hệ quả~\ref{hq:pinn-hong}
 & $\nabla_{\btheta}J_r \equiv \bm{0}$ với ReLU
 & $\norm{\nabla J_r}_\infty = 0{,}0$; $J_r = 776{,}23$ so với $778{,}49$ trên
@@ -1247,8 +1589,10 @@ Mục~\ref{subsec:adam-vs-lbfgs}
 & \textbf{Khớp} \\[4pt]
 Định nghĩa~\ref{dn:rho}
 & bệnh lý chỉ ở bài toán cứng
-& $\rho_b$: $1\,758$ (Burgers) so với $25{,}4$ (khuếch tán); xu hướng ngược nhau
-& \textbf{Khớp} \\[4pt]
+& $\max\rho_b$ trên năm hạt giống: $[603;\ 4\,070]$ (Burgers) so với
+  $[19{,}5;\ 96{,}5]$ (khuếch tán), hai khoảng không giao nhau
+& \textbf{Khớp} về độ lớn; chiều biến thiên chỉ vững ở bài toán cứng
+  (Mục~\ref{sec:tn8}) \\[4pt]
 Giả thuyết \eqref{eq:pho-hieu-dung}
 & phần dư ưu tiên $k$ cao
 & $\abs{c_1}/\abs{c_8} = 38{,}6$; thứ tự học đảo chiều so với hồi quy
@@ -1259,11 +1603,13 @@ Mục~\ref{subsec:he-qua-pinn}
 & \textbf{Cần siết lại} (Nhận xét~\ref{nx:hieu-chinh}) \\[4pt]
 Quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$
 & (không có mệnh đề)
-& $\norm{\bW^{(1)}}^2$ tăng $4{,}04$ lần, $\rho_b$ tăng $122$ lần
-& \textbf{Tương quan}, chưa giải thích \\[4pt]
+& thuyết phục trên một hạt giống, nhưng tương quan log trên năm hạt giống chỉ
+  còn $0{,}24$
+& \textbf{Không tái lập được} (Nhận xét~\ref{nx:tuong-quan-hong}) \\[4pt]
 Thuật toán~\ref{alg:annealing}
 & cân bằng biên độ gradient
-& làm xấu $35{,}6$ lần (khuếch tán), $15{,}9$ lần (Burgers)
+& làm xấu ở $10/10$ lần chạy: trung vị $19{,}6$ lần (khuếch tán), $2{,}5$ lần
+  (Burgers)
 & \textbf{Có chế độ hỏng} (Bổ đề~\ref{bd:phan-hoi-duong}) \\[4pt]
 Mệnh đề~\ref{md:chan-on-dinh}
 & $\norm{e}_{L^2}\le \pi^{-2}\norm{r}_{L^2}$ khi điều kiện biên thoả chính xác
@@ -1275,37 +1621,51 @@ Mệnh đề~\ref{md:chan-suy-bien}
 & chặn đúng $15/15$; nhưng số mũ của tỉ số quan sát được là
   $-0{,}730 / -0{,}237 / +0{,}049$ tuỳ hạt giống, và $0/3$ hạt giống hội tụ tại
   $\nu = 0{,}01$
-& \textbf{Chặn khớp, cơ chế không} (Nhận xét~\ref{nx:doc-tn7}) \\
-\bottomrule
-\end{tabular}
-\end{table}
+& \textbf{Chặn khớp, cơ chế không} (Nhận xét~\ref{nx:doc-tn7}) \\[4pt]
+Mệnh đề~\ref{md:chi-phi-bp}
+& $\mathrm{cost}(\nabla_{\btheta}J) \le c\cdot\mathrm{cost}(J)$ với $c\le 3$
+& $c = 30{,}35/11{,}50 = 2{,}64$
+& \textbf{Khớp} \\[4pt]
+Nhận xét~\ref{nx:chi-phi-bac-cao}
+& đồ thị tối ưu dài gấp $4$--$6$ lần đồ thị xuôi
+& bội số đo được $4{,}10$
+& \textbf{Khớp}
+\end{longtable}
+\endgroup
  
-Trong mười hạng mục: năm khớp trọn vẹn, một khớp về hướng nhưng không rút được
-kết luận định lượng, \emph{hai} cần siết lại cách phát biểu, một chỉ là tương
-quan chưa giải thích được, và một cho kết quả tiêu cực nhưng đã truy được nguyên
-nhân.
- 
+Trong mười hai hạng mục: sáu khớp trọn vẹn, một khớp về hướng nhưng không rút
+được kết luận định lượng, \emph{ba} cần siết lại cách phát biểu, một không tái
+lập được trên năm hạt giống, và một cho kết quả tiêu cực nhưng đã truy được
+nguyên nhân.
+
 Mức khớp này ủng hộ khung lý thuyết của Chương~\ref{chap:pinn} một cách
-\emph{có điều kiện}, và điều kiện ấy đáng được nêu rõ: bốn trong năm hạng mục
-khớp trọn vẹn tương ứng với một mệnh đề \emph{đã được chứng minh}
-(Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:phat-bien-phat},
-Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh}); hạng mục còn lại dựa trên
-Định nghĩa~\ref{dn:rho}, vốn là một \emph{tiêu chí chẩn đoán} do luận văn đặt ra
-chứ không phải một mệnh đề, nên nó kiểm chứng tính hữu dụng của tiêu chí chứ
-không kiểm chứng một dự báo lý thuyết. Ngược lại, cả ba hạng mục có vấn đề đều
-tương ứng với những chỗ luận văn dùng \emph{suy luận tiệm cận}, \emph{ghép hai
-kết quả rời rạc}, hoặc đọc một \emph{chặn trên} như thể nó là cơ chế đang vận
-hành:
-giả thuyết \eqref{eq:pho-hieu-dung} ghép $\abs{P}^2$ với
-$\widehat{\varkappa}$; kết luận ở Mục~\ref{subsec:he-qua-pinn} ngầm giả định thừa
-số nào thắng; quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$ không có chứng minh nào cả; và tầng thứ
-nhất của Bảng~\ref{tab:ba-nguyen-nhan} đọc hằng số của một chặn trên như thể nó
-là cơ chế quyết định (Nhận xét~\ref{nx:doc-tn7}).
- 
+\emph{có điều kiện}, và điều kiện ấy hiện ra rất rõ khi xếp mười hai hạng mục
+theo \emph{nguồn gốc} của phát biểu thay vì theo kết quả.
+
+\emph{Năm trong sáu hạng mục khớp trọn vẹn tương ứng với một mệnh đề đã được
+chứng minh}: Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:phat-bien-phat},
+Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh} và
+Mệnh đề~\ref{md:chi-phi-bp}. Hạng mục thứ sáu dựa trên
+Nhận xét~\ref{nx:chi-phi-bac-cao}, một ước lượng bậc độ lớn --- và nó khớp đúng
+ở mức mà một ước lượng bậc độ lớn có quyền đòi hỏi.
+
+\emph{Ngược lại, không một hạng mục có vấn đề nào tương ứng với một mệnh đề đã
+chứng minh.} Cả năm đều đến từ một trong ba kiểu suy luận yếu hơn. Kiểu thứ
+nhất, \emph{ghép hai kết quả rời rạc}: giả thuyết \eqref{eq:pho-hieu-dung} nhân
+$\abs{P}^2$ với $\widehat{\varkappa}$, và kết luận ở Mục~\ref{subsec:he-qua-pinn}
+ngầm giả định thừa số nào thắng. Kiểu thứ hai, \emph{đọc một chặn trên như thể
+nó là cơ chế đang vận hành}: tầng thứ nhất của Bảng~\ref{tab:ba-nguyen-nhan}
+(Nhận xét~\ref{nx:doc-tn7}). Kiểu thứ ba, \emph{khái quát hoá từ một lần chạy}:
+quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$ không có chứng minh nào cả và không sống
+sót qua năm hạt giống (Nhận xét~\ref{nx:tuong-quan-hong}), còn phát biểu về
+chiều biến thiên của $\rho_b$ trên bài toán lành mạnh chỉ đúng ở $3/5$ hạt
+giống (Mục~\ref{sec:tn8}).
+
 Đây là bài học phương pháp luận của chương, và nó nhất quán với ranh giới mà
 Chương~\ref{chap:fnn} đã vạch giữa lý thuyết xấp xỉ và lý thuyết tối ưu: những gì
 được chứng minh thì đứng vững, những gì được suy đoán thì cần kiểm chứng trước khi
-dùng.
+dùng --- và ``kiểm chứng'' ở đây có nghĩa cụ thể là \emph{nhiều hơn một hạt
+giống}.
  
 %==============================================================================
 \section{Hạn chế của thiết kế thực nghiệm}
@@ -1315,15 +1675,18 @@ dùng.
 Để các kết luận trên được đọc đúng phạm vi, cần nêu rõ những hạn chế sau.
  
 \begin{enumerate}[label=(\arabic*),leftmargin=2.2em,itemsep=4pt]
-\item \emph{Một hạt giống ngẫu nhiên duy nhất.} Mọi lần chạy dùng một hạt giống cố
-định để tái lập được, nên không có ước lượng độ phân tán giữa các lần khởi tạo.
-Đây là vi phạm trực tiếp nguyên tắc đã nêu ở Nhận xét~\ref{nx:doi-xung-hoan-vi}:
-với ít nhất $2^{n_1}n_1!$ cực tiểu tương đương, một kết quả tốt từ một hạt giống
-may mắn không phải bằng chứng về phương pháp. Hệ quả thực hành cho việc đọc chương
-này: các chênh lệch dưới hai lần trong bảng số liệu \emph{không nên} được coi là
-có ý nghĩa; mọi kết luận ở Mục~\ref{sec:doi-chieu} đều dựa trên chênh lệch từ một
-bậc độ lớn trở lên. Khắc phục đúng cách là lặp mỗi cấu hình trên $5$--$10$ hạt
-giống và báo cáo trung vị cùng khoảng phân vị.
+\item \emph{Chỉ hai trong năm bài toán được lặp trên nhiều hạt giống.} Nguyên tắc
+ở Nhận xét~\ref{nx:doi-xung-hoan-vi} --- với ít nhất $2^{n_1}n_1!$ cực tiểu tương
+đương, một kết quả tốt từ một hạt giống may mắn không phải bằng chứng về phương
+pháp --- được thực hiện ở Mục~\ref{sec:tn8} cho TN4 và TN5, và ở
+Mục~\ref{sec:tn7} cho phép quét $\nu$ (ba hạt giống). Các mục còn lại thì không:
+TN1 và TN2 dùng lưới tất định nên vấn đề nhẹ hơn, nhưng \emph{TN3 dùng lấy mẫu
+ngẫu nhiên và vẫn chỉ có một hạt giống}. Hệ số $161$ lần của nhúng đặc trưng
+Fourier ở Mục~\ref{sec:tn3} vì vậy chưa có khoảng tin cậy nào, và theo ngưỡng đo
+được ở Nhận xét~\ref{nx:doc-tn8} thì một hệ số $161$ lần đủ lớn để không thể là
+nhiễu hạt giống, nhưng \emph{giá trị} $161$ thì không nên được trích dẫn như một
+con số. Khắc phục là chạy nốt TN3 trên năm hạt giống, đúng quy trình của
+Mục~\ref{sec:tn8}.
  
 \item \emph{Ngân sách huấn luyện hạn chế.} Toàn bộ thí nghiệm chạy trên một lõi
 CPU, với $4\,000$--$8\,000$ vòng Adam, so với bậc $10^5$ vòng thường dùng trong
@@ -1387,6 +1750,19 @@ Mệnh đề~\ref{md:chan-suy-bien} nói tới lại là chế độ không ki�
 PINN. Muốn tách riêng tầng thứ nhất cần một cách khác --- chẳng hạn dựng sai số
 \emph{nhân tạo} theo hướng hàm riêng $\sin\pi x$ rồi đo trực tiếp tỉ số, thay vì
 để quá trình huấn luyện quyết định hướng của sai số.
+
+\item \emph{Mọi bài toán thực nghiệm đều nằm ngoài ba động lực của
+Mục~\ref{subsec:gioi-han-co-dien}.} Mọi bài toán trong chương này đều là bài
+toán \emph{thuận}, một chiều theo không gian, với dữ liệu biên và dữ liệu đầu
+cho đầy đủ và không nhiễu --- tức không chạm tới bài toán ngược, không chạm tới
+điều kiện biên khuyết, và không chạm tới lời nguyền số chiều. Đây chính là chế
+độ mà phương pháp lưới cổ điển gần như tối ưu, và Mục~\ref{sec:tn9} đo được cái
+giá của việc đó: chậm hơn $189$ lần ở cùng mức sai số. Hệ quả cho cách đọc
+chương này: các thí nghiệm ở đây kiểm chứng \emph{cơ chế} của PINNs --- vai trò
+hàm kích hoạt, cái giá của ràng buộc mềm, thiên kiến phổ, bệnh lý gradient, các
+chặn ổn định --- chứ không kiểm chứng \emph{tính cạnh tranh} của phương pháp.
+Muốn kiểm chứng điều sau cần ít nhất một bài toán nhiều chiều hoặc một bài toán
+ngược, là hướng nêu ở Chương~\ref{chap:ketluan}.
 \end{enumerate}
  
 %==============================================================================
@@ -1407,9 +1783,10 @@ Về mặt \emph{kiểm chứng}, ba kết quả nổi bật. Thứ nhất,
 Hệ quả~\ref{hq:pinn-hong} được xác nhận tới từng chữ số máy: mạng ReLU cho
 gradient bằng đúng không, chứng tỏ điều kiện $\sigma \in C^m$ là bắt buộc chứ
 không phải khuyến nghị. Thứ hai, bệnh lý gradient được chứng minh là hiện tượng
-\emph{phụ thuộc bài toán}: $\rho_b$ chênh nhau $69$ lần giữa Burgers và khuếch
-tán, và quan trọng hơn là ngược chiều xu hướng -- nên việc chẩn đoán trước khi can
-thiệp là bắt buộc. Thứ ba, giả thuyết \eqref{eq:pho-hieu-dung} được xác nhận theo
+\emph{phụ thuộc bài toán}: trên năm hạt giống, $\max\rho_b$ của Burgers nằm trong
+$[603;\ 4\,070]$ còn của khuếch tán trong $[19{,}5;\ 96{,}5]$ -- hai khoảng
+không giao nhau, nên việc chẩn đoán trước khi can thiệp là bắt buộc. Ngược lại,
+phát biểu về \emph{chiều} biến thiên chỉ vững ở bài toán cứng. Thứ ba, giả thuyết \eqref{eq:pho-hieu-dung} được xác nhận theo
 cách bất ngờ nhất: toán tử vi phân \emph{đảo ngược} thiên kiến phổ, khiến sai số
 dồn về mode tần số thấp; phát hiện này buộc phải siết lại cách phát biểu ở
 Mục~\ref{subsec:he-qua-pinn}.
@@ -1424,7 +1801,17 @@ Bổ đề~\ref{bd:phan-hoi-duong} chứng minh rằng quy tắc \eqref{eq:lambd
 chế độ phản hồi dương với tốc độ phân kỳ $\hat\lambda_i \sim J_i^{-1/2}$ và không
 có cơ chế tự hãm.
  
+Về mặt \emph{thực hành}, hai phép đo cuối chương trả lời hai câu hỏi mà các mục
+trước để ngỏ, và cả hai câu trả lời đều khiêm tốn hơn kỳ vọng. Mục~\ref{sec:tn8}
+lặp TN4 và TN5 trên năm hạt giống và cho thấy độ phân tán tự nó phụ thuộc bài
+toán: hệ số $2{,}4$ giữa lần chạy tốt nhất và tệ nhất trên bài toán khuếch tán,
+nhưng $26{,}4$ trên Burgers --- đủ để loại bỏ một tương quan mà chương này từng
+ghi nhận (Nhận xét~\ref{nx:tuong-quan-hong}). Mục~\ref{sec:tn9} đo chi phí và
+cho con số bất lợi nhất của luận văn: PINN chậm hơn sai phân hữu hạn $189$ lần ở
+cùng mức sai số, trên đúng lớp bài toán mà cả ba động lực của
+Mục~\ref{subsec:gioi-han-co-dien} đều vắng mặt.
+
 Kết quả cuối cùng ấy minh hoạ đúng vai trò của chương: bước kiểm chứng số không
 chỉ xác nhận hay bác bỏ lý thuyết đã có, mà còn chỉ ra chỗ lý thuyết cần được bổ
-sung.
+sung -- và chỉ ra cả chỗ mà chính chương thực nghiệm đã kết luận vội.
  

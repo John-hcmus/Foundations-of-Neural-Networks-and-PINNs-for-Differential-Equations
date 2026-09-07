@@ -29,13 +29,19 @@ hợp \emph{ba nguyên nhân độc lập, nằm ở ba tầng khác nhau}, cùn
 giảm trên đúng lớp bài toán có thang độ dài nhỏ (Bảng~\ref{tab:ba-nguyen-nhan}).
 
 Phần thực nghiệm cài đặt PINNs bằng PyTorch, không dùng thư viện đóng gói sẵn,
-và kiểm chứng từng phát biểu lý thuyết bằng bảy thí nghiệm có tiêu chí thành bại
+và kiểm chứng từng phát biểu lý thuyết bằng chín thí nghiệm có tiêu chí thành bại
 xác định trước. Kết quả được đối chiếu với lý thuyết ở
 Bảng~\ref{tab:doi-chieu}. Luận văn báo cáo đầy đủ cả những kết quả không đạt kỳ
 vọng: một kết quả buộc phải siết lại cách phát biểu của chính chương lý thuyết
 (Nhận xét~\ref{nx:hieu-chinh}), và một kết quả tiêu cực về thuật toán cân bằng
 trọng số đã dẫn tới một chứng minh mới về chế độ phản hồi dương của quy tắc ấy
-(Bổ đề~\ref{bd:phan-hoi-duong}).
+(Bổ đề~\ref{bd:phan-hoi-duong}). Việc lặp lại hai thí nghiệm chính trên năm hạt
+giống còn loại bỏ được một tương quan mà chính luận văn đã ghi nhận trước đó
+(Mục~\ref{sec:tn8}). Phép đo chi phí cho một kết quả cần được nêu
+thẳng: trên bài toán một chiều được khảo sát, PINN chậm hơn bộ giải sai phân hữu
+hạn $189$ lần ở cùng mức sai số, nên giá trị của phương pháp phải được biện minh
+bằng bài toán ngược, dữ liệu biên khuyết và số chiều cao chứ không bằng chi phí
+(Mục~\ref{sec:tn9}).
 
 \bigskip
 \noindent\textbf{Từ khoá:} mạng nơ-ron thông tin vật lý, phương trình vi phân,
@@ -70,11 +76,16 @@ optimisation level and spectral bias at the approximation level, this yields
 degrade PINNs on precisely the class of problems with small length scales.
 
 The experimental part implements PINNs in PyTorch without any packaged PINN
-library and tests each theoretical claim through six experiments with success
+library and tests each theoretical claim through nine experiments with success
 criteria fixed in advance. Negative results are reported in full: one experiment
 forced a restatement of a conclusion in the theoretical chapter, and a negative
 result on adaptive loss balancing led to a new proof that the balancing rule has
-a positive-feedback failure mode.
+a positive-feedback failure mode. Repeating the two main experiments over five
+random seeds further eliminated a correlation the thesis had itself recorded. A
+direct cost measurement gives a further result worth stating plainly: on the one-dimensional problems studied here the
+PINN is $189$ times slower than a finite-difference solver at the same accuracy,
+so the value of the method must be argued from inverse problems, incomplete
+boundary data and high dimension rather than from cost.
 
 \bigskip
 \noindent\textbf{Keywords:} physics-informed neural networks, differential

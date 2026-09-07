@@ -18,8 +18,15 @@ python -m pinns.exp3_spectral    # TN3: thiên kiến phổ, đảo chiều do t
 python -m pinns.exp4_heat        # TN4: phương trình khuếch tán
 python -m pinns.exp5_burgers     # TN5: Burgers độ nhớt nhỏ
 python -m pinns.exp6_stability   # TN6: kiểm chứng chặn ổn định
+python -m pinns.exp7_nu_sweep    # TN7: quét ν, kiểm chứng chặn suy biến 1/ν
+python -m pinns.exp8_seeds       # TN8: lặp TN4/TN5 trên năm hạt giống
+python -m pinns.exp9_chiphi      # TN9: chi phí tính toán, PINN so với sai phân
 python -m pinns.run_all          # chạy tất cả
 ```
+
+`exp8_seeds` ghi kết quả ra `results/` **sau mỗi hạt giống** và đọc lại phần đã
+có khi chạy lại, nên một lần chạy bị ngắt không làm mất gì. Nó nhận thêm tham số
+`heat` hoặc `burgers` để chạy riêng một nửa.
 
 Kết quả số ghi ra `results/*.json`.
 

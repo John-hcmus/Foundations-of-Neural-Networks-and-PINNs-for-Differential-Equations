@@ -3,6 +3,7 @@
 \section{Bối cảnh}
 \label{sec:boi-canh}
 \subsection{Giới hạn của phương pháp số cổ điển}
+\label{subsec:gioi-han-co-dien}
 Việc mô hình hoá và dự báo động lực học của các hệ đa vật lý, đa quy mô vẫn là
 một bài toán mở của khoa học hiện đại. Các hệ thực tế thường chịu chi phối đồng
 thời của nhiều quá trình vật lý, hoá học và sinh học tương tác trên những thang
@@ -168,6 +169,7 @@ dẫn tới việc phải siết lại cách phát biểu của chính chương 
 (Nhận xét~\ref{nx:hieu-chinh}).
  
 \subsection{Mục tiêu cụ thể}
+\label{subsec:mt-cu-the}
  
 Từ mục tiêu tổng quát, luận văn đặt ra năm nhiệm vụ.
  
@@ -258,9 +260,10 @@ tái lập được, có thể dùng làm điểm khởi đầu cho các nghiên
 \emph{Thứ ba}, một phân tích đối chiếu có hệ thống giữa lý thuyết và số liệu
 (Bảng~\ref{tab:doi-chieu}), qua đó chỉ ra cụ thể những tình huống PINNs phát huy
 hiệu quả và những tình huống phương pháp gặp khó khăn. Phần đối chiếu này cho một
-kết luận phương pháp luận đáng chú ý: mọi hạng mục khớp trọn vẹn với thực nghiệm
-đều tương ứng với một mệnh đề đã được chứng minh, còn mọi hạng mục phải điều chỉnh
-đều tương ứng với chỗ suy luận tiệm cận hoặc ghép hai kết quả rời rạc.
+kết luận phương pháp luận đáng chú ý: \emph{không} hạng mục nào phải điều chỉnh
+lại tương ứng với một mệnh đề đã được chứng minh --- tất cả đều đến từ suy luận
+tiệm cận, từ việc ghép hai kết quả rời rạc, hoặc từ việc khái quát hoá một lần
+chạy duy nhất.
  
 %==============================================================================
 \section{Bố cục luận văn}
@@ -293,7 +296,7 @@ của chương là Bảng~\ref{tab:ba-nguyen-nhan}: ba nguyên nhân độc lậ
 khác nhau, cùng làm PINNs suy giảm trên đúng lớp bài toán có thang độ dài nhỏ.
  
 \textbf{Chương~\ref{chap:thucnghiem}} cài đặt toàn bộ khung ấy trên PyTorch và
-kiểm chứng bằng bảy thí nghiệm, mỗi thí nghiệm trả lời một câu hỏi cụ thể với tiêu
+kiểm chứng bằng chín thí nghiệm, mỗi thí nghiệm trả lời một câu hỏi cụ thể với tiêu
 chí thành công xác định trước. Kết quả được tổng hợp ở Bảng~\ref{tab:doi-chieu},
 và những hạn chế của chính thiết kế thực nghiệm được nêu thẳng ở
 Mục~\ref{sec:hanche}.

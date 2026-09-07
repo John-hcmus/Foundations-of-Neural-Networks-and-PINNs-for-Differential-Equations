@@ -2,7 +2,7 @@
 \label{chap:fnn}
  
 Chương này thiết lập nền tảng toán học cho lớp mô hình được sử dụng xuyên suốt
-luận văn: \emph{mạng nơ-ron truyền thẳng} (feedforward neural network, FNN), còn
+báo cáo: \emph{mạng nơ-ron truyền thẳng} (feedforward neural network, FNN), còn
 gọi là \emph{perceptron nhiều lớp} (multilayer perceptron, MLP).
  
 Trong học sâu truyền thống -- thị giác máy tính, xử lý ngôn ngữ -- mạng nơ-ron
@@ -35,15 +35,15 @@ trong tài liệu học sâu tổng quát, vì vậy trở thành trục của c
 \end{enumerate}
  
 Kết quả cuối chương là một cấu hình kiến trúc được \emph{biện minh từng thành
-phần}, dùng cố định cho toàn bộ phần thực nghiệm của luận văn.
+phần}, dùng cố định cho toàn bộ phần thực nghiệm của báo cáo.
  
 \subsubsection*{Quy ước ký hiệu của chương}
  
 Bảng~\ref{tab:ky-hieu} cố định các ký hiệu được dùng nhất quán từ đây đến hết
-luận văn. Quy ước quan trọng nhất: chỉ số trên trong ngoặc đơn $(\ell)$ luôn chỉ
+báo cáo. Quy ước quan trọng nhất: chỉ số trên trong ngoặc đơn $(\ell)$ luôn chỉ
 \emph{lớp}, chỉ số dưới chỉ \emph{thành phần} hoặc \emph{mẫu}; đạo hàm theo biến
 đầu vào $\bx$ và đạo hàm theo tham số $\btheta$ được ký hiệu phân biệt, vì hai
-đại lượng này đóng hai vai trò hoàn toàn khác nhau trong luận văn.
+đại lượng này đóng hai vai trò hoàn toàn khác nhau trong báo cáo.
  
 \begin{table}[H]
 \centering
@@ -126,7 +126,7 @@ Các lớp $\ell = 1,\dots,L-1$ được gọi là \emph{lớp ẩn}, lớp $\el
  
 Thứ nhất, quy ước \eqref{eq:fnn-output} -- lớp ra \emph{không} chịu hàm kích
 hoạt -- là quy ước chuẩn cho bài toán hồi quy trên miền giá trị không bị chặn.
-Luận văn dùng nó nhất quán, bởi nghiệm của một phương trình vi phân nói chung
+Báo cáo dùng nó nhất quán, bởi nghiệm của một phương trình vi phân nói chung
 không bị ràng buộc trong $(-1,1)$ hay $(0,1)$; đặt $\tanh$ ở lớp ra sẽ áp một
 chặn tiên nghiệm sai lên hàm nghiệm.
  
@@ -139,7 +139,7 @@ chương này khả thi.
  
 Thứ ba, ta dùng cùng một $\sigma$ cho mọi lớp ẩn. Mọi kết quả trong chương vẫn
 đúng khi mỗi lớp có $\sigma^{(\ell)}$ riêng; ta cố định một $\sigma$ để giảm
-gánh nặng ký hiệu, và vì phần thực nghiệm của luận văn không dùng kiến trúc pha
+gánh nặng ký hiệu, và vì phần thực nghiệm của báo cáo không dùng kiến trúc pha
 trộn hàm kích hoạt.
  
 \paragraph{Dạng khai triển theo từng phần tử.}
@@ -637,7 +637,7 @@ với cùng bậc phức tạp nhưng không phải viết tường minh $\sigma
 Với $\sigma \in C^{m}$, lập luận của Mệnh đề~\ref{md:hessian} lặp lại cho một hệ
 truy hồi trên các tensor $\partial^{m}\ba^{(\ell)}/\partial\bx^{m}$, trong đó
 xuất hiện đầy đủ các $\sigma^{(1)},\dots,\sigma^{(m)}$ theo công thức Faà di
-Bruno. Điều cần ghi nhớ cho luận văn là dạng tổng quát của Hệ
+Bruno. Điều cần ghi nhớ cho báo cáo là dạng tổng quát của Hệ
 quả~\ref{hq:relu-hessian}: \emph{để đạo hàm bậc $m$ của mạng không đồng nhất
 triệt tiêu, điều kiện cần là $\sigma^{(m)} \not\equiv 0$}. Bậc $m$ ở đây chính
 là bậc cao nhất của toán tử vi phân trong phương trình cần giải; đó là lý do
@@ -780,7 +780,7 @@ hai} của mạng khớp một phương trình. Tiêu chuẩn chọn hàm kích 
 Ba định lý dưới đây trả lời ba câu hỏi khác nhau và thường bị gộp làm một trong
 tài liệu phổ thông: mạng nơ-ron xấp xỉ được lớp hàm nào; xấp xỉ được theo
 \emph{chuẩn} nào; và xấp xỉ với \emph{tốc độ} nào. Chỉ câu hỏi thứ hai và thứ ba
-mới thực sự phục vụ luận văn.
+mới thực sự phục vụ báo cáo.
  
 \begin{dinhly}[Xấp xỉ phổ quát, dạng $C^0$]
 \label{dl:xap-xi}
@@ -803,7 +803,7 @@ và cộng sự~\cite{leshno1993}, không phải của Cybenko hay Hornik. Cyben
 (\cite{cybenko1989}) chứng minh chiều thuận cho lớp hẹp hơn gồm các $\sigma$
 \emph{sigmoidal}, tức liên tục với $\sigma(t)\to 1$ khi $t\to+\infty$ và
 $\sigma(t)\to 0$ khi $t\to-\infty$. Việc phân biệt hai phát biểu là cần thiết
-cho luận văn: hàm $\sigma(t) = \sin t$ dùng trong một số kiến trúc PINN không
+cho báo cáo: hàm $\sigma(t) = \sin t$ dùng trong một số kiến trúc PINN không
 sigmoidal, nên chỉ nằm trong phạm vi của~\cite{leshno1993}. Chiều đảo của
 Định lý~\ref{dl:xap-xi} chính là Mệnh đề~\ref{md:da-thuc} dưới đây, được chứng
 minh đầy đủ vì lập luận sơ cấp và trực tiếp phục vụ tiêu chuẩn chọn $\sigma$.
@@ -829,7 +829,7 @@ $\bx\mapsto e^{i\bm{v}^{\top}\bx}$. Chi tiết đầy đủ xem~\cite{cybenko198
 sắc bén cho lớp không đa thức xem~\cite{leshno1993}.
 \end{proof}
  
-Đối với luận văn này, dạng $C^0$ ở Định lý~\ref{dl:xap-xi} là \emph{chưa đủ}: nó
+Đối với báo cáo này, dạng $C^0$ ở Định lý~\ref{dl:xap-xi} là \emph{chưa đủ}: nó
 chỉ bảo đảm xấp xỉ giá trị hàm, không nói gì về đạo hàm. Một dãy hàm có thể hội
 tụ đều tới $u$ trong khi đạo hàm của nó phân kỳ hoàn toàn; mà phần dư của phương
 trình vi phân lại được xây trên đạo hàm. Dạng cần thiết là kết quả sau.
@@ -894,7 +894,7 @@ Hai điều kiện phải đọc kèm. Thứ nhất, sự chuyển dịch phụ 
 \emph{bậc} sang \emph{hằng số} không phải là sự biến mất của nó: với nhiều lớp
 hàm, $C_f$ tự nó tăng theo $d$. Thứ hai, \eqref{eq:barron} là chặn theo chuẩn
 $L^2$ chứ không phải chuẩn $C^k$ của Định lý~\ref{dl:sobolev}; không có kết quả
-nào trong luận văn cho phép ghép trực tiếp tốc độ của Barron với chuẩn cần thiết
+nào trong báo cáo cho phép ghép trực tiếp tốc độ của Barron với chuẩn cần thiết
 cho phần dư. Ta dẫn Định lý~\ref{dl:barron} như một lập luận \emph{định hướng},
 không như một chặn sai số áp dụng được cho các thí nghiệm ở
 Chương~\ref{chap:thucnghiem}.
@@ -1134,14 +1134,14 @@ $M(r) = \max_{|z|=r}|\tanh z|$; nhưng $M(r) \to \infty$ khi $r \to \pi/2^{-}$ v
 $\tanh$ có cực tại $i\pi/2$, nên \emph{không} thể chọn $r = \pi/2$ để thu được
 chặn dạng $|\sigma^{(k)}(0)| \le C\,k!\,(2/\pi)^k$ chỉ bằng lập luận này. Chặn
 với đúng cơ số $2/\pi$ vẫn đúng, nhưng đòi hỏi khai triển thặng dư tại cực đơn
-$i\pi/2$ chứ không phải bất đẳng thức Cauchy. Vì luận văn chỉ cần \emph{bậc}
+$i\pi/2$ chứ không phải bất đẳng thức Cauchy. Vì báo cáo chỉ cần \emph{bậc}
 tăng, ta dừng ở \eqref{eq:tanh-tang}.
 \end{nhanxet}
  
 Mệnh đề~\ref{md:tanh-giai-tich} lý giải một quan sát thực nghiệm quen thuộc: vi
 phân tự động bậc cao trên mạng $\tanh$ ổn định về số, vì các đạo hàm tại gốc chỉ
 tăng theo cấp giai thừa với cơ số $2/\pi < 1$, chứ không nhanh hơn. Trong thực hành, các phương
-trình được xét ở luận văn này có bậc không quá $2$, nên chỉ cần
+trình được xét ở báo cáo này có bậc không quá $2$, nên chỉ cần
 \eqref{eq:tanh-d1}--\eqref{eq:tanh-d2}.
  
 \subsection{Cấu trúc của mạng ReLU}
@@ -1687,12 +1687,12 @@ $\Var(w)$ & $1/n_{\text{in}}$ & $2/(n_{\text{in}}+n_{\text{out}})$
 Biên phân phối đều & $\sqrt{3/n_{\text{in}}}$
   & $\sqrt{6/(n_{\text{in}}+n_{\text{out}})}$ & $\sqrt{6/n_{\text{in}}}$ \\
 Điều kiện được thoả & xuôi & dung hoà xuôi/ngược & xuôi, có bù $\tfrac12$ \\
-Dùng trong luận văn & không & \textbf{có} (với $\tanh$) & không \\
+Dùng trong báo cáo & không & \textbf{có} (với $\tanh$) & không \\
 \bottomrule
 \end{tabular}
 \end{table}
  
-Bảng~\ref{tab:khoitao} cho thấy lý do luận văn chọn Xavier chứ không phải He
+Bảng~\ref{tab:khoitao} cho thấy lý do báo cáo chọn Xavier chứ không phải He
 không nằm ở chất lượng của công thức mà ở \emph{phạm vi áp dụng}: He được suy ra
 riêng cho ReLU thông qua Bổ đề~\ref{bd:relu-nua}, mà ReLU đã bị loại trừ ở
 Hệ quả~\ref{hq:pinn-hong}. Dùng \eqref{eq:he} với $\tanh$ sẽ cho $\rho = 2$, tức
@@ -1892,10 +1892,10 @@ Cần nêu rõ phạm vi của kết luận trên. Số liệu ở Bảng~\ref{t
 từ một cấu hình duy nhất ($12$ lớp, $128$ nơ-ron, đầu vào chuẩn tắc) và tại thời
 điểm khởi tạo, chưa qua huấn luyện. Nó kiểm chứng \emph{quy luật tiệm cận}
 \eqref{eq:dieu-hoa}, không kiểm chứng rằng quy luật ấy còn đúng sau khi trọng số
-đã được cập nhật -- điều mà không kết quả nào trong luận văn khẳng định.
+đã được cập nhật -- điều mà không kết quả nào trong báo cáo khẳng định.
 \end{nhanxet}
  
-\subsection{Khởi tạo độ chệch và lựa chọn của luận văn}
+\subsection{Khởi tạo độ chệch và lựa chọn của báo cáo}
  
 Độ chệch không gây vấn đề đối xứng một khi trọng số đã ngẫu nhiên: giả thiết
 \eqref{eq:khoi-tao-hang} của Mệnh đề~\ref{md:doi-xung} đòi hỏi \emph{cả hai}
@@ -1903,7 +1903,7 @@ từ một cấu hình duy nhất ($12$ lớp, $128$ nơ-ron, đầu vào chuẩ
 này cũng nhất quán với giả thiết (A2) của phân tích phương sai.
  
 Tổng hợp Mục~\ref{sec:kichhoat} và Mục~\ref{sec:khoitao}, cấu hình áp dụng xuyên
-suốt phần thực nghiệm của luận văn là: hàm kích hoạt $\tanh$, khởi tạo Xavier
+suốt phần thực nghiệm của báo cáo là: hàm kích hoạt $\tanh$, khởi tạo Xavier
 theo \eqref{eq:xavier}, độ chệch bằng $0$, lớp ra tuyến tính. Cấu hình
 này đồng thời bảo đảm ba điều: (i) tính khả vi vô hạn cần cho toán tử vi phân
 bậc hai, với mọi đạo hàm bị chặn đều (Bổ đề~\ref{bd:tanh-dao-ham} và
@@ -2103,7 +2103,7 @@ này đã vượt $10^{24}$.
  
 Bức tranh này -- không lồi, đối xứng phong phú, vô số cực tiểu tương đương -- là
 lý do các bảo đảm hội tụ toàn cục vắng bóng trong toàn bộ lĩnh vực, và là lý do
-phương pháp luận thực nghiệm của luận văn phải dựa trên nhiều lần chạy với hạt
+phương pháp luận thực nghiệm của báo cáo phải dựa trên nhiều lần chạy với hạt
 giống ngẫu nhiên khác nhau, báo cáo cả trung bình lẫn độ phân tán, thay vì một
 lần chạy duy nhất. Một kết quả tốt từ một hạt giống may mắn không phải là bằng
 chứng về phương pháp.
@@ -2152,7 +2152,7 @@ tính chính quy của lưới.
 \addcontentsline{toc}{section}{Kết luận chương}
 %==============================================================================
  
-Chương này đã thiết lập các kết quả nền tảng cho phần còn lại của luận văn, được
+Chương này đã thiết lập các kết quả nền tảng cho phần còn lại của báo cáo, được
 tổng hợp trong Bảng~\ref{tab:tong-ket}. Điểm chung của chúng: mỗi lựa chọn thiết
 kế trong phần thực nghiệm đều truy về được một mệnh đề cụ thể, chứ không về một
 quy ước thực hành.
@@ -2223,7 +2223,7 @@ Chương này cũng đã xác định rõ biên giới của những gì đã ch
 định lý xấp xỉ phổ quát bảo đảm sự \emph{tồn tại} của một bộ tham số tốt;
 Mệnh đề~\ref{md:khong-loi} cho thấy không có bảo đảm nào rằng thuật toán tối ưu
 sẽ tìm ra nó. Khoảng cách giữa hai điều đó chính là lý do phần đánh giá số của
-luận văn là bắt buộc chứ không phải minh hoạ.
+báo cáo là bắt buộc chứ không phải minh hoạ.
  
 Chương tiếp theo trình bày cơ chế tính $\nabla_{\btheta} J$ và các đạo hàm theo
 biến đầu vào bằng vi phân tự động -- công cụ hiện thực hoá các công thức truy hồi

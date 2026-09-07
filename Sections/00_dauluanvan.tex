@@ -6,13 +6,14 @@
 \addcontentsline{toc}{chapter}{Lời cam đoan}
 \markboth{Lời cam đoan}{Lời cam đoan}
 
-Tôi xin cam đoan đây là công trình nghiên cứu của riêng tôi, được thực hiện dưới
-sự hướng dẫn của \thesisAdvisor. Các kết quả lý thuyết được trình bày trong luận
-văn hoặc do tôi tự chứng minh, hoặc được trích dẫn đầy đủ từ tài liệu gốc. Toàn
-bộ số liệu thực nghiệm được tạo ra bằng mã nguồn công bố kèm luận văn
-(Phụ lục~\ref{app:code}) và có thể kiểm chứng lại; các giới hạn về tính tái lập
-của những số liệu ấy được nêu thẳng ở Mục~\ref{sec:hanche}. Luận văn không sao
-chép từ bất kỳ công trình nào khác mà không ghi rõ nguồn.
+Tôi xin cam đoan báo cáo này do tôi thực hiện, dưới sự hướng dẫn của
+\thesisAdvisor. Các kết quả lý thuyết được trình bày ở đây hoặc do tôi tự chứng
+minh, hoặc được trích dẫn đầy đủ từ tài liệu gốc; những chỗ tôi chỉ diễn giải
+lại một kết quả đã có đều được ghi rõ là như vậy. Toàn bộ số liệu thực nghiệm
+được tạo ra bằng mã nguồn công bố kèm báo cáo (Phụ lục~\ref{app:code}) và có thể
+kiểm chứng lại; các giới hạn về tính tái lập của những số liệu ấy được nêu thẳng
+ở Mục~\ref{sec:hanche}. Báo cáo không sao chép từ bất kỳ công trình nào khác mà
+không ghi rõ nguồn.
 
 \vspace{1.5cm}
 \begin{flushright}
@@ -30,22 +31,22 @@ TP. Hồ Chí Minh, \ngaythangnam{5}{9}{2026}\\[0.3cm]
 \markboth{Lời cảm ơn}{Lời cảm ơn}
 
 Trước hết, tôi xin bày tỏ lòng biết ơn sâu sắc tới \thesisAdvisor{}, người đã
-nhận hướng dẫn và theo sát tôi trong suốt quá trình thực hiện luận văn này. Thầy
+nhận hướng dẫn và theo sát tôi trong suốt quá trình thực hiện báo cáo này. Thầy
 không chỉ gợi ý đề tài mà còn chỉ cho tôi \emph{cách} tiếp cận nó: danh mục tài
 liệu tham khảo chi tiết mà thầy giao, với chỉ dẫn đọc đến từng mục của từng công
-trình, là thứ đã định hình toàn bộ cấu trúc của luận văn. Quan trọng hơn, thầy
+trình, là thứ đã định hình toàn bộ cấu trúc của báo cáo. Quan trọng hơn, thầy
 đã nhiều lần yêu cầu tôi phân biệt rạch ròi giữa điều đã chứng minh và điều mới
 chỉ được suy đoán. Yêu cầu ấy khó chịu hơn tôi tưởng lúc đầu, và cuối cùng lại
-trở thành mạch chính của cả chương thực nghiệm: phần lớn những gì luận văn thu
+trở thành mạch chính của cả chương thực nghiệm: phần lớn những gì báo cáo thu
 được nằm ở chỗ dám ghi lại các kết quả không đạt kỳ vọng thay vì bỏ qua chúng.
 
 Tôi xin cảm ơn quý Thầy Cô Khoa Toán--Tin học, Trường Đại học Khoa học Tự nhiên,
 Đại học Quốc gia Thành phố Hồ Chí Minh. Những kiến thức về giải tích, phương
 trình đạo hàm riêng, giải tích số và tối ưu hoá mà tôi được học ở Khoa là nền
-tảng trực tiếp cho luận văn này; nhiều chỗ trong Chương~\ref{chap:pinn} và
+tảng trực tiếp cho báo cáo này; nhiều chỗ trong Chương~\ref{chap:pinn} và
 Chương~\ref{chap:thucnghiem} chỉ viết được vì tôi đã có sẵn những công cụ ấy.
 Tôi cũng cảm ơn Thầy Cô trong hội đồng đã dành thời gian đọc và góp ý cho bản
-luận văn này.
+báo cáo này.
 
 Xin cảm ơn bạn bè cùng khoá đã trao đổi, tranh luận và nhiều lần chỉ ra những
 chỗ tôi lập luận vội trong các bản nháp trước.
@@ -53,7 +54,7 @@ chỗ tôi lập luận vội trong các bản nháp trước.
 Cuối cùng, tôi xin gửi lời cảm ơn tới gia đình, những người đã tạo mọi điều kiện
 và kiên nhẫn với tôi trong suốt thời gian học tập.
 
-Luận văn chắc chắn còn thiếu sót. Tôi mong nhận được góp ý của quý Thầy Cô và
+Báo cáo chắc chắn còn thiếu sót. Tôi mong nhận được góp ý của quý Thầy Cô và
 các bạn để có thể hoàn thiện hơn.
 
 \vspace{1cm}
@@ -72,11 +73,11 @@ TP. Hồ Chí Minh, \ngaythangnam{5}{9}{2026}\\[0.3cm]
 
 \begin{longtable}{@{}l p{5.3cm} p{6.0cm}@{}}
 \toprule
-\textbf{Viết tắt} & \textbf{Nguyên văn} & \textbf{Nghĩa dùng trong luận văn} \\
+\textbf{Viết tắt} & \textbf{Nguyên văn} & \textbf{Nghĩa dùng trong báo cáo} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Viết tắt} & \textbf{Nguyên văn} & \textbf{Nghĩa dùng trong luận văn} \\
+\textbf{Viết tắt} & \textbf{Nguyên văn} & \textbf{Nghĩa dùng trong báo cáo} \\
 \midrule
 \endhead
 \bottomrule
@@ -105,7 +106,7 @@ XPINN & extended PINN & PINN phân rã miền tổng quát \\
 \begin{center}
 \begin{minipage}{0.92\textwidth}
 \small
-\textbf{Về hai chữ viết tắt không dùng.} Luận văn viết đầy đủ ``phương trình đạo
+\textbf{Về hai chữ viết tắt không dùng.} Báo cáo viết đầy đủ ``phương trình đạo
 hàm riêng'' và ``phương trình vi phân thường'' thay vì PDE và ODE, để tránh lẫn
 với cách viết tắt tiếng Việt; riêng ký hiệu $\mathcal{L}$ luôn chỉ toán tử vi
 phân và không bao giờ chỉ hàm mất mát (xem quy ước ở đầu

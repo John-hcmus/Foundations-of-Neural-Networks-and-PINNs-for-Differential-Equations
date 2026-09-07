@@ -1,4 +1,4 @@
-"""Thanh phan dung chung cho moi thi nghiem PINN cua luan van.
+"""Thanh phan dung chung cho moi thi nghiem PINN cua bao cao.
 
 Moi lua chon thiet ke o day deu tuong ung voi mot ket qua trong Chuong 2-3:
 
@@ -43,7 +43,7 @@ def grad(y: torch.Tensor, x: torch.Tensor, order: int = 1) -> torch.Tensor:
 class FNN(nn.Module):
     """Mang truyen thang, tuy chon nhung dac trung Fourier.
 
-    layers: vi du [1, 32, 32, 32, 1] cho kien truc bai toan 1D cua luan van.
+    layers: vi du [1, 32, 32, 32, 1] cho kien truc bai toan 1D cua bao cao.
     """
 
     def __init__(self, layers, act="tanh", fourier_m=0, fourier_s=1.0, seed=None):
@@ -78,7 +78,7 @@ class FNN(nn.Module):
 def uniform_1d(n: int, a: float = 0.0, b: float = 1.0) -> torch.Tensor:
     """n diem phoi tri deu tren [a,b], KE CA hai diem bien.
 
-    Day dung la quy uoc cua luan van: voi n = 256 tren (0,1) va
+    Day dung la quy uoc cua bao cao: voi n = 256 tren (0,1) va
     f = 4 pi^2 sin(2 pi x), trung binh f^2 tren luoi nay bang 776,229 --
     khop voi gia tri J_r bao cao o TN1.
     """

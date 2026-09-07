@@ -9,7 +9,7 @@ Nghiem tham chieu: sai phan huu han bac hai + Runge--Kutta bac bon tuong minh,
 dang bao toan (u^2/2)_x sai phan trung tam, khuech tan trung tam ba diem.
 
 Cau hinh L-BFGS (max_iter = 800, history_size = 50, Wolfe manh) lay dung theo
-Doan ma 5.3 cua luan van. Rieng TN4 dung 500 vong theo dung mo ta trong Muc 5.4.
+Doan ma 5.3 cua bao cao. Rieng TN4 dung 500 vong theo dung mo ta trong Muc 5.4.
 """
 from __future__ import annotations
 import json, math, os

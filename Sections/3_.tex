@@ -11,7 +11,7 @@ nghiệm số dùng được nằm ở hai công cụ được trình bày trong
  
 Công cụ thứ nhất là \emph{vi phân tự động}: một cơ chế tính đạo hàm chính xác
 tới độ chính xác máy với chi phí chỉ bằng một bội số nhỏ của chi phí đánh giá
-hàm, và -- điểm quyết định đối với luận văn -- áp dụng được \emph{đệ quy lên
+hàm, và -- điểm quyết định đối với báo cáo -- áp dụng được \emph{đệ quy lên
 chính nó} để thu được đạo hàm bậc cao theo biến đầu vào. Công cụ thứ hai là
 \emph{các thuật toán tối ưu} bậc nhất và tựa Newton, cho phép cực tiểu hoá hàm
 mục tiêu trên không gian tham số nhiều chiều.
@@ -35,7 +35,7 @@ quy ước lớp ra tuyến tính $\Net_{\btheta}(\bx) = \bz^{(L)}$ của
 \begin{itemize}[leftmargin=*]
 \item $\varrho(\hat{\bm{y}}, \bm{y})$ -- hàm mất mát \emph{tại một điểm}. Ta
       không dùng ký hiệu $\mathcal{L}$ cho đại lượng này, vì $\mathcal{L}$ được
-      dành riêng cho toán tử vi phân trong toàn bộ luận văn.
+      dành riêng cho toán tử vi phân trong toàn bộ báo cáo.
 \item $\D f(\bx) \in \R^{m\times n}$ -- ma trận Jacobi của
       $f:\R^n\to\R^m$ tại $\bx$. Ta không dùng $\bm{J}_f$ để tránh nhầm với hàm
       mục tiêu $J$.
@@ -92,7 +92,7 @@ dung} cụ thể của mô hình. Hệ thức truy hồi
 dạng chuỗi; hoàn toàn có thể thay nó bằng mạng có kết nối tắt, mạng tuần hoàn,
 hay biểu thức phần dư của một phương trình vi phân, mà cơ chế lấy đạo hàm không
 thay đổi một dòng nào. Chính tính bất biến này là điều làm cho vi phân tự động
-trở thành công cụ đúng cho bài toán của luận văn: phần dư
+trở thành công cụ đúng cho bài toán của báo cáo: phần dư
 $\mathcal{L}[\Net_{\btheta}] - f$ cũng chỉ là một đỉnh khác trong cùng đồ thị.
  
 \begin{figure}[htbp]
@@ -214,7 +214,7 @@ Với \eqref{eq:bp1}: theo \eqref{eq:fnn-output}, $\Net_{\btheta} = \bz^{(L)}$,
 nên hai gradient trùng nhau theo định nghĩa. (Nếu lớp ra có kích hoạt
 $\sigma^{(L)}$, công thức trở thành
 $\bm{\delta}^{(L)} = \nabla_{\ba^{(L)}}J \odot \sigma'^{(L)}(\bz^{(L)})$; ta nêu
-để đối chiếu, nhưng luận văn không dùng trường hợp này.)
+để đối chiếu, nhưng báo cáo không dùng trường hợp này.)
  
 Với \eqref{eq:bp2}: biến $z^{(\ell)}_j$ ảnh hưởng đến $J$ chỉ thông qua toàn bộ
 các biến $z^{(\ell+1)}_k$, $k = 1,\dots,n_{\ell+1}$. Từ \eqref{eq:z-k},
@@ -267,7 +267,7 @@ mọi bước lùi. Tích luỹ qua $L$ lớp, nó sinh ra đúng tích ma trậ
 Mệnh đề~\ref{md:tich-gradient}, và chính tích này gây hiện tượng triệt tiêu hoặc
 bùng nổ gradient.
  
-\emph{(c) Trường hợp của luận văn.} Với lớp ra tuyến tính và
+\emph{(c) Trường hợp của báo cáo.} Với lớp ra tuyến tính và
 $\varrho(\hat{\bm y},\bm y) = \tfrac12\|\hat{\bm y}-\bm y\|_2^2$,
 \eqref{eq:bp1} rút gọn thành $\bm{\delta}^{(L)} = \Net_{\btheta}(\bx) - \bm{y}$,
 tức đúng bằng phần dư của phép khớp. Trong bài toán PINN, vai trò của
@@ -603,7 +603,7 @@ chữ V; vi phân tự động cho giá trị chính xác tới độ chính xá
 \begin{nhanxet}[Hệ quả đối với bài toán phương trình vi phân]
 \label{nx:fd-pde}
 Bảng~\ref{tab:fd-error} mới chỉ là đạo hàm bậc nhất. Ba lý do khiến tình hình xấu
-đi nhanh chóng trong bối cảnh của luận văn.
+đi nhanh chóng trong bối cảnh của báo cáo.
  
 Thứ nhất, với đạo hàm bậc hai, lược đồ trung tâm
 $\big(f(x+h)-2f(x)+f(x-h)\big)/h^2$ có sai số cắt cụt $\mathcal{O}(h^2)$ nhưng
@@ -756,7 +756,7 @@ Bộ nhớ                 & $\mathcal{O}(1)$ theo độ dài đồ thị
 \subsection{Đạo hàm theo biến đầu vào và đạo hàm bậc cao}
 \label{subsec:bac-cao-ad}
  
-Đây là mục có ý nghĩa quyết định đối với phần còn lại của luận văn, và là mắt
+Đây là mục có ý nghĩa quyết định đối với phần còn lại của báo cáo, và là mắt
 xích nối trở lại Chương~\ref{chap:fnn}. Khi giải phương trình vi phân, mạng
 $\Net_{\btheta}(\bx)$ đóng vai trò hàm thử và ta cần các đại lượng
 $\partial_{x_i}\Net_{\btheta}$, $\partial^2_{x_ix_j}\Net_{\btheta}$, sau đó lại
@@ -1381,7 +1381,7 @@ Cần đọc Hình~\ref{fig:quydao} với một dè dặt: hàm Rosenbrock là h
 Mục~\ref{subsec:dac-thu}. Nó minh hoạ \emph{cơ chế} (thông tin độ cong giúp duỗi
 thẳng khe hẹp), không chứng minh điều gì về hàm mục tiêu PINN. Ba lập luận sau
 mới là lý do thực chất khiến L-BFGS vượt trội ở giai đoạn cuối trong bối cảnh của
-luận văn.
+báo cáo.
  
 \emph{Thứ nhất, tính tất định.} Trong bài toán PINN, hàm mục tiêu được tính trên
 một tập điểm phối trí \emph{cố định}, nên $J(\btheta)$ là hàm tất định và
@@ -1480,7 +1480,7 @@ Nhận xét~\ref{nx:doi-xung-hoan-vi}, mọi so sánh giữa hai phác đồ hu�
 \addcontentsline{toc}{section}{Kết luận chương}
 %==============================================================================
  
-Chương này đã thiết lập bộ công cụ tính toán cho phần còn lại của luận văn; các
+Chương này đã thiết lập bộ công cụ tính toán cho phần còn lại của báo cáo; các
 kết quả chính được tổng hợp ở Bảng~\ref{tab:tong-ket-3}.
  
 Lan truyền ngược được trình bày như một trường hợp riêng của quy tắc dây chuyền

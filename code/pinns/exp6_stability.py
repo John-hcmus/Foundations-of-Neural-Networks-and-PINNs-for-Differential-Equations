@@ -80,7 +80,7 @@ def run(hard: bool, seed: int = 0, adam_iters: int = 4000, n_col: int = 256,
     net = FNN([1, 32, 32, 32, 1], act="tanh")
     model = make_model(net, hard)
 
-    xr = uniform_1d(n_col)          # quy uoc luan van: ke ca diem bien
+    xr = uniform_1d(n_col)          # quy uoc bao cao: ke ca diem bien
     xb = torch.tensor([[0.0], [1.0]], dtype=DTYPE)
     xe = torch.linspace(0, 1, 20001, dtype=DTYPE).reshape(-1, 1)
 

@@ -1,6 +1,6 @@
 """TN8 --- Do do phan tan giua cac hat giong.
 
-Han che thu nhat ma luan van tu neu o Muc sec:hanche: moi so lieu deu den tu
+Han che thu nhat ma bao cao tu neu o Muc sec:hanche: moi so lieu deu den tu
 MOT hat giong duy nhat, nen khong co uoc luong do phan tan, va "cac chenh lech
 duoi hai lan khong nen duoc coi la co y nghia".
 

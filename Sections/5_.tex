@@ -15,7 +15,7 @@ với tiêu chí thành công hoặc thất bại xác định \emph{trước} k
 chiếu ở Mục~\ref{sec:doi-chieu}, sáu khớp trọn vẹn, hai khớp về hướng nhưng
 không về độ lớn, \emph{bốn} buộc phải siết lại cách phát biểu, một không tái lập
 được khi đổi hạt giống, và một cho kết quả trái với kỳ vọng.
-Phần điều chỉnh được ghi rõ thay vì bỏ qua; theo quan điểm của luận văn, một kết
+Phần điều chỉnh được ghi rõ thay vì bỏ qua; theo quan điểm của báo cáo, một kết
 quả tiêu cực được phân tích đúng nguyên nhân có giá trị ngang một kết quả khớp.
  
 Cấu trúc chương: Mục~\ref{sec:trienkhai} mô tả kiến trúc cài đặt trên
@@ -69,7 +69,7 @@ vectơ--Jacobi \eqref{eq:vjp}, không dựng ma trận Jacobi.
 sự~\cite{lu2021}. Phần~2 của bài báo ấy mô tả một thiết kế tách bài toán thành
 các thành phần độc lập --- hình học miền, đối tượng điều kiện biên, đối tượng dữ
 liệu, và một lớp mô hình lo phần huấn luyện --- rồi ghép chúng lại. Cách tổ chức ấy là đúng cho \emph{người dùng}
-phương pháp: nó giấu đi đúng những chi tiết mà luận văn này lấy làm đối tượng
+phương pháp: nó giấu đi đúng những chi tiết mà báo cáo này lấy làm đối tượng
 khảo sát.
 
 Ba thí nghiệm của chương này chỉ đặt ra được khi ta cầm trực tiếp các chi tiết
@@ -79,7 +79,7 @@ riêng gradient của từng thành phần mất mát ở mỗi vòng lặp --- 
 nằm trong giao diện huấn luyện thông thường. Và cùng hai mục ấy cần
 can thiệp vào chính quy tắc cập nhật $\lambda_i$ để quan sát chế độ phản hồi
 dương của Bổ đề~\ref{bd:phan-hoi-duong}. Nói ngắn gọn: thư viện tối ưu hoá cho
-việc \emph{giải} phương trình, còn luận văn này cần quan sát \emph{cơ chế} của
+việc \emph{giải} phương trình, còn báo cáo này cần quan sát \emph{cơ chế} của
 bộ giải.
 
 Điều đi vay từ~\cite{lu2021} là các quy ước đo và đối chiếu, chứ không phải mã
@@ -527,7 +527,7 @@ hiệu chính $P(\bk)$ của toán tử, với biên độ bị nhân lên $\abs
 \label{eq:pho-hieu-dung}
 \end{equation}
 Cần nói thẳng: \eqref{eq:pho-hieu-dung} \emph{không} phải một mệnh đề đã chứng
-minh trong luận văn. Nó là giả thuyết làm việc ghép từ hai kết quả nói trên, và
+minh trong báo cáo. Nó là giả thuyết làm việc ghép từ hai kết quả nói trên, và
 mục đích của thí nghiệm này là kiểm tra dự báo định tính của nó.
  
 Dự báo ấy như sau. Với toán tử Poisson trong $\R^1$, $P(k) = 4\pi^2k^2$, nên
@@ -668,7 +668,7 @@ $\mu(k) \sim k^{2}$ và hệ số ưu tiên chỉ còn $8^2 = 64$. Tỉ lệ đo
 nằm gần con số thứ hai hơn -- nhưng ta không rút kết luận định lượng từ đối chiếu
 này, vì $\abs{c_k}$ tại điểm dừng không phải một hàm đơn giản của $\mu(k)$, và vì
 ước lượng $\widehat{\varkappa}(k)\sim k^{-2}$ chưa được chứng minh ở đâu trong
-luận văn.
+báo cáo.
  
 \begin{nhanxet}[Ba mode được theo dõi không chiếm hết sai số]
 \label{nx:nang-luong}
@@ -887,7 +887,7 @@ Mục~\ref{subsec:thang-do-dai} trích $\max\abs{u_x} \approx 151$ tại
 $t \approx 0{,}51$ từ một nghiệm giả phổ Fourier với $2\,048$ chế độ, còn mục này
 trích $150{,}1$ tại $t = 0{,}5$ từ nghiệm sai phân hữu hạn. Hai con số nhất quán
 với nhau trong phạm vi sai số của cả hai lược đồ, nhưng chúng đến từ \emph{hai
-nghiệm tham chiếu khác nhau}. Khi hoàn thiện luận văn, cần chọn một nghiệm tham
+nghiệm tham chiếu khác nhau}. Khi hoàn thiện báo cáo, cần chọn một nghiệm tham
 chiếu duy nhất và dùng nó ở cả hai chương, đồng thời nêu rõ lược đồ và tham số rời
 rạc hoá đúng một lần.
 \end{nhanxet}
@@ -956,7 +956,7 @@ $\norm{\bW^{(1)}}_F^2$ tăng $4{,}04$ lần, trong khi $\rho_b$ tăng $122$ lầ
 đại lượng cùng tăng đơn điệu và cùng lúc (Hình~\ref{fig:tn6}b), gợi ý một mối liên
 hệ giữa chuẩn trọng số lớp vào và mức mất cân bằng gradient.
  
-Cần nói rõ giới hạn của quan sát này. Luận văn \emph{không} có mệnh đề nào chứng
+Cần nói rõ giới hạn của quan sát này. Báo cáo \emph{không} có mệnh đề nào chứng
 minh $\rho_b \sim \norm{\bW^{(1)}}^2$; đây là một tương quan quan sát được trên
 một lần chạy, không phải một dự báo được kiểm chứng. Và khi thực sự kiểm chứng
 nó trên năm hạt giống ở Nhận xét~\ref{nx:tuong-quan-hong}, tương quan \emph{không
@@ -1065,7 +1065,7 @@ $J_i \to 0$. Hai hướng khắc phục theo đúng cơ chế vừa chứng minh
 cho $\lambda_i$, hoặc thay mẫu số bằng một đại lượng không triệt tiêu cùng $J_i$
 -- chẳng hạn vết của nhân tiếp tuyến thay cho chuẩn gradient.
  
-Với phạm vi luận văn này, khuyến nghị là dùng trọng số cố định kèm dò tìm
+Với phạm vi báo cáo này, khuyến nghị là dùng trọng số cố định kèm dò tìm
 $\lambda_b$ theo Bảng~\ref{tab:tn2}, và xem việc ủ trọng số như một hướng cần khảo
 sát thêm. Cần nêu rõ rằng kết luận này \emph{không} bác bỏ kết quả
 của~\cite{wang2021}, vốn báo cáo cải thiện hơn một bậc độ lớn trên bài toán
@@ -1276,7 +1276,7 @@ tới. Chặn vẫn đúng; nó chỉ không chặt, và càng không chặt khi
 
 Điều bị siết lại là cách \emph{đọc} tầng thứ nhất của
 Bảng~\ref{tab:ba-nguyen-nhan}. Bảng ấy liệt kê ba nguyên nhân độc lập cùng làm
-PINNs suy giảm; với tầng thứ nhất, luận văn ngầm hiểu rằng hằng số ổn định là
+PINNs suy giảm; với tầng thứ nhất, báo cáo ngầm hiểu rằng hằng số ổn định là
 \emph{cơ chế đang vận hành}. Thí nghiệm này không tìm được bằng chứng cho cách
 hiểu đó trong dải $\nu \in [0{,}03;\ 1]$, và ở $\nu = 0{,}01$ thì không thể tìm
 được, vì tầng \emph{tối ưu} hỏng trước: muốn đo hằng số ổn định thì phải có phần
@@ -1285,7 +1285,7 @@ dư nhỏ, mà đúng ở chế độ ấy PINN không đưa phần dư xuống 
 Phát biểu đúng của tầng thứ nhất vì vậy là: \emph{chặn ổn định suy biến theo
 $1/\nu$ là một sự thật đã chứng minh về bài toán vi phân, và nó nói rằng phần dư
 nhỏ \textbf{không còn bảo đảm} sai số nhỏ khi $\nu$ nhỏ; nhưng nó không nói
-rằng sai số quan sát được sẽ tăng theo $1/\nu$, và luận văn không có bằng chứng
+rằng sai số quan sát được sẽ tăng theo $1/\nu$, và báo cáo không có bằng chứng
 thực nghiệm cho điều mạnh hơn ấy.}
 
 Kết luận (c) lại là bằng chứng trực tiếp cho chính \emph{sự cộng hưởng} mà
@@ -1483,7 +1483,7 @@ $10\%$ quanh $-1$.
 Mệnh đề~\ref{md:phat-bien-phat} ở đây và Mệnh đề~\ref{md:chan-suy-bien} ở
 Mục~\ref{sec:tn7} --- có \emph{cùng} cấu trúc lỗi. Cả hai mệnh đề đều đúng và
 đều được xác nhận về hướng ở mọi hạt giống; cả hai đều là phát biểu
-\emph{tiệm cận}; và trong cả hai trường hợp luận văn đã đối chiếu một số mũ đo
+\emph{tiệm cận}; và trong cả hai trường hợp báo cáo đã đối chiếu một số mũ đo
 được ở chế độ ngân sách hữu hạn với số mũ tiệm cận, rồi đọc mức gần nhau như
 bằng chứng định lượng. Với $n = 1$ thì phép đối chiếu ấy trông thuyết phục; với
 $n = 5$ thì độ phân tán của chính số mũ đã lớn hơn khoảng cách tới dự báo.
@@ -1514,7 +1514,7 @@ mức tăng chuẩn trọng số nhỏ nhất nhưng mức tăng $\rho_b$ vẫn 
 luận được điều cần thiết: \emph{dữ liệu hiện có không ủng hộ quan hệ ấy}, và
 việc nó trông thuyết phục ở Mục~\ref{sec:tn5} là do chỉ nhìn một hạt giống. Đây
 đúng là chế độ hỏng mà Nhận xét~\ref{nx:doi-xung-hoan-vi} cảnh báo, quan sát
-được ngay trong chính luận văn này.
+được ngay trong chính báo cáo này.
 \end{nhanxet}
 
 \begin{nhanxet}[Quy tắc đọc lại toàn chương]
@@ -1554,7 +1554,7 @@ giữ lại hơn một con số tầm thường.
 
 Bài học phương pháp luận thì rộng hơn một chương: \emph{chi phí của việc lặp năm
 hạt giống là năm mươi lăm lần huấn luyện, chưa tới hai giờ máy; cái giá của việc
-không lặp là bốn con số sai trong một luận văn.}
+không lặp là bốn con số sai trong một báo cáo.}
 \end{nhanxet}
 
 %==============================================================================
@@ -1688,7 +1688,7 @@ với thời gian PINN cần để đạt sai số $14\%$.
 \begin{nhanxet}[Đọc kết quả này cho đúng: PINN thua ở đâu và vì sao không mâu
 thuẫn]
 \label{nx:doc-tn9}
-Kết quả (b) là kết quả bất lợi rõ rệt nhất cho PINNs trong toàn luận văn, và nó
+Kết quả (b) là kết quả bất lợi rõ rệt nhất cho PINNs trong toàn báo cáo, và nó
 cần được đặt đúng chỗ.
 
 Mục~\ref{subsec:gioi-han-co-dien} nêu \emph{ba} động lực cho hướng tiếp cận PINNs: bài
@@ -1711,7 +1711,7 @@ phân rẻ hơn nhiều; (iii) bài toán ngược chỉ cần thêm một số 
 tiêu, trong khi phương pháp cổ điển đòi hỏi cả một bộ máy liên hợp
 (Mục~\ref{subsec:thuan-nguoc}).
 
-Kết luận trung thực là: \emph{trên lớp bài toán mà luận văn này thực nghiệm,
+Kết luận trung thực là: \emph{trên lớp bài toán mà báo cáo này thực nghiệm,
 PINNs đắt hơn bốn bậc so với phương pháp cổ điển ở cùng độ chính xác; giá trị
 của phương pháp phải được biện minh bằng ba động lực ở
 Mục~\ref{subsec:gioi-han-co-dien}, không bằng chi phí.} Mọi thí nghiệm của chương này
@@ -1886,7 +1886,7 @@ $\abs{c_1}/\abs{c_8}$ ở TN3 --- bốn hạt giống trong $[4{,}5;\ 7{,}6]$ v�
 $46{,}3$ --- năm mẫu là quá ít để mô tả cái đuôi. \emph{Thứ hai}, các bảng ở
 Mục~\ref{sec:tn1}--\ref{sec:tn7} vẫn in số của \emph{một} lần chạy, còn trung
 vị và khoảng chỉ xuất hiện ở Mục~\ref{sec:tn8}. Cách trình bày đúng là gộp
-chúng: mỗi ô số liệu nên là ``trung vị $[\min;\max]$'' ngay tại chỗ. Luận văn
+chúng: mỗi ô số liệu nên là ``trung vị $[\min;\max]$'' ngay tại chỗ. Báo cáo
 giữ cách trình bày hiện tại để mỗi mục còn đọc được độc lập, nhưng người đọc cần
 mang Mục~\ref{sec:tn8} theo khi đọc mọi con số ở các mục trước.
  
@@ -1920,11 +1920,11 @@ Nhận xét~\ref{nx:hai-nghiem-tham-chieu} đã nêu việc hai chương hiện 
 tham chiếu khác nhau.
  
 \item \emph{Tập điểm phối trí không được đặc tả đủ.} Khuyết điểm này có hai
-dạng khác nhau, và cả hai chỉ lộ ra khi cài đặt lại từ chính mô tả trong luận
-văn (Phụ lục~\ref{app:code}).
+dạng khác nhau, và cả hai chỉ lộ ra khi cài đặt lại từ chính mô tả trong báo
+cáo (Phụ lục~\ref{app:code}).
 
 \emph{Dạng thứ nhất --- lấy mẫu ngẫu nhiên, chỉ ghi số lượng.} TN4 và TN5 lấy
-điểm phối trí ngẫu nhiên, nhưng luận văn chỉ ghi \emph{số lượng} điểm chứ không
+điểm phối trí ngẫu nhiên, nhưng báo cáo chỉ ghi \emph{số lượng} điểm chứ không
 ghi bộ sinh số ngẫu nhiên và thứ tự tiêu thụ nó. Hai thí nghiệm ấy tái lập
 \emph{kết luận định tính} trọn vẹn --- $\rho_b$ giảm ở TN4 và tăng ở TN5, ủ
 trọng số phản tác dụng ở cả hai --- nhưng các \emph{con số} lệch từ hai đến chín
@@ -2048,7 +2048,7 @@ lặp TN4 và TN5 trên năm hạt giống và cho thấy độ phân tán tự 
 toán: hệ số $2{,}4$ giữa lần chạy tốt nhất và tệ nhất trên bài toán khuếch tán,
 nhưng $26{,}4$ trên Burgers --- đủ để loại bỏ một tương quan mà chương này từng
 ghi nhận (Nhận xét~\ref{nx:tuong-quan-hong}). Mục~\ref{sec:tn9} đo chi phí và
-cho con số bất lợi nhất của luận văn: PINN chậm hơn sai phân hữu hạn khoảng bốn
+cho con số bất lợi nhất của báo cáo: PINN chậm hơn sai phân hữu hạn khoảng bốn
 bậc độ lớn ở cùng mức sai số, trên đúng lớp bài toán mà cả ba động lực của
 Mục~\ref{subsec:gioi-han-co-dien} đều vắng mặt.
 

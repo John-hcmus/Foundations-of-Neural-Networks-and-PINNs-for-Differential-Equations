@@ -1,7 +1,7 @@
 # Mã nguồn thực nghiệm
 
 Cài đặt PINNs bằng PyTorch thuần, không dùng thư viện PINNs đóng gói sẵn, dùng
-cho toàn bộ Chương 5 của luận văn.
+cho toàn bộ Chương 5 của báo cáo.
 
 ## Cài đặt
 
@@ -30,7 +30,7 @@ có khi chạy lại, nên một lần chạy bị ngắt không làm mất gì.
 
 Kết quả số ghi ra `results/*.json`.
 
-## Quy ước bám theo luận văn
+## Quy ước bám theo báo cáo
 
 | Thành phần | Thiết lập | Truy về |
 |---|---|---|
@@ -46,7 +46,7 @@ Kết quả số ghi ra `results/*.json`.
 **Ghi chú về lưới điểm phối trí.** Lưới 1D bao gồm cả hai điểm biên. Với
 $n=256$ trên $(0,1)$ và $f=4\pi^2\sin(2\pi x)$, trung bình $f^2$ trên lưới này
 bằng $776{,}229$ — đúng giá trị $J_r$ mà TN1 báo cáo cho mạng ReLU. Quy ước này
-được xác định bằng cách đối chiếu ngược với số liệu trong luận văn.
+được xác định bằng cách đối chiếu ngược với số liệu trong báo cáo.
 
 ## Tái lập
 
@@ -95,7 +95,7 @@ Hệ quả thực hành:
   tái lập được **kết luận định tính**, không phải con số.
 - Các thí nghiệm dùng lưới tất định (TN1, TN2, TN6) và bộ giải tham chiếu sai
   phân hữu hạn của TN5 thì ổn định hơn hẳn: chúng tái lập tới ba đến bốn chữ số
-  có nghĩa so với số liệu trong luận văn.
+  có nghĩa so với số liệu trong báo cáo.
 
-Xem thêm phần Hạn chế của luận văn về việc một hạt giống duy nhất là chưa đủ để
+Xem thêm phần Hạn chế của báo cáo về việc một hạt giống duy nhất là chưa đủ để
 rút kết luận thống kê.

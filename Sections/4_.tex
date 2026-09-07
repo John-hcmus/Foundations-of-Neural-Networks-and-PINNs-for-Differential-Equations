@@ -32,7 +32,7 @@ của nó dùng chữ $J$. Nhiều tài liệu, kể cả~\cite{wang2021}, dùng
 cho hàm mất mát; ta tránh cách đó để không trùng ký hiệu.
  
 Thứ hai, vectơ tham số vật lý được ký hiệu $\bzeta$ chứ không phải $\lambda$ như
-trong~\cite{raissi2019}, bởi $\lambda$ trong luận văn này được dành cho các trọng
+trong~\cite{raissi2019}, bởi $\lambda$ trong báo cáo này được dành cho các trọng
 số cân bằng mất mát. Hai đại lượng có bản chất hoàn toàn khác nhau -- một là dữ
 kiện (hoặc ẩn số) của bài toán vật lý, một là siêu tham số của thuật toán -- nên
 việc dùng chung ký hiệu là nguồn nhầm lẫn thực sự.
@@ -102,7 +102,7 @@ là toán tử đồng nhất (điều kiện Dirichlet), toán tử đạo hàm
 hoặc tổ hợp của chúng (Robin).
  
 Dạng \eqref{eq:pde-general} bao hàm hầu hết các lớp phương trình được khảo sát
-trong luận văn. Với phương trình Burgers một chiều có độ nhớt $\nu$,
+trong báo cáo. Với phương trình Burgers một chiều có độ nhớt $\nu$,
 $\Lop[u] = u\,\partial_{x} u - \nu\, \partial_{xx} u$; với phương trình khuếch
 tán, $\Lop[u] = -\nu\,\partial_{xx} u$. Bài toán dừng (không phụ thuộc thời gian)
 thu được bằng cách bỏ số hạng $\partial_t u$ và điều kiện \eqref{eq:ic}; ta sẽ
@@ -486,7 +486,7 @@ biên được thoả \emph{chính xác}; với ràng buộc mềm
 với sai số biên. Thứ hai, cả hai là bài toán tuyến tính một chiều; với toán tử
 phi tuyến như Burgers, chặn tương ứng chỉ tồn tại địa phương và hằng số phụ thuộc
 nghiệm. Thứ ba, chúng chặn sai số theo chuẩn $L^2$, còn cái ta thường báo cáo là
-sai số tương đối theo chuẩn vô cùng. Không kết quả nào trong luận văn cho phép
+sai số tương đối theo chuẩn vô cùng. Không kết quả nào trong báo cáo cho phép
 chuyển đổi tự động giữa các chuẩn ấy; ta dẫn hai mệnh đề như \emph{cơ sở khái
 niệm} cho phương pháp và như một dự báo định lượng về vai trò của $\nu$, không
 như một chặn hậu nghiệm áp dụng được cho các thí nghiệm.
@@ -541,7 +541,7 @@ tìm $D$ trơn triệt tiêu đúng trên $\partial\Omega$ và khác không bên
 một bài toán riêng. Ngoài ra, \eqref{eq:hard-constraint} thay đổi lớp hàm thử: độ
 trơn và thang độ của $\hat u_{\btheta}$ bị chi phối bởi $D$, nên các phân tích ở
 Chương~\ref{chap:fnn} về $u_{\btheta}$ không chuyển sang $\hat u_{\btheta}$ một
-cách tự động. Luận văn dùng ràng buộc mềm cho các thí nghiệm chính và ràng buộc
+cách tự động. Báo cáo dùng ràng buộc mềm cho các thí nghiệm chính và ràng buộc
 cứng như một đối chứng.
  
 \subsection{Bài toán thuận và bài toán ngược}
@@ -1081,13 +1081,13 @@ minh rằng mạng \emph{không thể} biểu diễn tần số cao; nó chỉ r
 phổ với chuẩn tham số. Sức nặng của lập luận nằm ở việc đảo ngược quan hệ ấy, tức
 Hệ quả~\ref{hq:parameter-cost}.
  
-Thứ ba, định lý phát biểu cho ReLU. Mạng $\tanh$ dùng trong luận văn không thuộc
+Thứ ba, định lý phát biểu cho ReLU. Mạng $\tanh$ dùng trong báo cáo không thuộc
 phạm vi của nó, và thực tế phổ của mạng $\tanh$ suy giảm còn nhanh hơn -- theo
 Mệnh đề~\ref{md:tanh-giai-tich}, $\tanh$ giải tích trên một dải, nên hàm hợp
 tương ứng trơn hơn hẳn tuyến tính từng khúc. Kết luận định tính (tần số cao đắt
 đỏ) chuyển sang được; hằng số và số mũ cụ thể thì không. Ta dẫn
 Định lý~\ref{dl:spectral-decay} như bằng chứng cho cơ chế, không như một chặn áp
-dụng trực tiếp cho kiến trúc của luận văn.
+dụng trực tiếp cho kiến trúc của báo cáo.
 \end{nhanxet}
  
 \begin{hequa}[Cái giá tham số của tần số cao]

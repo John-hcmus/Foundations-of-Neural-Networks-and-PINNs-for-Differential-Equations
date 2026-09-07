@@ -15,7 +15,7 @@ OUT = os.path.join(os.path.dirname(__file__), "..", "results")
 def run(act: str, seed=0, iters=4000, n_col=256, lam_b=100.0):
     set_seed(seed)
     net = FNN([1, 32, 32, 32, 1], act=act)
-    xr = uniform_1d(n_col)          # quy uoc luan van: ke ca diem bien
+    xr = uniform_1d(n_col)          # quy uoc bao cao: ke ca diem bien
     xb = torch.tensor([[0.0], [1.0]], dtype=DTYPE)
     xe = torch.linspace(0, 1, 1001, dtype=DTYPE).reshape(-1, 1)
     f = lambda x: 4 * PI**2 * torch.sin(2 * PI * x)

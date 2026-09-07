@@ -6,7 +6,7 @@
 \label{sec:da-lam}
 %==============================================================================
 
-Luận văn đặt ra năm nhiệm vụ ở Mục~\ref{sec:muc-tieu}. Phần này đối chiếu từng
+Báo cáo đặt ra năm nhiệm vụ ở Mục~\ref{sec:muc-tieu}. Phần này đối chiếu từng
 nhiệm vụ với kết quả thực tế, kể cả những chỗ chưa đạt.
 
 \paragraph{MT1 --- Cơ sở toán học của mạng truyền thẳng.}
@@ -31,7 +31,7 @@ minh bằng ba lập luận cụ thể --- tính tất định của gradient, s
 thực hành.
 
 \paragraph{MT3 --- Xây dựng PINNs một cách chặt chẽ.}
-Đã hoàn thành, và đây là chỗ luận văn bổ sung được một mắt xích mà tài liệu
+Đã hoàn thành, và đây là chỗ báo cáo bổ sung được một mắt xích mà tài liệu
 thường bỏ qua: \emph{vì sao cực tiểu hoá phần dư lại là việc đáng làm}.
 Mệnh đề~\ref{md:chan-on-dinh} trả lời bằng một chặn ổn định, và
 Mệnh đề~\ref{md:chan-suy-bien} chỉ ra hằng số của chặn ấy suy biến theo $1/\nu$.
@@ -41,7 +41,7 @@ thang độ dài nhỏ.
 
 \paragraph{MT4 --- Cài đặt và thực nghiệm trên PyTorch.}
 Đã hoàn thành. Toàn bộ cài đặt dùng PyTorch thuần, không dùng thư viện PINNs đóng
-gói sẵn (lý do ở Nhận xét~\ref{nx:vi-sao-tu-viet}), và được công bố kèm luận văn
+gói sẵn (lý do ở Nhận xét~\ref{nx:vi-sao-tu-viet}), và được công bố kèm báo cáo
 (Phụ lục~\ref{app:code}) để mọi bảng số và mọi hình trong
 Chương~\ref{chap:thucnghiem} đều tái lập được bằng một lệnh.
 
@@ -53,7 +53,7 @@ trong $0{,}0098$ giây --- chậm hơn khoảng $1{,}8\times10^{4}$ lần, tức
 lớn. Đây không phải mâu thuẫn với Chương~\ref{chap:modau}: cả ba động lực
 nêu ở Mục~\ref{subsec:gioi-han-co-dien} --- bài toán ngược, điều kiện biên
 khuyết, lời nguyền số chiều --- đều \emph{không} có mặt trong lớp bài toán mà
-luận văn thực nghiệm. Kết luận đúng phạm vi là: các thí nghiệm ở đây kiểm chứng
+báo cáo thực nghiệm. Kết luận đúng phạm vi là: các thí nghiệm ở đây kiểm chứng
 \emph{cơ chế} của PINNs, không kiểm chứng \emph{tính cạnh tranh} của chúng
 (Nhận xét~\ref{nx:doc-tn9}).
 
@@ -66,11 +66,11 @@ Mục~\ref{sec:tn8} không chỉ đo độ nhạy theo hạt giống mà còn d�
 một khảo sát độ nhạy phải có.
 
 %==============================================================================
-\section{Đóng góp của luận văn}
+\section{Đóng góp của báo cáo}
 \label{sec:dong-gop-cuoi}
 %==============================================================================
 
-Trong phạm vi đã nêu ở Mục~\ref{subsec:pham-vi}, luận văn có ba đóng góp.
+Trong phạm vi đã nêu ở Mục~\ref{subsec:pham-vi}, báo cáo có ba đóng góp.
 
 \emph{Thứ nhất}, một trình bày mạch lạc bằng tiếng Việt về PINNs, đi từ cơ sở
 toán học của mạng truyền thẳng tới công thức đầy đủ của mô hình thời gian liên
@@ -113,7 +113,7 @@ cực}:
       $\hat\lambda_i \gtrsim J_i^{-1/2}$ và không có cơ chế tự hãm. Đây là kết
       quả lý thuyết nảy sinh \emph{từ} thực nghiệm chứ không phải được kiểm chứng
       bởi thực nghiệm.
-\item \textbf{Bốn con số của chính luận văn bị chính luận văn loại bỏ.}
+\item \textbf{Bốn con số của chính báo cáo này bị chính nó loại bỏ.}
       Mục~\ref{sec:tn8} lặp lại mọi thí nghiệm có phụ thuộc ngẫu nhiên trên năm
       hạt giống, và kết quả là bốn đại lượng từng được trích dẫn như số đo đều
       hoá ra không tiêu biểu: tương quan $\rho_b$--$\norm{\bW^{(1)}}_F^2$ chỉ còn
@@ -133,9 +133,9 @@ cực}:
 %==============================================================================
 
 Ngoài chín hạn chế về thiết kế thực nghiệm đã nêu ở Mục~\ref{sec:hanche}, cần nói
-rõ ba giới hạn về phạm vi của toàn bộ luận văn.
+rõ ba giới hạn về phạm vi của toàn bộ báo cáo.
 
-Thứ nhất, luận văn \emph{không} chứng minh định lý mới về hội tụ hay ước lượng
+Thứ nhất, báo cáo \emph{không} chứng minh định lý mới về hội tụ hay ước lượng
 sai số cho PINNs. Các kết quả lớn của lĩnh vực chỉ được trích dẫn cùng diễn giải;
 những chứng minh được trình bày đầy đủ đều sơ cấp, và giá trị của chúng nằm ở chỗ
 biến những khẳng định mơ hồ thành phát biểu có giả thiết rõ ràng.
@@ -144,10 +144,10 @@ Thứ hai, phạm vi bài toán hẹp: chỉ mô hình thời gian liên tục, 
 thẳng kết nối đầy đủ, chỉ bài toán thuận, và chỉ các phương trình một chiều theo
 không gian. Lợi thế lý thuyết quan trọng nhất của mạng nơ-ron --- bậc xấp xỉ
 $\mathcal{O}(m^{-1/2})$ không phụ thuộc số chiều ở Định lý~\ref{dl:barron} ---
-vì vậy \emph{không} được kiểm chứng bằng thực nghiệm nào trong luận văn. Phép đo
+vì vậy \emph{không} được kiểm chứng bằng thực nghiệm nào trong báo cáo. Phép đo
 chi phí ở Mục~\ref{sec:tn9} cho thấy cái giá của giới hạn phạm vi này là cụ thể
 chứ không trừu tượng: ở $d = 1$, nơi phương pháp lưới gần như tối ưu, PINN thua
-bốn bậc về chi phí, và luận văn không có bài toán nào để cho thấy tỉ số ấy đảo
+bốn bậc về chi phí, và báo cáo không có bài toán nào để cho thấy tỉ số ấy đảo
 chiều.
 
 Thứ ba, các chặn ổn định ở Mệnh đề~\ref{md:chan-on-dinh} và
@@ -200,7 +200,7 @@ phải do bài toán. Cách sạch hơn là \emph{dựng} sai số theo hướng
 $\sin \pi x$ --- hướng làm chặn Poincaré trở nên chặt --- rồi đo trực tiếp tỉ số
 ấy theo $\nu$.
 
-\paragraph{Mở rộng phạm vi.} Cuối cùng, hai mở rộng nằm ngoài phạm vi luận văn
+\paragraph{Mở rộng phạm vi.} Cuối cùng, hai mở rộng nằm ngoài phạm vi báo cáo
 nhưng nối liền với nó: bài toán ngược, nơi khung hàm mất mát \eqref{eq:total-loss}
 đã sẵn sàng và chỉ cần thêm $\bzeta$ vào tập biến tối ưu
 (Mục~\ref{subsec:thuan-nguoc}); và bài toán nhiều chiều, nơi lập luận chống lời

@@ -40,7 +40,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     lams = [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]
     rows = [run(l) for l in lams]
-    # hoi quy log--log tren dai [0,1 ; 100] dung nhu luan van
+    # hoi quy log--log tren dai [0,1 ; 100] dung nhu bao cao
     sub = [w for w in rows if 0.1 <= w["lam_b"] <= 100.0]
     A = np.log10([w["lam_b"] for w in sub])
     B = np.log10([w["sai_so_bien"] for w in sub])

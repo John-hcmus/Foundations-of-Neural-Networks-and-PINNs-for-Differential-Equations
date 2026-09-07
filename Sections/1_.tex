@@ -20,7 +20,7 @@ vật liệu. Tuy nhiên, với các hệ phi tuyến, đa quy mô và có tần
 nguồn bất định.
  
 Ba giới hạn cụ thể đáng được nêu riêng, vì cả ba đều là động lực trực tiếp cho
-hướng tiếp cận của luận văn~\cite{karniadakis2021}.
+hướng tiếp cận của báo cáo~\cite{karniadakis2021}.
  
 \emph{Thứ nhất, bài toán ngược.} Khi mục tiêu không chỉ là tìm nghiệm của một
 phương trình đã biết mà còn phải ước lượng tham số chưa biết, tính chất vật liệu,
@@ -76,7 +76,7 @@ và hướng quá trình tối ưu về những nghiệm phù hợp quy luật v
 dung của \emph{học máy khoa học}.
  
 Karniadakis và cộng sự~\cite{karniadakis2021} phân loại ba con đường nhúng vật lý,
-và sự phân loại này định vị chính xác phạm vi của luận văn.
+và sự phân loại này định vị chính xác phạm vi của báo cáo.
  
 \emph{Thiên kiến quan sát} (observational bias) đưa vật lý vào qua chính dữ liệu:
 huấn luyện trên dữ liệu đã hàm chứa quy luật vật lý cho phép mô hình học được các
@@ -96,7 +96,7 @@ vật lý. Bằng các ràng buộc phạt mềm, định luật vật lý chỉ
 xỉ}; đổi lại, đây là nền linh hoạt nhất, cho phép đưa vào một lớp rất rộng các
 ràng buộc dạng tích phân, vi phân hay thậm chí phân thứ.
  
-Ba con đường này không loại trừ nhau. Luận văn tập trung vào con đường thứ ba, và
+Ba con đường này không loại trừ nhau. Báo cáo tập trung vào con đường thứ ba, và
 sự lựa chọn ấy có cái giá của nó: Nhận xét~\ref{rem:soft-constraint} của
 Chương~\ref{chap:pinn} sẽ chỉ ra rằng phạt mềm khiến điều kiện biên không được
 thoả chính xác, còn Mục~\ref{sec:gradient-pathology} phân tích khó khăn tối ưu
@@ -141,7 +141,7 @@ hàm mất mát phục vụ được cả hai, vì tham số vật lý được 
 số của mạng; Mục~\ref{subsec:thuan-nguoc} trình bày điều này.
  
 Cuối cùng, cần nói ngay rằng PINNs không phải một phương pháp không có nhược điểm,
-và chính các nhược điểm ấy chiếm phần lớn dung lượng của luận văn. Karniadakis và
+và chính các nhược điểm ấy chiếm phần lớn dung lượng của báo cáo. Karniadakis và
 cộng sự~\cite{karniadakis2021} nêu thẳng rằng mạng kết nối đầy đủ gặp khó khăn khi
 học các hàm tần số cao -- hiện tượng gọi là \emph{thiên kiến phổ} -- và rằng các
 đặc trưng tần số cao trong nghiệm sinh ra gradient dốc, khiến PINNs thường không
@@ -156,22 +156,22 @@ Chương~\ref{chap:thucnghiem} kiểm chứng chúng bằng số liệu.
  
 \subsection{Mục tiêu tổng quát}
  
-Luận văn hướng tới việc trình bày một cách hệ thống nền tảng toán học, thuật toán
+Báo cáo hướng tới việc trình bày một cách hệ thống nền tảng toán học, thuật toán
 và thực nghiệm của PINNs khi được dùng làm công cụ giải phương trình vi phân;
 đồng thời cài đặt và đánh giá định lượng phương pháp này trên các bài toán chuẩn
 mực, nhằm xác lập một đánh giá cân bằng -- dựa trên số liệu và chứng minh chứ
 không dựa trên kỳ vọng -- về phạm vi mà PINNs thực sự mang lại lợi thế so với giải
 tích số cổ điển.
  
-Hai chữ ``cân bằng'' cần được hiểu theo nghĩa mạnh. Luận văn báo cáo đầy đủ cả
-những kết quả không đạt kỳ vọng, và trong một trường hợp, một kết quả tiêu cực đã
-dẫn tới việc phải siết lại cách phát biểu của chính chương lý thuyết
+Hai chữ ``cân bằng'' cần được hiểu theo nghĩa mạnh. Những kết quả không đạt kỳ
+vọng cũng được trình bày đầy đủ, và trong một trường hợp, một kết quả tiêu cực
+đã dẫn tới việc phải siết lại cách phát biểu của chính chương lý thuyết
 (Nhận xét~\ref{nx:hieu-chinh}).
  
 \subsection{Mục tiêu cụ thể}
 \label{subsec:mt-cu-the}
  
-Từ mục tiêu tổng quát, luận văn đặt ra năm nhiệm vụ.
+Từ mục tiêu tổng quát, báo cáo đặt ra năm nhiệm vụ.
  
 \begin{enumerate}[label=\textbf{MT\arabic*.},leftmargin=*,itemsep=5pt]
 \item \textbf{Hệ thống hoá cơ sở toán học của mạng nơ-ron truyền thẳng.} Trình bày
@@ -209,17 +209,17 @@ nghiệm ở Mục~\ref{sec:hanche}.
 \subsection{Phạm vi và giới hạn}
 \label{subsec:pham-vi}
  
-Để bảo đảm chiều sâu, luận văn giới hạn phạm vi như sau.
+Để bảo đảm chiều sâu, báo cáo giới hạn phạm vi như sau.
  
 Về \emph{lớp bài toán}, trọng tâm đặt vào bài toán thuận; bài toán ngược chỉ được
 trình bày ở mức tổng quan (Mục~\ref{subsec:thuan-nguoc}) nhằm cho thấy tính thống
 nhất của khung phương pháp.
  
-Về \emph{cơ chế nhúng vật lý}, luận văn tập trung vào thiên kiến học, tức cưỡng
+Về \emph{cơ chế nhúng vật lý}, báo cáo tập trung vào thiên kiến học, tức cưỡng
 bức bằng phạt mềm; thiên kiến quy nạp chỉ được nhắc tới khi cần đối chiếu, qua
 dạng nghiệm thử ràng buộc cứng ở Bổ đề~\ref{bd:rang-buoc-cung}.
  
-Về \emph{mô hình thời gian}, luận văn chỉ xét mô hình thời gian liên tục của
+Về \emph{mô hình thời gian}, báo cáo chỉ xét mô hình thời gian liên tục của
 Raissi và cộng sự. Mô hình thời gian rời rạc dựa trên các lược đồ Runge--Kutta ẩn
 nằm ngoài phạm vi.
  
@@ -233,9 +233,9 @@ Về \emph{công cụ}, toàn bộ phần thực nghiệm được cài đặt b
 thư viện PINNs đóng gói sẵn, nhằm giữ cho mọi thành phần của thuật toán đều minh
 bạch và kiểm chứng được.
  
-Cuối cùng, về \emph{tham vọng lý thuyết}: luận văn không đặt mục tiêu chứng minh
+Cuối cùng, về \emph{tham vọng lý thuyết}: báo cáo không đặt mục tiêu chứng minh
 định lý mới về hội tụ hay ước lượng sai số cho PINNs, và các kết quả lớn của lĩnh
-vực chỉ được trích dẫn cùng diễn giải. Tuy vậy, luận văn \emph{có} cung cấp chứng
+vực chỉ được trích dẫn cùng diễn giải. Tuy vậy, báo cáo \emph{có} cung cấp chứng
 minh đầy đủ cho một số phát biểu mà tài liệu thường chỉ nêu định tính -- chẳng hạn
 sự sụp đổ gradient của kiến trúc ReLU (Hệ quả~\ref{hq:pinn-hong}), chặn ổn định
 nối phần dư với sai số (Mệnh đề~\ref{md:chan-on-dinh}), sàn nhiễu của bước học
@@ -246,7 +246,7 @@ khẳng định mơ hồ thành những phát biểu có giả thiết rõ ràng
  
 \subsection{Đóng góp dự kiến}
  
-Trong phạm vi đã nêu, luận văn có ba đóng góp.
+Trong phạm vi đã nêu, báo cáo có ba đóng góp.
  
 \emph{Thứ nhất}, một trình bày mạch lạc bằng tiếng Việt về PINNs, đi từ cơ sở toán
 học của mạng nơ-ron truyền thẳng tới công thức đầy đủ của mô hình thời gian liên
@@ -266,7 +266,7 @@ việc ghép hai kết quả rời rạc, từ một ước lượng chưa kiể
 khái quát hoá một lần chạy duy nhất.
  
 %==============================================================================
-\section{Bố cục luận văn}
+\section{Bố cục báo cáo}
 \label{sec:bo-cuc}
 %==============================================================================
  

@@ -6,11 +6,11 @@
 \addcontentsline{toc}{chapter}{Tóm tắt}
 \markboth{Tóm tắt}{Tóm tắt}
 
-Luận văn trình bày một cách hệ thống cơ sở toán học, thuật toán và thực nghiệm
+Báo cáo trình bày một cách hệ thống cơ sở toán học, thuật toán và thực nghiệm
 của \emph{mạng nơ-ron thông tin vật lý} (physics-informed neural network, PINN)
 khi được dùng làm công cụ giải phương trình vi phân.
 
-Điểm khác biệt về trọng tâm so với tài liệu học sâu tổng quát là luận văn khảo
+Điểm khác biệt về trọng tâm so với tài liệu học sâu tổng quát là báo cáo khảo
 sát mạng truyền thẳng từ góc độ \emph{đạo hàm theo biến đầu vào} chứ không phải
 theo tham số. Hai hệ thức truy hồi cho Jacobi và Hessian
 (Mệnh đề~\ref{md:jacobian}, \ref{md:hessian}) được thiết lập tường minh và trở
@@ -20,23 +20,23 @@ chính xác ở dạng mạnh hơn nhiều một sự ``suy giảm'': hàm mục
 phương trình bậc hai là \emph{hằng số địa phương}, nên mọi thuật toán dựa trên
 gradient đứng yên tuyệt đối (Hệ quả~\ref{hq:pinn-hong}).
 
-Về phương pháp, luận văn trả lời câu hỏi thường bị bỏ qua: \emph{vì sao cực tiểu
+Về phương pháp, báo cáo trả lời câu hỏi thường bị bỏ qua: \emph{vì sao cực tiểu
 hoá phần dư lại là việc đáng làm}. Câu trả lời là một chặn ổn định của bài toán
 vi phân (Mệnh đề~\ref{md:chan-on-dinh}), và hằng số của chặn ấy suy biến theo
 $1/\nu$ với bài toán nhiễu kỳ dị (Mệnh đề~\ref{md:chan-suy-bien}). Kết hợp với
-bệnh lý gradient ở tầng tối ưu và thiên kiến phổ ở tầng xấp xỉ, luận văn tổng
+bệnh lý gradient ở tầng tối ưu và thiên kiến phổ ở tầng xấp xỉ, báo cáo tổng
 hợp \emph{ba nguyên nhân độc lập, nằm ở ba tầng khác nhau}, cùng làm PINNs suy
 giảm trên đúng lớp bài toán có thang độ dài nhỏ (Bảng~\ref{tab:ba-nguyen-nhan}).
 
 Phần thực nghiệm cài đặt PINNs bằng PyTorch, không dùng thư viện đóng gói sẵn,
 và kiểm chứng từng phát biểu lý thuyết bằng chín thí nghiệm có tiêu chí thành bại
 xác định trước. Kết quả được đối chiếu với lý thuyết ở
-Bảng~\ref{tab:doi-chieu}. Luận văn báo cáo đầy đủ cả những kết quả không đạt kỳ
-vọng: một kết quả buộc phải siết lại cách phát biểu của chính chương lý thuyết
+Bảng~\ref{tab:doi-chieu}. Những kết quả không đạt kỳ vọng cũng được trình bày
+đầy đủ: một kết quả buộc phải siết lại cách phát biểu của chính chương lý thuyết
 (Nhận xét~\ref{nx:hieu-chinh}), và một kết quả tiêu cực về thuật toán cân bằng
 trọng số đã dẫn tới một chứng minh mới về chế độ phản hồi dương của quy tắc ấy
 (Bổ đề~\ref{bd:phan-hoi-duong}). Việc lặp lại mọi thí nghiệm có phụ thuộc ngẫu
-nhiên trên năm hạt giống còn loại bỏ được bốn con số mà chính luận văn đã trích
+nhiên trên năm hạt giống còn loại bỏ được bốn con số mà chính báo cáo đã trích
 dẫn trước đó, trong khi các kết luận định tính đều đứng vững
 (Mục~\ref{sec:tn8}). Phép đo chi phí cho một kết quả cần được nêu
 thẳng: trên bài toán một chiều được khảo sát, PINN chậm hơn bộ giải sai phân hữu
@@ -55,7 +55,7 @@ vi phân tự động, xấp xỉ phổ quát, thiên kiến phổ, bệnh lý g
 \markboth{Abstract}{Abstract}
 
 \begin{english}
-This thesis gives a systematic account of the mathematical, algorithmic and
+This report gives a systematic account of the mathematical, algorithmic and
 experimental foundations of \emph{physics-informed neural networks} (PINNs) used
 as solvers for differential equations.
 
@@ -68,7 +68,7 @@ stated in a form considerably stronger than mere degradation: for a second-order
 operator the residual objective is \emph{locally constant}, so every
 gradient-based algorithm is exactly stationary.
 
-Methodologically, the thesis answers a question that is usually skipped: \emph{why
+Methodologically, the report answers a question that is usually skipped: \emph{why
 minimising the residual is worth doing at all}. The answer is a stability bound
 for the underlying differential problem, whose constant degenerates as $1/\nu$ for
 singularly perturbed problems. Combined with gradient pathology at the
@@ -82,7 +82,7 @@ criteria fixed in advance. Negative results are reported in full: one experiment
 forced a restatement of a conclusion in the theoretical chapter, and a negative
 result on adaptive loss balancing led to a new proof that the balancing rule has
 a positive-feedback failure mode. Repeating every seed-dependent experiment over
-five random seeds further eliminated four figures the thesis had itself quoted,
+five random seeds further eliminated four figures the report had itself quoted,
 while leaving all of its qualitative conclusions intact. A
 direct cost measurement gives a further result worth stating plainly: on the
 one-dimensional problems studied here the PINN is about four orders of magnitude

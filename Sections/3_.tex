@@ -865,8 +865,8 @@ Với phương trình $u_t = \nu u_{xx}$, một bước huấn luyện gồm:
       bước cập nhật tối ưu.
 \end{enumerate}
 Trong PyTorch~\cite{paszke2019}, hai lượt đầu tương ứng với việc gọi
-\verb|torch.autograd.grad(u, x, create_graph=True)|, trong đó cờ
-\verb|create_graph| báo cho hệ thống rằng bản thân phép tính gradient phải được
+\texttt{torch.autograd.grad(u, x, create\_graph=True)}, trong đó cờ
+\texttt{create\_graph} báo cho hệ thống rằng bản thân phép tính gradient phải được
 \emph{ghi lại} vào băng ghi thay vì bị loại bỏ sau khi dùng. Bỏ sót cờ này là lỗi
 cài đặt phổ biến nhất khi triển khai PINN: chương trình vẫn chạy, hàm mục tiêu
 vẫn được tính, nhưng $\nabla_{\btheta} J$ bỏ mất toàn bộ đóng góp đi qua phần dư,

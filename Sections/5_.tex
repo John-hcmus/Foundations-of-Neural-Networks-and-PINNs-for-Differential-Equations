@@ -812,9 +812,12 @@ Nhận xét~\ref{nx:danh-doi}, trọng số biên quá lớn làm hy sinh phần
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Images/chap_5/fig54_heat.pdf}
-\caption{Phương trình khuếch tán. (a) Hội tụ sai số $L^2$ trong giai đoạn Adam.
-(b) Chỉ số mất cân bằng $\rho_b$: với trọng số cố định, $\rho_b$ giảm dần -- theo
-Định nghĩa~\ref{dn:rho}, đây là dấu hiệu không có bệnh lý gradient.}
+\caption[Phương trình khuếch tán]{Phương trình khuếch tán, \emph{một} lần chạy.
+(a) Hội tụ sai số $L^2$ trong giai đoạn Adam. (b) Chỉ số mất cân bằng $\rho_b$:
+với trọng số cố định, $\rho_b$ giảm dần -- theo Định nghĩa~\ref{dn:rho}, đây là
+dấu hiệu không có bệnh lý gradient. Chiều giảm này chỉ xuất hiện ở $3/5$ hạt
+giống (Mục~\ref{sec:tn8}); cái vững trên mọi hạt giống là \emph{độ lớn} của
+$\rho_b$, chứ không phải chiều biến thiên của nó.}
 \label{fig:tn4}
 \end{figure}
  
@@ -970,8 +973,11 @@ lớp đầu, nên chuẩn của một lớp không đủ để giải thích. T
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Images/chap_5/fig56_rho.pdf}
-\caption{So sánh hai bài toán. (a) $\rho_b$ tăng đơn điệu với Burgers, giảm với
-khuếch tán. (b) Chuẩn Frobenius của ma trận trọng số lớp vào.}
+\caption[So sánh hai bài toán]{So sánh hai bài toán, \emph{một} lần chạy.
+(a) $\rho_b$ tăng đơn điệu với Burgers, giảm với khuếch tán. (b) Chuẩn Frobenius
+của ma trận trọng số lớp vào. Trên năm hạt giống, chiều tăng ở Burgers giữ nguyên
+($5/5$) còn chiều giảm ở khuếch tán thì không ($3/5$), và quan hệ giữa hai đường
+ở (a) và (b) không tái lập được (Nhận xét~\ref{nx:tuong-quan-hong}).}
 \label{fig:tn6}
 \end{figure}
  

@@ -95,8 +95,20 @@ model = lambda x: x * (1 - x) * net(x)
 \section{Giới hạn về tính tái lập}
 %==============================================================================
 
-Mọi thí nghiệm dùng một hạt giống cố định (\texttt{seed = 0}) và số học
-\texttt{float64}, nên kết quả tái lập được trên cùng một phiên bản PyTorch. Cần
-đọc điều này kèm hạn chế thứ nhất ở Mục~\ref{sec:hanche}: tái lập được không đồng
-nghĩa với có ý nghĩa thống kê, và một hạt giống duy nhất chưa đủ để rút kết luận
-so sánh giữa hai phác đồ huấn luyện.
+Mọi thí nghiệm dùng số học \texttt{float64}; các mục không quét hạt giống dùng
+\texttt{seed = 0}, còn Mục~\ref{sec:tn8} quét $\texttt{seed} \in \{0,\dots,4\}$
+và Mục~\ref{sec:tn7} quét ba hạt giống.
+
+Cố định hạt giống \emph{vẫn chưa đủ}. Toàn bộ số liệu kèm theo được sinh với
+\begin{center}
+\texttt{OMP\_NUM\_THREADS=1 python -m pinns.<tệp>}
+\end{center}
+và biến môi trường ấy là bắt buộc chứ không phải tuỳ chọn: số luồng của thư viện
+đại số tuyến tính thay đổi thứ tự cộng dồn trong phép nhân ma trận, và trên bài
+toán Burgers điều đó đủ để đổi sai số cuối gần hai lần
+(Mục~\ref{sec:hanche}, hạn chế~(7)).
+
+Cần đọc cả hai điều trên kèm hạn chế thứ nhất ở Mục~\ref{sec:hanche}: tái lập
+được không đồng nghĩa với có ý nghĩa thống kê. Riêng Mục~\ref{sec:tn3} vẫn dùng
+lấy mẫu ngẫu nhiên với một hạt giống duy nhất, nên các hệ số cải thiện báo cáo ở
+đó chưa có khoảng tin cậy.

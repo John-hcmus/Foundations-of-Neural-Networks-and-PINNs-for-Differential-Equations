@@ -16,7 +16,7 @@ Diem (3) moi la doi chieu thuc su: no tra loi cau hoi "voi bai toan mot
 chieu nay, PINN co re hon phuong phap co dien khong".
 """
 from __future__ import annotations
-import json, math, os, time
+import json, math, os, statistics as st, time
 
 import numpy as np
 import torch
@@ -29,14 +29,23 @@ NU = 0.01 / PI
 OUT = os.path.join(os.path.dirname(__file__), "..", "results")
 
 
-def _dem(f, n=20):
-    """Thoi gian trung binh mot lan goi f, sau khi da lam nong."""
-    for _ in range(3):
+def _dem(f, n=20, vong=9):
+    """Thoi gian mot lan goi f: TRUNG VI cua `vong` dot do, moi dot `n` lan.
+
+    Do trung binh cua mot dot duy nhat qua nhieu nhieu: giua cac lan chay
+    doc lap, ti so "phan du / luot xuoi" dao dong tu 4,1 den 5,1 chi vi
+    luot xuoi (co 2 ms) rat nhay voi tai he thong. Trung vi cua chin dot
+    on dinh hon han.
+    """
+    for _ in range(5):
         f()
-    t0 = time.perf_counter()
-    for _ in range(n):
-        f()
-    return (time.perf_counter() - t0) / n
+    dot = []
+    for _ in range(vong):
+        t0 = time.perf_counter()
+        for _ in range(n):
+            f()
+        dot.append((time.perf_counter() - t0) / n)
+    return st.median(dot)
 
 
 def chi_phi_mot_buoc(Nr=2500, seed=0):
@@ -68,38 +77,99 @@ def chi_phi_mot_buoc(Nr=2500, seed=0):
     t_buoc = _dem(buoc_day_du)
     return {"luot_xuoi": t_xuoi, "phan_du": t_pd, "buoc_day_du": t_buoc,
             "boi_so_phan_du": t_pd / t_xuoi, "boi_so_buoc": t_buoc / t_xuoi,
+            "c_menh_de": t_buoc / t_pd,
             "so_tham_so": net.n_params(), "Nr": Nr}
+
+
+def quet_kich_thuoc(seed=0):
+    """Do chi phi mot buoc o nhieu kich thuoc lo.
+
+    Ly do phai quet: voi Nr = 2500 luot xuoi chi ton ~1,3 ms, qua ngan de do
+    tin cay tren mot may dung chung -- ba lan chay doc lap cho boi so 4,2 /
+    7,2 / 7,4. Tang Nr len lam luot xuoi du dai de phep do on dinh, va ti so
+    thi gan nhu khong doi theo Nr. Ta lay Nr lon nhat lam so bao cao.
+    """
+    return [chi_phi_mot_buoc(Nr=n, seed=seed) for n in (2500, 10000, 40000)]
+
+
+def _do_fd(Nx, dt, ref_min):
+    """Chay bo giai FD mot lan, tra ve (giay, eps_L2) hoac None neu luoi
+    thoi gian khong khop voi luoi cua nghiem tham chieu."""
+    xm, tm, Um, _ = ref_min
+    t0 = time.perf_counter()
+    x, ts, U, _ = B.reference(Nx=Nx, dt=dt)
+    el = time.perf_counter() - t0
+    if len(ts) != len(tm):
+        return None
+    Ui = np.stack([np.interp(xm, x, U[i]) for i in range(len(ts))])
+    e = float(np.linalg.norm(Ui - Um) / np.linalg.norm(Um))
+    return el, e
 
 
 def chi_phi_fd(muc_tieu, ref_min):
     """Thoi gian bo giai sai phan huu han dat sai so <= muc_tieu.
 
-    Quet Nx tang dan; voi moi Nx do thoi gian va sai so so voi luoi min.
+    Quet Nx tang dan, GIU dt = 5e-5 nhu bo giai tham chieu. Day la phep do
+    "ngay tho": dt ay duoc chon cho Nx = 2047 nen qua nho voi luoi tho.
     """
-    xm, tm, Um, _ = ref_min
     rows = []
-    for Nx in (63, 127, 255, 511, 1023):
-        t0 = time.perf_counter()
-        x, ts, U, _ = B.reference(Nx=Nx)
-        dt = time.perf_counter() - t0
-        Ui = np.stack([np.interp(xm, x, U[i]) for i in range(len(ts))])
-        e = float(np.linalg.norm(Ui - Um) / np.linalg.norm(Um))
-        rows.append({"Nx": Nx, "giay": dt, "eps_L2": e, "dat": e <= muc_tieu})
+    for Nx in (15, 31, 63, 127, 255, 511, 1023):
+        r = _do_fd(Nx, 5e-5, ref_min)
+        if r is None:
+            continue
+        el, e = r
+        rows.append({"Nx": Nx, "dt": 5e-5, "giay": el, "eps_L2": e,
+                     "dat": e <= muc_tieu})
         if e <= muc_tieu:
             break
     return rows
 
 
+def chi_phi_fd_dt_hop_ly(Nx, ref_min):
+    """Chi phi FD that su tai luoi Nx, khi dt duoc chon cho CHINH luoi ay.
+
+    Bo giai la RK4 tuong minh, nen dt bi chan boi hai dieu kien on dinh:
+        khuech tan  dt <= dx^2 / (2 nu),
+        doi luu     dt <= dx / max|u|  (max|u| <= 1 voi bai toan nay).
+    Ta quet dt tang dan trong vung on dinh va bao cao lan chay nhanh nhat
+    van dat cung muc sai so. Sai so khong doi khi dt giam, chung to sai so
+    KHONG GIAN moi la thanh phan chiem uu the -- day chinh la ly do dt = 5e-5
+    la lang phi tren luoi tho.
+    """
+    dx = 2.0 / (Nx + 1)
+    chan_kt = dx * dx / (2.0 * NU)
+    chan_dl = dx / 1.0
+    chan = min(chan_kt, chan_dl)
+    rows = []
+    for dt in (5e-5, 1e-3, 5e-3, 1e-2):
+        if dt > chan / 2:          # giu bien an toan gap doi
+            continue
+        r = _do_fd(Nx, dt, ref_min)
+        if r is None:
+            continue
+        el, e = r
+        rows.append({"Nx": Nx, "dt": dt, "n_buoc": int(round(1.0 / dt)),
+                     "giay": el, "eps_L2": e})
+    return {"chan_khuech_tan": chan_kt, "chan_doi_luu": chan_dl,
+            "lan_chay": rows}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
-    print("=== 1. Chi phi mot buoc huan luyen PINN (Burgers, Nr = 2500) ===")
-    c = chi_phi_mot_buoc()
-    print(f"  luot xuoi thuan tuy          {c['luot_xuoi']*1e3:8.2f} ms")
-    print(f"  + dao ham bac hai (phan du)  {c['phan_du']*1e3:8.2f} ms"
-          f"   = {c['boi_so_phan_du']:5.1f}x luot xuoi")
-    print(f"  + gradient theo tham so      {c['buoc_day_du']*1e3:8.2f} ms"
-          f"   = {c['boi_so_buoc']:5.1f}x luot xuoi")
-    print(f"  (Nhan xet nx:chi-phi-bac-cao du bao boi so 4-6 lan)")
+    print("=== 1. Chi phi mot buoc huan luyen PINN (Burgers) ===")
+    quet = quet_kich_thuoc()
+    print(f"  {'Nr':>7}{'xuoi (ms)':>12}{'phan du (ms)':>15}{'buoc (ms)':>12}"
+          f"{'pd/xuoi':>10}{'c=buoc/pd':>11}")
+    for z in quet:
+        print(f"  {z['Nr']:7d}{z['luot_xuoi']*1e3:12.3f}{z['phan_du']*1e3:15.3f}"
+              f"{z['buoc_day_du']*1e3:12.3f}{z['boi_so_phan_du']:10.2f}"
+              f"{z['c_menh_de']:11.3f}")
+    c = quet[-1]
+    print(f"  So bao cao (Nr = {c['Nr']}, luot xuoi du dai de do tin cay):")
+    print(f"    do thi phan du / do thi xuoi = {c['boi_so_phan_du']:.2f}"
+          f"   (Nhan xet nx:chi-phi-bac-cao uoc luong 4-6 lan)")
+    print(f"    c = cost(grad J)/cost(J)     = {c['c_menh_de']:.2f}"
+          f"   (Menh de md:chi-phi-bp doi hoi c <= 3)")
 
     print("\n=== 2. Tong thoi gian huan luyen PINN (TN5, trong so co dinh) ===")
     ref_tmp = B.reference(Nx=511)      # luoi tho, chi de ham run() co cho danh gia
@@ -130,18 +200,38 @@ def main():
         print(f"  {r['Nx']:6d}{r['giay']:10.3f}{r['eps_L2']:12.4e}"
               f"   {'co' if r['dat'] else 'khong'}")
     dat = [r for r in rows if r["dat"]]
-    out = {"mot_buoc": c, "fd": rows, "eps_pinn": eps_pinn,
+    out = {"mot_buoc": c, "quet_kich_thuoc": quet, "fd": rows,
+           "eps_pinn": eps_pinn,
            "giay_ref_min": t_min, "giay_huan_luyen_pinn": t_pinn}
     if dat:
         r = dat[0]
-        print(f"\n  Sai phan huu han dat cung muc sai so voi Nx = {r['Nx']} "
-              f"trong {r['giay']:.3f} s.")
-        print(f"  PINN can {t_pinn:.1f} s  ->  cham hon {t_pinn/r['giay']:.0f} lan.")
-        print(f"  LUU Y: bo giai FD dung dt = 5e-5 co dinh (chon cho Nx = 2047),")
-        print(f"  qua nho so voi nhu cau cua Nx = {r['Nx']}. Chi phi FD that su con")
-        print(f"  thap hon, nen ti so tren la uoc luong CO LOI cho PINN.")
+        print(f"\n  Voi dt = 5e-5 co dinh: FD dat cung muc sai so tai "
+              f"Nx = {r['Nx']} trong {r['giay']:.3f} s")
+        print(f"  -> PINN cham hon {t_pinn/r['giay']:.0f} lan.")
         out["fd_dat"] = r
-        out["cham_hon_lan"] = t_pinn / r["giay"]
+        out["cham_hon_lan_dt_co_dinh"] = t_pinn / r["giay"]
+
+        print("\n=== 5. Nhung dt = 5e-5 la lang phi tren luoi tho ===")
+        q = chi_phi_fd_dt_hop_ly(r["Nx"], ref_min)
+        print(f"  Tai Nx = {r['Nx']}: chan on dinh dt <= "
+              f"{q['chan_khuech_tan']:.3e} (khuech tan), "
+              f"{q['chan_doi_luu']:.3e} (doi luu)")
+        print(f"  {'dt':>10}{'so buoc':>10}{'giay':>10}{'eps_L2':>13}")
+        for z in q["lan_chay"]:
+            print(f"  {z['dt']:10.1e}{z['n_buoc']:10d}{z['giay']:10.4f}"
+                  f"{z['eps_L2']:13.4e}")
+        out["fd_quet_dt"] = q
+        hop_le = [z for z in q["lan_chay"] if z["eps_L2"] <= eps_pinn]
+        if hop_le:
+            z = min(hop_le, key=lambda w: w["giay"])
+            print(f"\n  Sai so KHONG DOI khi dt giam -- sai so khong gian chiem"
+                  f" uu the.")
+            print(f"  Chi phi FD that su tai Nx = {r['Nx']}: {z['giay']:.4f} s "
+                  f"(dt = {z['dt']:.0e}, {z['n_buoc']} buoc).")
+            print(f"  PINN can {t_pinn:.1f} s  ->  cham hon "
+                  f"{t_pinn/z['giay']:.0f} lan.")
+            out["fd_nhanh_nhat"] = z
+            out["cham_hon_lan"] = t_pinn / z["giay"]
     json.dump(out, open(os.path.join(OUT, "exp9_chiphi.json"), "w"), indent=2)
 
 

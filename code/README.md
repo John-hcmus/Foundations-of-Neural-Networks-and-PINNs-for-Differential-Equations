@@ -67,6 +67,26 @@ tích luỹ qua nhiều bước, vì số luồng đổi **thứ tự cộng d�
 trận. Sai khác cỡ epsilon máy ban đầu được quỹ đạo tối ưu hoá khuếch đại: sau
 $1\,500$ vòng đã lệch ở chữ số có nghĩa thứ tư.
 
+**Trên bài toán khó thì mức khuếch đại lớn hơn hẳn.** Chạy `exp5_burgers` với
+hạt giống `0`, cùng một mã, cùng `float64`, cùng $6\,000$ vòng Adam $+\ 800$ vòng
+L-BFGS — chỉ khác biến môi trường:
+
+| | `OMP_NUM_THREADS=1` | không đặt (nhiều luồng) | hệ số |
+|---|---|---|---|
+| `eps_L2` cuối | `1.382437e-01` | `8.185651e-02` | **1.69×** |
+| `max rho_b` | `602.9` | `2101.1` | **3.48×** |
+| `rho_b` cuối | `419.8` | `705.5` | 1.68× |
+| `‖W⁽¹⁾‖_F` cuối | `3.608211` | `3.969849` | 1.10× |
+
+Hai lần chạy khởi tạo **giống hệt nhau** (`rho_dau = 10.538083367986...` ở cả
+hai), nên toàn bộ chênh lệch sinh ra trong quá trình huấn luyện. Nói cách khác:
+trên bài toán Burgers độ nhớt nhỏ, **số luồng BLAS một mình nó đã đổi sai số cuối
+gần hai lần và chỉ số `max rho_b` gấp ba lần rưỡi.** Con số `max rho_b` là đại
+lượng mà Chương 5 dùng để chẩn đoán bệnh lý gradient, nên nó phải được đọc theo
+bậc độ lớn chứ không theo giá trị.
+
+Mọi số trong `results/*.json` của kho này đều được sinh với `OMP_NUM_THREADS=1`.
+
 Hệ quả thực hành:
 
 - Muốn tái lập từng chữ số, phải cố định **cả** hạt giống **lẫn** số luồng

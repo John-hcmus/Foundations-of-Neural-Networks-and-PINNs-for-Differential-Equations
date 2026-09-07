@@ -11,10 +11,10 @@ chứng đó.
 Mục tiêu không dừng ở chỗ trình bày một cài đặt chạy được. Mỗi thí nghiệm dưới
 đây được thiết kế để trả lời một câu hỏi cụ thể do Chương~\ref{chap:pinn} đặt ra,
 với tiêu chí thành công hoặc thất bại xác định \emph{trước} khi chạy. Ta báo cáo
-đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong mười hai hạng mục đối chiếu
-ở Mục~\ref{sec:doi-chieu}, bảy khớp trọn vẹn, một khớp về hướng nhưng không về
-độ lớn, \emph{hai} buộc phải siết lại cách phát biểu, một chỉ là tương quan chưa
-giải thích được, và một cho kết quả trái với kỳ vọng.
+đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong mười hai hạng mục đối
+chiếu ở Mục~\ref{sec:doi-chieu}, năm khớp trọn vẹn, một khớp về hướng nhưng
+không về độ lớn, \emph{bốn} buộc phải siết lại cách phát biểu, một không tái lập
+được khi đổi hạt giống, và một cho kết quả trái với kỳ vọng.
 Phần điều chỉnh được ghi rõ thay vì bỏ qua; theo quan điểm của luận văn, một kết
 quả tiêu cực được phân tích đúng nguyên nhân có giá trị ngang một kết quả khớp.
  
@@ -713,7 +713,18 @@ Vì vậy khi ghép hai chương, câu kết luận cần được siết lại 
  
 \section{Thí nghiệm 4: phương trình khuếch tán với nghiệm giải tích}
 \label{sec:tn4}
- 
+%==============================================================================
+
+\begin{thinghiem}[Đối chứng ``lành mạnh'']
+\label{tn:heat}
+Ba thí nghiệm trước đều đo một cơ chế \emph{hỏng}. Trước khi khảo sát bài toán
+cứng, ta cần một bài toán mà mọi thứ chạy đúng, để biết chuẩn so sánh nằm ở đâu.
+Phương trình khuếch tán với $\nu = 0{,}1$ có nghiệm đóng, hằng số ổn định không
+suy biến, và không có lớp trong. Câu hỏi: \emph{với một bài toán không có gì
+khó, cài đặt này đạt độ chính xác nào, giai đoạn L-BFGS đóng góp bao nhiêu, và
+chỉ số $\rho_b$ ứng xử ra sao khi không có bệnh lý gradient?}
+\end{thinghiem}
+
 \textbf{Thiết lập.} Bài toán có nghiệm đóng, dùng để đo độ chính xác tuyệt đối và
 đánh giá hiệu quả của giai đoạn L-BFGS:
 \begin{equation}
@@ -814,7 +825,18 @@ luyện.
 \section{Thí nghiệm 5: phương trình Burgers độ nhớt nhỏ}
 \label{sec:tn5}
 %==============================================================================
- 
+
+\begin{thinghiem}[Bài toán cứng: ba tầng cùng bất lợi]
+\label{tn:burgers}
+Đây là bài toán trung tâm của chương. Bảng~\ref{tab:ba-nguyen-nhan} dự báo rằng
+ba nguyên nhân ở ba tầng khác nhau sẽ \emph{cùng} tác động lên phương trình
+Burgers độ nhớt nhỏ. Đặt cạnh đối chứng lành mạnh ở Mục~\ref{sec:tn4}, hai câu
+hỏi tách bạch: \emph{chỉ số $\rho_b$ có phân biệt được hai bài toán không} --- tức
+Định nghĩa~\ref{dn:rho} có phải một tiêu chí chẩn đoán dùng được --- và
+\emph{thuật toán ủ trọng số, vốn được đề xuất đúng cho tình huống này, có cứu
+được không?}
+\end{thinghiem}
+
 \begin{equation}
 \left\{
 \begin{aligned}
@@ -1437,51 +1459,72 @@ này, PINN có rẻ hơn một bộ giải cổ điển không?}
 \textbf{Thiết lập.} Mọi phép đo chạy trên cùng một máy, cùng một tiến trình, với
 \texttt{OMP\_NUM\_THREADS=1} để loại bỏ dao động do số luồng
 (xem Phụ lục~\ref{app:code}). Bài toán là Burgers của Mục~\ref{sec:tn5}
-($\nu = 0{,}01/\pi$), mạng $[2, 32, 32, 32, 32, 1]$ với $P = 3\,297$ tham số,
-$N_r = 2\,500$ điểm phối trí. Mỗi số là trung bình của $20$ lần gọi sau ba lần
-làm nóng.
+($\nu = 0{,}01/\pi$), mạng $[2, 32, 32, 32, 32, 1]$ với $P = 3\,297$ tham số.
 
-\textbf{Kết quả (a): chi phí một bước.} Tách một bước huấn luyện thành ba mức
-chồng lên nhau.
+Một lưu ý về \emph{cách} đo, vì nó quyết định kết luận. Với $N_r = 2\,500$ như
+các mục trước, lượt xuôi thuần tuý chỉ tốn cỡ $1$--$2$ ms --- quá ngắn để đo tin
+cậy trên một máy dùng chung, và ba lần chạy độc lập cho ba bội số khác hẳn nhau
+($4{,}2$; $7{,}2$; $7{,}4$). Ta vì vậy đo ở $N_r \in \{10\,000;\ 40\,000\}$, nơi
+lượt xuôi đủ dài, và lặp \emph{năm} lần cho mỗi kích thước. Bảng dưới báo cáo
+trung vị cùng khoảng của mười lần đo ấy.
 
 \begin{table}[H]
 \centering
-\caption[Chi phí một bước huấn luyện PINN]{Chi phí một bước huấn luyện, tách
-theo ba mức. Cột cuối là bội số so với lượt xuôi thuần tuý.}
+\caption[Chi phí một bước huấn luyện PINN]{Chi phí một bước huấn luyện, trung vị
+và khoảng trên mười lần đo độc lập.}
 \label{tab:tn9-buoc}
 \small
-\begin{tabular}{@{}l r r@{}}
+\begin{tabular}{@{}l r l@{}}
 \toprule
-\textbf{Mức} & \textbf{Thời gian} & \textbf{Bội số} \\
+\textbf{Tỉ số} & \textbf{trung vị} & \textbf{khoảng} \\
 \midrule
-Lượt xuôi thuần tuý $u_{\btheta}(X)$        & $2{,}81$ ms  & $1{,}00$ \\
-$+$ đạo hàm bậc hai theo $x$ (tính $J_r$)   & $11{,}50$ ms & $4{,}10$ \\
-$+$ gradient theo tham số (bước đầy đủ)     & $30{,}35$ ms & $10{,}81$ \\
+đồ thị phần dư $/$ đồ thị xuôi
+  & $8{,}4$ & $[4{,}6;\ 9{,}4]$ \\
+$c = \mathrm{cost}(\nabla_{\btheta}J) / \mathrm{cost}(J)$
+  & $2{,}67$ & $[2{,}21;\ 3{,}03]$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Hai dự báo lý thuyết đều khớp.
+\emph{Mệnh đề~\ref{md:chi-phi-bp} khớp.} Mệnh đề đòi hỏi $c \le 3$; trung vị đo
+được là $2{,}67$, và chín trong mười lần đo nằm dưới $3$. Lần thứ mười cho
+$3{,}03$ --- vượt chặn một cách không đáng kể, và giải thích được: mệnh đề đếm
+\emph{phép toán số thực}, còn ta đo \emph{thời gian tường}, vốn còn gồm chi phí
+điều phối của trình thông dịch và của hệ thống vi phân tự động mà mô hình đếm
+phép toán không tính tới.
 
-\emph{Nhận xét~\ref{nx:chi-phi-bac-cao} dự báo bốn đến sáu lần; đo được
-$4{,}10$.} Đây đúng là đại lượng mà nhận xét nói tới: tỉ số giữa đồ thị có đạo
-hàm bậc hai và đồ thị xuôi thuần tuý, cho phương trình bậc hai.
+\emph{Nhận xét~\ref{nx:chi-phi-bac-cao} thì ước lượng \textbf{thấp}.} Nhận xét
+đoán rằng đồ thị dùng cho lượt tối ưu dài gấp ``bốn đến sáu lần'' đồ thị xuôi;
+đo được trung vị $8{,}4$, và bảy trong mười lần đo nằm trên $7$. Hơn nữa, sai số
+đo ở đây chỉ lệch về \emph{một} phía: nhiễu hệ thống chỉ có thể làm lượt xuôi
+\emph{chậm} đi chứ không thể làm nó nhanh hơn, nên nó chỉ kéo tỉ số \emph{xuống}.
+Đúng hai lần đo thấp nhất ($4{,}55$ và $6{,}68$) là hai lần mà lượt xuôi bị đo
+chậm bất thường (lần lượt $10{,}7$ ms so với $5{,}7$--$6{,}2$ ms thông thường, và
+$30{,}4$ ms so với $22$ ms). Ước lượng ít chệch nhất do đó là \emph{cận trên} của
+khoảng, tức khoảng $9$ lần --- gấp rưỡi tới gấp đôi con số mà
+Nhận xét~\ref{nx:chi-phi-bac-cao} đưa ra.
 
-\emph{Mệnh đề~\ref{md:chi-phi-bp} dự báo $c \le 3$; đo được $c = 2{,}64$.}
-Hằng số $c$ của mệnh đề là tỉ số giữa chi phí lấy $\nabla_{\btheta}J$ và chi phí
-đánh giá $J$ --- ở đây là $30{,}35 / 11{,}50 = 2{,}64$, chứ không phải bội số
-$10{,}81$ ở cột cuối. Lấy riêng lượt ngược thì hết $18{,}85$ ms, tức $1{,}64$
-lần đồ thị mà nó phải đi ngược. Con số $10{,}81$ là \emph{tích} của hai hiệu
-ứng: đạo hàm bậc cao kéo dài đồ thị $4{,}10$ lần, rồi lan truyền ngược nhân
-tiếp $2{,}64$ lần. Đây là dạng định lượng của điều
-Nhận xét~\ref{nx:chi-phi-bac-cao} phát biểu định tính --- một bước PINN đắt hơn
-hẳn một bước hồi quy cùng kích thước mạng.
+Lý do của sai lệch có thể truy được, và nó nằm ở chỗ nhận xét ngầm giả định hai
+bậc đạo hàm tốn như nhau. Thực tế thì không: lượt lấy $\partial_x u$ chạy ngược
+trên đồ thị xuôi, nhưng lượt lấy $\partial_{xx} u$ chạy ngược trên đồ thị
+\emph{đã được nối dài} bởi lượt trước. Nếu mỗi lượt ngược tốn khoảng $c \approx
+2{,}7$ lần đồ thị mà nó đi qua, thì hai lượt lồng nhau cho bội số cỡ
+$1 + c + c^2 \approx 11$ chứ không phải $1 + 2c \approx 6$. Số đo nằm giữa hai
+ước lượng ấy. Đây là một chỗ Chương~\ref{chap:autodiff} nên được sửa lại.
 
 \textbf{Kết quả (b): PINN so với sai phân hữu hạn.} Câu hỏi thật sự nằm ở đây.
 Cấu hình trọng số cố định của Mục~\ref{sec:tn5} chạy $6\,000$ vòng Adam và $800$
-vòng L-BFGS trong $183{,}6$ giây, đạt $\varepsilon_{L^2} = 8{,}19\times10^{-2}$.
-Ta hỏi: bộ giải sai phân hữu hạn của Mục~\ref{sec:tn5} cần bao lâu để
-đạt \emph{cùng} mức sai số ấy?
+vòng L-BFGS trong khoảng $170$ giây --- thời gian tường dao động vài phần trăm
+giữa các lần chạy --- và đạt $\varepsilon_{L^2} = 1{,}38\times10^{-1}$. Ta hỏi:
+bộ giải sai phân hữu hạn của Mục~\ref{sec:tn5} cần bao lâu để đạt \emph{cùng}
+mức sai số ấy?
+
+Câu trả lời phụ thuộc vào một chi tiết dễ bỏ qua, và chi tiết ấy đổi kết luận
+hai bậc độ lớn. Bộ giải tham chiếu dùng bước thời gian cố định
+$\Delta t = 5\times10^{-5}$, chọn cho lưới mịn $N_x = 2\,047$. Trên lưới thô
+$N_x = 63$ thì bước ấy nhỏ hơn mức cần thiết rất nhiều: điều kiện ổn định của
+sơ đồ RK4 tường minh cho phép $\Delta t \le 3{,}1\times10^{-2}$ (đối lưu) và
+$\Delta t \le 1{,}5\times10^{-1}$ (khuếch tán). Ta vì thế đo cả hai cách.
 
 \begin{table}[H]
 \centering
@@ -1490,30 +1533,38 @@ trên bài toán Burgers. Sai số của cả hai đo so với cùng một nghi�
 $N_x = 2\,047$.}
 \label{tab:tn9-fd}
 \small
-\begin{tabular}{@{}l r r@{}}
+\begin{tabular}{@{}l r r r@{}}
 \toprule
-\textbf{Phương pháp} & \textbf{Thời gian} & $\varepsilon_{L^2}$ \\
+\textbf{Phương pháp} & $\Delta t$ & \textbf{Thời gian} & $\varepsilon_{L^2}$ \\
 \midrule
-PINN, $6\,000$ Adam $+\ 800$ L-BFGS   & $183{,}6$ s & $8{,}19\times10^{-2}$ \\
-Sai phân hữu hạn, $N_x = 63$          & $0{,}97$ s  & $7{,}24\times10^{-2}$ \\
+PINN, $6\,000$ Adam $+\ 800$ L-BFGS
+  & ---                  & $\approx 170$ s & $1{,}38\times10^{-1}$ \\
+\addlinespace
+Sai phân, $N_x = 63$, bước của lưới mịn
+  & $5\times10^{-5}$     & $0{,}97$ s      & $7{,}24\times10^{-2}$ \\
+Sai phân, $N_x = 63$, bước hợp với lưới
+  & $5\times10^{-3}$     & $0{,}0098$ s    & $7{,}24\times10^{-2}$ \\
 \midrule
-\multicolumn{3}{@{}l@{}}{\emph{PINN chậm hơn $189$ lần ở cùng mức sai số.}} \\
+\multicolumn{4}{@{}l@{}}{\emph{PINN chậm hơn khoảng $1{,}8\times10^{4}$ lần ở
+cùng mức sai số.}} \\
 \midrule
-Nghiệm tham chiếu, $N_x = 2\,047$     & $2{,}13$ s  & --- (chuẩn) \\
+Nghiệm tham chiếu, $N_x = 2\,047$
+  & $5\times10^{-5}$     & $2{,}1$ s       & --- (chuẩn) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Hàng cuối bảng đáng dừng lại: chính nghiệm tham chiếu --- lời giải chính xác
-nhất của bài toán Burgers trong toàn chương này, cái chuẩn dùng để chấm điểm mọi
-kết quả PINN --- được tính trong $2{,}13$ giây, tức nhanh hơn $86$ lần so với
-thời gian PINN cần để đạt sai số $8\%$.
+Hai hàng sai phân giữa bảng có \emph{cùng} sai số tới năm chữ số có nghĩa, dù
+số bước thời gian chênh nhau $100$ lần ($20\,000$ so với $200$). Đó là bằng
+chứng trực tiếp rằng ở $N_x = 63$ sai số \emph{không gian} chiếm ưu thế hoàn
+toàn, nên $19\,800$ bước thời gian kia là lãng phí thuần tuý. Chi phí thật của
+sai phân hữu hạn ở mức sai số này vì vậy là $0{,}0098$ giây, không phải $0{,}97$
+giây --- và tỉ số đúng là bốn bậc độ lớn chứ không phải hai.
 
-Hơn nữa, tỉ số $189$ là ước lượng \textbf{có lợi cho PINN}. Bộ giải sai phân
-dùng bước thời gian cố định $\Delta t = 5\times10^{-5}$, chọn cho lưới
-$N_x = 2\,047$ để thoả điều kiện ổn định; với $N_x = 63$ thì bước ấy nhỏ hơn
-mức cần thiết hàng bậc, nên $0{,}97$ giây còn xa mới là chi phí tối thiểu. Ta
-không tinh chỉnh xuống nữa, vì con số đã đủ nói lên điều cần nói.
+Hàng cuối bảng cũng đáng dừng lại: chính nghiệm tham chiếu --- lời giải chính
+xác nhất của bài toán Burgers trong toàn chương này, cái chuẩn dùng để chấm điểm
+mọi kết quả PINN --- được tính trong $2{,}1$ giây, tức vẫn nhanh hơn $80$ lần so
+với thời gian PINN cần để đạt sai số $14\%$.
 
 \begin{nhanxet}[Đọc kết quả này cho đúng: PINN thua ở đâu và vì sao không mâu
 thuẫn]
@@ -1532,17 +1583,17 @@ chương ấy. Điều nó bác bỏ là một cách đọc sai --- khá phổ b
 một bộ giải phương trình vi phân nhanh hơn.
 
 Ba lợi thế mà phép đo này \emph{không} bắt được, và vì vậy không được coi là đã
-bị phủ nhận: (i) chi phí lưới tăng theo $\mathcal{O}(N^d)$, nên tỉ số $189$ ở
-$d=1$ có thể đảo chiều khi $d$ lớn --- đây chính là nội dung
+bị phủ nhận: (i) chi phí lưới tăng theo $\mathcal{O}(N^d)$, nên tỉ số bốn bậc
+độ lớn ở $d=1$ có thể đảo chiều khi $d$ lớn --- đây chính là nội dung
 Nhận xét~\ref{nx:loi-nguyen}, một lập luận tiệm cận theo $d$ chứ không phải một
 phép đo; (ii) PINN cho một hàm khả vi mọi nơi, trong khi sai phân cho giá trị
-trên lưới --- tuy ở mức sai số $8\%$ thì lợi thế này mỏng, vì nội suy lưới sai
+trên lưới --- tuy ở mức sai số $14\%$ thì lợi thế này mỏng, vì nội suy lưới sai
 phân rẻ hơn nhiều; (iii) bài toán ngược chỉ cần thêm một số hạng vào hàm mục
 tiêu, trong khi phương pháp cổ điển đòi hỏi cả một bộ máy liên hợp
 (Mục~\ref{subsec:thuan-nguoc}).
 
 Kết luận trung thực là: \emph{trên lớp bài toán mà luận văn này thực nghiệm,
-PINNs đắt hơn hai bậc so với phương pháp cổ điển ở cùng độ chính xác; giá trị
+PINNs đắt hơn bốn bậc so với phương pháp cổ điển ở cùng độ chính xác; giá trị
 của phương pháp phải được biện minh bằng ba động lực ở
 Mục~\ref{subsec:gioi-han-co-dien}, không bằng chi phí.} Mọi thí nghiệm của chương này
 đều nằm ngoài ba động lực ấy --- đó là một hạn chế của thiết kế thực nghiệm, ghi
@@ -1624,42 +1675,45 @@ Mệnh đề~\ref{md:chan-suy-bien}
 & \textbf{Chặn khớp, cơ chế không} (Nhận xét~\ref{nx:doc-tn7}) \\[4pt]
 Mệnh đề~\ref{md:chi-phi-bp}
 & $\mathrm{cost}(\nabla_{\btheta}J) \le c\cdot\mathrm{cost}(J)$ với $c\le 3$
-& $c = 30{,}35/11{,}50 = 2{,}64$
-& \textbf{Khớp} \\[4pt]
+& $c$ trung vị $2{,}67$, khoảng $[2{,}21;\ 3{,}03]$ trên mười lần đo
+& \textbf{Khớp} ($9/10$ lần đo dưới chặn) \\[4pt]
 Nhận xét~\ref{nx:chi-phi-bac-cao}
 & đồ thị tối ưu dài gấp $4$--$6$ lần đồ thị xuôi
-& bội số đo được $4{,}10$
-& \textbf{Khớp}
+& trung vị $8{,}4$, khoảng $[4{,}6;\ 9{,}4]$; nhiễu đo chỉ kéo tỉ số xuống nên
+  ước lượng ít chệch nhất là $\approx 9$
+& \textbf{Ước lượng thấp}, cần sửa (Mục~\ref{sec:tn9})
 \end{longtable}
 \endgroup
  
-Trong mười hai hạng mục: sáu khớp trọn vẹn, một khớp về hướng nhưng không rút
-được kết luận định lượng, \emph{ba} cần siết lại cách phát biểu, một không tái
+Trong mười hai hạng mục: năm khớp trọn vẹn, một khớp về hướng nhưng không rút
+được kết luận định lượng, \emph{bốn} cần siết lại cách phát biểu, một không tái
 lập được trên năm hạt giống, và một cho kết quả tiêu cực nhưng đã truy được
 nguyên nhân.
 
 Mức khớp này ủng hộ khung lý thuyết của Chương~\ref{chap:pinn} một cách
 \emph{có điều kiện}, và điều kiện ấy hiện ra rất rõ khi xếp mười hai hạng mục
-theo \emph{nguồn gốc} của phát biểu thay vì theo kết quả.
+theo \emph{nguồn gốc} của phát biểu thay vì theo kết quả. Ranh giới trùng khít:
 
-\emph{Năm trong sáu hạng mục khớp trọn vẹn tương ứng với một mệnh đề đã được
-chứng minh}: Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:phat-bien-phat},
-Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh} và
-Mệnh đề~\ref{md:chi-phi-bp}. Hạng mục thứ sáu dựa trên
-Nhận xét~\ref{nx:chi-phi-bac-cao}, một ước lượng bậc độ lớn --- và nó khớp đúng
-ở mức mà một ước lượng bậc độ lớn có quyền đòi hỏi.
+\emph{Cả năm hạng mục khớp trọn vẹn đều tương ứng với một mệnh đề đã được chứng
+minh} --- Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:phat-bien-phat},
+Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh},
+Mệnh đề~\ref{md:chi-phi-bp} --- và \emph{không một hạng mục nào phải siết lại là
+chỗ một mệnh đề đã chứng minh bị số liệu bác bỏ}. Ngay cả
+Mệnh đề~\ref{md:chan-suy-bien}, nằm trong nhóm có vấn đề, cũng đúng ở cả $15/15$
+trường hợp; cái phải sửa là \emph{cách đọc} nó. Nói cách khác: trong toàn bộ
+chương thực nghiệm, chứng minh chưa một lần thất bại; chỉ có suy đoán thất bại.
 
-\emph{Ngược lại, không một hạng mục có vấn đề nào tương ứng với một mệnh đề đã
-chứng minh.} Cả năm đều đến từ một trong ba kiểu suy luận yếu hơn. Kiểu thứ
-nhất, \emph{ghép hai kết quả rời rạc}: giả thuyết \eqref{eq:pho-hieu-dung} nhân
-$\abs{P}^2$ với $\widehat{\varkappa}$, và kết luận ở Mục~\ref{subsec:he-qua-pinn}
-ngầm giả định thừa số nào thắng. Kiểu thứ hai, \emph{đọc một chặn trên như thể
-nó là cơ chế đang vận hành}: tầng thứ nhất của Bảng~\ref{tab:ba-nguyen-nhan}
-(Nhận xét~\ref{nx:doc-tn7}). Kiểu thứ ba, \emph{khái quát hoá từ một lần chạy}:
-quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$ không có chứng minh nào cả và không sống
-sót qua năm hạt giống (Nhận xét~\ref{nx:tuong-quan-hong}), còn phát biểu về
-chiều biến thiên của $\rho_b$ trên bài toán lành mạnh chỉ đúng ở $3/5$ hạt
-giống (Mục~\ref{sec:tn8}).
+Bảy chỗ phải điều chỉnh chia thành bốn kiểu suy luận yếu hơn. \emph{Ghép hai
+kết quả rời rạc}: giả thuyết \eqref{eq:pho-hieu-dung} nhân $\abs{P}^2$ với
+$\widehat{\varkappa}$, và kết luận ở Mục~\ref{subsec:he-qua-pinn} ngầm giả định
+thừa số nào thắng. \emph{Đọc một chặn trên như thể nó là cơ chế đang vận hành}:
+tầng thứ nhất của Bảng~\ref{tab:ba-nguyen-nhan} (Nhận xét~\ref{nx:doc-tn7}).
+\emph{Khái quát hoá từ một lần chạy}: quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$
+không sống sót qua năm hạt giống (Nhận xét~\ref{nx:tuong-quan-hong}), và phát
+biểu về chiều biến thiên của $\rho_b$ trên bài toán lành mạnh chỉ đúng ở $3/5$
+hạt giống (Mục~\ref{sec:tn8}). Cuối cùng, \emph{ước lượng bậc độ lớn không được
+kiểm chứng}: Nhận xét~\ref{nx:chi-phi-bac-cao} đoán bội số $4$--$6$ trong khi đo
+được khoảng $9$ (Mục~\ref{sec:tn9}).
 
 Đây là bài học phương pháp luận của chương, và nó nhất quán với ranh giới mà
 Chương~\ref{chap:fnn} đã vạch giữa lý thuyết xấp xỉ và lý thuyết tối ưu: những gì
@@ -1736,11 +1790,41 @@ tiên giống nhau tới từng bit ở mọi cấu hình luồng, nhưng đến
 hàm mục tiêu đã lệch ở chữ số có nghĩa thứ tư ($0{,}0232628$ với một luồng,
 $0{,}0232880$ với hai luồng, $0{,}0232605$ với bốn luồng). Nguyên nhân là số
 luồng thay đổi \emph{thứ tự cộng dồn} trong phép nhân ma trận; sai khác cỡ
-epsilon máy sinh ra ở đó được quỹ đạo tối ưu hoá khuếch đại dần. Điều này không
-mâu thuẫn với việc dùng \texttt{float64} --- độ chính xác kép vẫn cần thiết theo
-lập luận ở Mục~\ref{ssec:ad-pytorch} --- nhưng nó có nghĩa là tuyên bố ``tái lập
-được'' chỉ chặt chẽ khi cố định \emph{cả} hạt giống, \emph{cả} số luồng và
-\emph{cả} phiên bản thư viện.
+epsilon máy sinh ra ở đó được quỹ đạo tối ưu hoá khuếch đại dần.
+
+Trên bài toán Burgers thì mức khuếch đại lớn hơn hẳn, và đủ lớn để đổi kết luận
+số. Chạy lại cấu hình trọng số cố định của Mục~\ref{sec:tn5} với \emph{cùng} hạt
+giống, \emph{cùng} mã, \emph{cùng} \texttt{float64}, chỉ khác số luồng:
+
+\begin{center}
+\small
+\begin{tabular}{@{}l r r r@{}}
+\toprule
+& một luồng & nhiều luồng & hệ số \\
+\midrule
+$\varepsilon_{L^2}$ cuối & $1{,}38\times10^{-1}$ & $8{,}19\times10^{-2}$
+  & $\mathbf{1{,}69}$ \\
+$\max\rho_b$            & $603$                 & $2\,101$
+  & $\mathbf{3{,}48}$ \\
+$\norm{\bW^{(1)}}_F$ cuối & $3{,}608$           & $3{,}970$ & $1{,}10$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Hai lần chạy khởi tạo giống hệt nhau ($\rho_b$ ban đầu trùng tới chữ số thứ mười
+lăm), nên toàn bộ chênh lệch sinh ra trong huấn luyện. Đây là cùng một hiện tượng
+với đoạn trên, nhưng ở quy mô khác: trên bài toán cứng, riêng số luồng đã đổi sai
+số cuối gần \emph{hai} lần và đổi $\max\rho_b$ gấp \emph{ba lần rưỡi} --- so được
+với độ phân tán giữa các hạt giống ở Mục~\ref{sec:tn8}. Vì $\max\rho_b$ chính là
+đại lượng dùng để chẩn đoán bệnh lý gradient, nó phải được đọc theo \emph{bậc độ
+lớn} chứ không theo giá trị; kết luận ở Mục~\ref{sec:tn5} vẫn đứng vững đúng vì
+nó dựa trên cách biệt hai bậc chứ không dựa trên con số $1\,758$.
+
+Điều này không mâu thuẫn với việc dùng \texttt{float64} --- độ chính xác kép vẫn
+cần thiết theo lập luận ở Mục~\ref{ssec:ad-pytorch} --- nhưng nó có nghĩa là
+tuyên bố ``tái lập được'' chỉ chặt chẽ khi cố định \emph{cả} hạt giống,
+\emph{cả} số luồng và \emph{cả} phiên bản thư viện. Mọi số liệu trong
+Phụ lục~\ref{app:code} vì vậy được sinh với \texttt{OMP\_NUM\_THREADS=1}.
 
 \item \emph{Không đo được hằng số ổn định ở chế độ $\nu$ rất nhỏ.}
 Mục~\ref{sec:tn7} đã quét $\nu$ trên bài toán đối lưu--khuếch tán, nhưng phép đo
@@ -1757,7 +1841,7 @@ toán \emph{thuận}, một chiều theo không gian, với dữ liệu biên v�
 cho đầy đủ và không nhiễu --- tức không chạm tới bài toán ngược, không chạm tới
 điều kiện biên khuyết, và không chạm tới lời nguyền số chiều. Đây chính là chế
 độ mà phương pháp lưới cổ điển gần như tối ưu, và Mục~\ref{sec:tn9} đo được cái
-giá của việc đó: chậm hơn $189$ lần ở cùng mức sai số. Hệ quả cho cách đọc
+giá của việc đó: chậm hơn khoảng $1{,}8\times10^{4}$ lần ở cùng mức sai số. Hệ quả cho cách đọc
 chương này: các thí nghiệm ở đây kiểm chứng \emph{cơ chế} của PINNs --- vai trò
 hàm kích hoạt, cái giá của ràng buộc mềm, thiên kiến phổ, bệnh lý gradient, các
 chặn ổn định --- chứ không kiểm chứng \emph{tính cạnh tranh} của phương pháp.
@@ -1807,8 +1891,8 @@ lặp TN4 và TN5 trên năm hạt giống và cho thấy độ phân tán tự 
 toán: hệ số $2{,}4$ giữa lần chạy tốt nhất và tệ nhất trên bài toán khuếch tán,
 nhưng $26{,}4$ trên Burgers --- đủ để loại bỏ một tương quan mà chương này từng
 ghi nhận (Nhận xét~\ref{nx:tuong-quan-hong}). Mục~\ref{sec:tn9} đo chi phí và
-cho con số bất lợi nhất của luận văn: PINN chậm hơn sai phân hữu hạn $189$ lần ở
-cùng mức sai số, trên đúng lớp bài toán mà cả ba động lực của
+cho con số bất lợi nhất của luận văn: PINN chậm hơn sai phân hữu hạn khoảng bốn
+bậc độ lớn ở cùng mức sai số, trên đúng lớp bài toán mà cả ba động lực của
 Mục~\ref{subsec:gioi-han-co-dien} đều vắng mặt.
 
 Kết quả cuối cùng ấy minh hoạ đúng vai trò của chương: bước kiểm chứng số không

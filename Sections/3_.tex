@@ -879,6 +879,11 @@ Mỗi bậc đạo hàm nhân độ dài đồ thị lên một hằng số. V�
 phương trình khuếch tán hay Burgers, đồ thị dùng cho lượt tối ưu hoá dài gấp
 khoảng bốn đến sáu lần đồ thị của lượt xuôi thuần tuý, và bộ nhớ tăng theo cùng
 tỉ lệ do Định lý~\ref{dl:cheap-gradient} đòi hỏi lưu toàn bộ giá trị trung gian.
+Ước lượng ``bốn đến sáu'' ở đây là ước lượng \emph{a priori}, và phép đo ở
+Mục~\ref{sec:tn9} cho thấy nó \emph{thấp}: bội số đo được là khoảng chín. Sai
+lệch nằm ở chỗ ước lượng này ngầm coi hai bậc đạo hàm tốn như nhau, trong khi
+lượt lấy $\partial_{xx}u$ chạy ngược trên đồ thị đã được lượt lấy
+$\partial_{x}u$ nối dài; xem phần thảo luận ở Mục~\ref{sec:tn9}.
 Đây là nguyên nhân chính khiến một bước huấn luyện PINN đắt hơn đáng kể so với
 một bước huấn luyện mạng hồi quy cùng kích thước, và là lý do phải chọn hàm kích
 hoạt trơn: với ReLU, $\sigma'' \equiv 0$ hầu khắp nơi

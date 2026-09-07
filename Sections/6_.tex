@@ -47,10 +47,10 @@ Chương~\ref{chap:thucnghiem} đều tái lập được bằng một lệnh.
 
 Phần ``chi phí tính toán thực đo'' mà nhiệm vụ này hứa được trả ở
 Mục~\ref{sec:tn9}, và câu trả lời cần được nêu thẳng vì nó bất lợi cho phương
-pháp: trên bài toán Burgers một chiều, PINN cần $183{,}6$ giây để đạt sai số
-$8{,}19\times10^{-2}$, trong khi bộ giải sai phân hữu hạn đạt cùng mức sai số
-trong $0{,}97$ giây --- chậm hơn $189$ lần, và tỉ số này còn là ước lượng có lợi
-cho PINN. Đây không phải mâu thuẫn với Chương~\ref{chap:modau}: cả ba động lực
+pháp: trên bài toán Burgers một chiều, PINN cần khoảng $170$ giây để đạt sai số
+$1{,}38\times10^{-1}$, trong khi bộ giải sai phân hữu hạn đạt cùng mức sai số
+trong $0{,}0098$ giây --- chậm hơn khoảng $1{,}8\times10^{4}$ lần, tức bốn bậc độ
+lớn. Đây không phải mâu thuẫn với Chương~\ref{chap:modau}: cả ba động lực
 nêu ở Mục~\ref{subsec:gioi-han-co-dien} --- bài toán ngược, điều kiện biên
 khuyết, lời nguyền số chiều --- đều \emph{không} có mặt trong lớp bài toán mà
 luận văn thực nghiệm. Kết luận đúng phạm vi là: các thí nghiệm ở đây kiểm chứng
@@ -143,7 +143,7 @@ $\mathcal{O}(m^{-1/2})$ không phụ thuộc số chiều ở Định lý~\ref{d
 vì vậy \emph{không} được kiểm chứng bằng thực nghiệm nào trong luận văn. Phép đo
 chi phí ở Mục~\ref{sec:tn9} cho thấy cái giá của giới hạn phạm vi này là cụ thể
 chứ không trừu tượng: ở $d = 1$, nơi phương pháp lưới gần như tối ưu, PINN thua
-hai bậc về chi phí, và luận văn không có bài toán nào để cho thấy tỉ số ấy đảo
+bốn bậc về chi phí, và luận văn không có bài toán nào để cho thấy tỉ số ấy đảo
 chiều.
 
 Thứ ba, các chặn ổn định ở Mệnh đề~\ref{md:chan-on-dinh} và
@@ -201,5 +201,5 @@ nhưng nối liền với nó: bài toán ngược, nơi khung hàm mất mát \
 nguyền số chiều ở Nhận xét~\ref{nx:loi-nguyen} lần đầu tiên trở nên kiểm chứng
 được. Mở rộng thứ hai là mở rộng \emph{quyết định}, và Mục~\ref{sec:tn9} cho nó
 một tiêu chí sắc: lặp lại chính phép đo chi phí ấy khi $d$ tăng, rồi tìm giá trị
-$d$ mà tỉ số $189$ lần đảo chiều. Chừng nào chưa có con số đó, ưu thế của PINNs
+$d$ mà tỉ số bốn bậc độ lớn ấy đảo chiều. Chừng nào chưa có con số đó, ưu thế của PINNs
 so với phương pháp lưới vẫn là một lập luận tiệm cận chứ chưa phải một quan sát.

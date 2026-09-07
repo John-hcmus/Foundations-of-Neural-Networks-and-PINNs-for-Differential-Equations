@@ -982,7 +982,8 @@ $0$, phương sai $\varsigma^2$. Khi đó
 \qquad\text{và do đó}\qquad
 \lim_{k\to\infty}\E\big[J(\theta_k)\big]
  = \frac{\alpha\,\varsigma^{2}}{2\,(2-\alpha\mu)}
- \;\xrightarrow[\alpha\to 0]{}\; \frac{\alpha\varsigma^2}{4}.
+ \;\sim\; \frac{\alpha\varsigma^{2}}{4}
+ \quad (\alpha \to 0^{+}).
 \label{eq:san-nhieu}
 \end{equation}
 \end{menhde}
@@ -1045,16 +1046,26 @@ Giả sử $\bm{g}_k \equiv \bm{g}$ không đổi và $\bm{v}_0 = \bm{0}$. Khi �
 \label{eq:momentum-khuech-dai}
 \end{equation}
 Ngược lại, nếu $\bm{g}_k$ đổi dấu luân phiên, $\bm{g}_k = (-1)^k\bm{g}$, thì
-$\bm{v}_k \to -\alpha\bm{g}\,(-1)^k/(1+\beta)$, tức biên độ bị \emph{thu nhỏ} đi
-thừa số $1/(1+\beta)$.
+\begin{equation}
+\bm{v}_k = -\alpha\,(-1)^{k}\,\frac{1-(-\beta)^{k}}{1+\beta}\,\bm{g},
+\qquad\text{nên}\qquad
+\norm{\bm{v}_k} \;\xrightarrow[k\to\infty]{}\;
+  \frac{\alpha\,\norm{\bm{g}}}{1+\beta},
+\label{eq:momentum-dao-dong}
+\end{equation}
+tức biên độ bị \emph{thu nhỏ} đi thừa số $1/(1+\beta)$ (bản thân $\bm{v}_k$ không
+hội tụ, nó dao động đổi dấu theo $k$).
 \end{bode}
  
 \begin{proof}
 Khai triển truy hồi \eqref{eq:momentum}:
 $\bm{v}_k = -\alpha\sum_{j=0}^{k-1}\beta^{j}\bm{g}_{k-j}$. Với $\bm{g}_k \equiv
 \bm{g}$, tổng là cấp số nhân $\sum_{j=0}^{k-1}\beta^j = (1-\beta^k)/(1-\beta)$,
-cho \eqref{eq:momentum-khuech-dai}. Với $\bm{g}_{k-j} = (-1)^{k-j}\bm{g}$, tổng
-trở thành $(-1)^k\sum_j (-\beta)^{j} \to (-1)^k/(1+\beta)$.
+cho \eqref{eq:momentum-khuech-dai}. Với $\bm{g}_{k-j} = (-1)^{k-j}\bm{g}
+= (-1)^{k}(-1)^{j}\bm{g}$, tổng trở thành
+$(-1)^k\sum_{j=0}^{k-1}(-\beta)^{j} = (-1)^k\,\dfrac{1-(-\beta)^{k}}{1+\beta}$,
+cho \eqref{eq:momentum-dao-dong}; vì $|\beta| < 1$ nên $(-\beta)^k \to 0$ và
+chuẩn của $\bm{v}_k$ hội tụ tới $\alpha\norm{\bm{g}}/(1+\beta)$.
 \end{proof}
  
 Bổ đề~\ref{bd:momentum} giải thích chính xác cơ chế của động lượng: thành phần
@@ -1295,7 +1306,7 @@ ngược hẳn với Adam.
 \label{nx:toc-do}
 Với $J$ khả vi liên tục hai lần, lồi mạnh địa phương và tìm kiếm đường thoả điều
 kiện Wolfe, BFGS hội tụ \emph{siêu tuyến tính}:
-$\|\btheta_{k+1}-\btheta^{*}\| / \|\btheta_k - \btheta^{*}\| \to 0$. L-BFGS với
+$\|\btheta_{k+1}-\btheta^{\star}\| / \|\btheta_k - \btheta^{\star}\| \to 0$. L-BFGS với
 bộ nhớ hữu hạn nói chung chỉ giữ được tốc độ tuyến tính, song với hệ số co rất
 nhỏ trong thực hành~\cite{nocedal2006}. So sánh với tốc độ dưới tuyến tính
 $\mathcal{O}(1/\sqrt{k})$ của các phương pháp ngẫu nhiên bậc nhất, khoảng cách ở
@@ -1344,7 +1355,7 @@ giới hạn của số học dấu phẩy động.
 \centering
 \includegraphics[width=\textwidth]{Images/chap_3/hinh_quydao.pdf}
 \caption{So sánh bốn thuật toán tối ưu trên hàm Rosenbrock, cùng điểm xuất phát
-$\btheta_0 = (-1{,}2;\,1)$ và cùng nghiệm $\btheta^{*}=(1;\,1)$. (a) Quỹ đạo
+$\btheta_0 = (-1{,}2;\,1)$ và cùng nghiệm $\btheta^{\star}=(1;\,1)$. (a) Quỹ đạo
 trên nền đường mức; (b) giá trị hàm mục tiêu theo số bước lặp, cả hai trục đều ở
 thang lô-ga-rít. Đường L-BFGS dốc đứng ở phía trái phản ánh tốc độ hội tụ siêu
 tuyến tính của phương pháp tựa Newton (Nhận xét~\ref{nx:toc-do}).}
@@ -1359,7 +1370,7 @@ mới là lý do thực chất khiến L-BFGS vượt trội ở giai đoạn cu
 luận văn.
  
 \emph{Thứ nhất, tính tất định.} Trong bài toán PINN, hàm mục tiêu được tính trên
-một tập điểm cấu tứ \emph{cố định}, nên $J(\btheta)$ là hàm tất định và
+một tập điểm phối trí \emph{cố định}, nên $J(\btheta)$ là hàm tất định và
 $\nabla J$ là gradient chính xác chứ không phải ước lượng ngẫu nhiên. Điều kiện
 tiên quyết để dùng phương pháp tựa Newton -- các cặp $(\bm{s}_k,\bm{y}_k)$ phản
 ánh đúng độ cong -- do đó được thoả mãn. Với gradient nhiễu, hiệu
@@ -1397,7 +1408,7 @@ dụng ở Chương~\ref{chap:thucnghiem} -- là \emph{huấn luyện hai giai �
 \caption{Chiến lược huấn luyện hai giai đoạn Adam $\to$ L-BFGS}
 \label{alg:two-stage}
 \begin{algorithmic}[1]
-\Require Tham số khởi tạo $\btheta_0$ theo Xavier \eqref{eq:xavier-uniform}, số
+\Require Tham số khởi tạo $\btheta_0$ theo Xavier \eqref{eq:xavier}, số
   vòng $K_{\text{Adam}}$, ngưỡng $\tau$, bộ nhớ $m$
 \State \textbf{Giai đoạn 1 (thăm dò).} Chạy Adam
   (Thuật toán~\ref{alg:adam}) với $\alpha = 10^{-3}$ trong $K_{\text{Adam}}$
@@ -1406,7 +1417,7 @@ dụng ở Chương~\ref{chap:thucnghiem} -- là \emph{huấn luyện hai giai �
   $\btheta^{\dagger}$ với tìm kiếm đường Wolfe
   \eqref{eq:wolfe1}--\eqref{eq:wolfe2}, bộ nhớ $m$
 \State Dừng khi $\|\nabla J\| < \tau$ hoặc khi tìm kiếm đường thất bại
-\State \Return $\btheta^{*}$
+\State \Return $\btheta^{\star}$
 \end{algorithmic}
 \end{algorithm}
  
@@ -1443,7 +1454,7 @@ Thí nghiệm ở Hình~\ref{fig:hoitu} là bài toán \emph{khớp hàm} có nh
 bài toán phần dư. Nó kiểm chứng cơ chế sàn nhiễu và lợi ích của giai đoạn tinh
 chỉnh trên một hàm mục tiêu tất định, nhưng chưa nói gì về hàm mục tiêu
 \eqref{eq:pinn-loss} với nhiều thành phần cạnh tranh. Kết quả định lượng của
-chiến lược này trên hai bài toán phương trình vi phân thường sẽ được trình bày ở
+chiến lược này trên các bài toán đạo hàm riêng sẽ được trình bày ở
 Chương~\ref{chap:thucnghiem}, và cần được đọc như phần kiểm chứng thực sự của
 Mục này. Ngoài ra, con số ``$850$ lần'' đến từ một hạt giống ngẫu nhiên; theo
 Nhận xét~\ref{nx:doi-xung-hoan-vi}, mọi so sánh giữa hai phác đồ huấn luyện phải

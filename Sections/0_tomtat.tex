@@ -1,0 +1,83 @@
+%==============================================================
+%  TÓM TẮT / ABSTRACT
+%==============================================================
+
+\chapter*{Tóm tắt}
+\addcontentsline{toc}{chapter}{Tóm tắt}
+\markboth{Tóm tắt}{Tóm tắt}
+
+Luận văn trình bày một cách hệ thống cơ sở toán học, thuật toán và thực nghiệm
+của \emph{mạng nơ-ron thông tin vật lý} (physics-informed neural network, PINN)
+khi được dùng làm công cụ giải phương trình vi phân.
+
+Điểm khác biệt về trọng tâm so với tài liệu học sâu tổng quát là luận văn khảo
+sát mạng truyền thẳng từ góc độ \emph{đạo hàm theo biến đầu vào} chứ không phải
+theo tham số. Hai hệ thức truy hồi cho Jacobi và Hessian
+(Mệnh đề~\ref{md:jacobian}, \ref{md:hessian}) được thiết lập tường minh và trở
+thành công cụ trung tâm cho mọi tính toán phần dư về sau; từ chúng suy ra ngay
+một tiêu chuẩn \emph{cần} đối với hàm kích hoạt. Trường hợp ReLU được phát biểu
+chính xác ở dạng mạnh hơn nhiều một sự ``suy giảm'': hàm mục tiêu phần dư của
+phương trình bậc hai là \emph{hằng số địa phương}, nên mọi thuật toán dựa trên
+gradient đứng yên tuyệt đối (Hệ quả~\ref{hq:pinn-hong}).
+
+Về phương pháp, luận văn trả lời câu hỏi thường bị bỏ qua: \emph{vì sao cực tiểu
+hoá phần dư lại là việc đáng làm}. Câu trả lời là một chặn ổn định của bài toán
+vi phân (Mệnh đề~\ref{md:chan-on-dinh}), và hằng số của chặn ấy suy biến theo
+$1/\nu$ với bài toán nhiễu kỳ dị (Mệnh đề~\ref{md:chan-suy-bien}). Kết hợp với
+bệnh lý gradient ở tầng tối ưu và thiên kiến phổ ở tầng xấp xỉ, luận văn tổng
+hợp \emph{ba nguyên nhân độc lập, nằm ở ba tầng khác nhau}, cùng làm PINNs suy
+giảm trên đúng lớp bài toán có thang độ dài nhỏ (Bảng~\ref{tab:ba-nguyen-nhan}).
+
+Phần thực nghiệm cài đặt PINNs bằng PyTorch, không dùng thư viện đóng gói sẵn,
+và kiểm chứng từng phát biểu lý thuyết bằng sáu thí nghiệm có tiêu chí thành bại
+xác định trước. Kết quả được đối chiếu với lý thuyết ở
+Bảng~\ref{tab:doi-chieu}. Luận văn báo cáo đầy đủ cả những kết quả không đạt kỳ
+vọng: một kết quả buộc phải siết lại cách phát biểu của chính chương lý thuyết
+(Nhận xét~\ref{nx:hieu-chinh}), và một kết quả tiêu cực về thuật toán cân bằng
+trọng số đã dẫn tới một chứng minh mới về chế độ phản hồi dương của quy tắc ấy
+(Bổ đề~\ref{bd:phan-hoi-duong}).
+
+\bigskip
+\noindent\textbf{Từ khoá:} mạng nơ-ron thông tin vật lý, phương trình vi phân,
+vi phân tự động, xấp xỉ phổ quát, thiên kiến phổ, bệnh lý gradient, chặn ổn
+định, L-BFGS.
+
+%--------------------------------------------------------------
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\markboth{Abstract}{Abstract}
+
+\begin{english}
+This thesis gives a systematic account of the mathematical, algorithmic and
+experimental foundations of \emph{physics-informed neural networks} (PINNs) used
+as solvers for differential equations.
+
+Its focus differs from that of general deep-learning texts: feedforward networks
+are studied through their derivatives \emph{with respect to the input} rather
+than to the parameters. Two explicit recurrences for the input Jacobian and
+Hessian are established and used throughout for residual computations; from them
+follows a \emph{necessary} condition on the activation function. The ReLU case is
+stated in a form considerably stronger than mere degradation: for a second-order
+operator the residual objective is \emph{locally constant}, so every
+gradient-based algorithm is exactly stationary.
+
+Methodologically, the thesis answers a question that is usually skipped: \emph{why
+minimising the residual is worth doing at all}. The answer is a stability bound
+for the underlying differential problem, whose constant degenerates as $1/\nu$ for
+singularly perturbed problems. Combined with gradient pathology at the
+optimisation level and spectral bias at the approximation level, this yields
+\emph{three independent causes, situated at three different levels}, that jointly
+degrade PINNs on precisely the class of problems with small length scales.
+
+The experimental part implements PINNs in PyTorch without any packaged PINN
+library and tests each theoretical claim through six experiments with success
+criteria fixed in advance. Negative results are reported in full: one experiment
+forced a restatement of a conclusion in the theoretical chapter, and a negative
+result on adaptive loss balancing led to a new proof that the balancing rule has
+a positive-feedback failure mode.
+
+\bigskip
+\noindent\textbf{Keywords:} physics-informed neural networks, differential
+equations, automatic differentiation, universal approximation, spectral bias,
+gradient pathology, stability bound, L-BFGS.
+\end{english}

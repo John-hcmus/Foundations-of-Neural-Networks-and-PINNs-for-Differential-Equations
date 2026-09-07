@@ -11,16 +11,16 @@ chứng đó.
 Mục tiêu không dừng ở chỗ trình bày một cài đặt chạy được. Mỗi thí nghiệm dưới
 đây được thiết kế để trả lời một câu hỏi cụ thể do Chương~\ref{chap:pinn} đặt ra,
 với tiêu chí thành công hoặc thất bại xác định \emph{trước} khi chạy. Ta báo cáo
-đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong tám hạng mục đối chiếu ở
-Mục~\ref{sec:doi-chieu}, bốn khớp trọn vẹn, một khớp về hướng nhưng không về độ
-lớn, một buộc phải siết lại cách phát biểu, một chỉ là tương quan chưa giải thích
-được, và một cho kết quả trái với kỳ vọng.
+đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong chín hạng mục đối chiếu
+ở Mục~\ref{sec:doi-chieu}, năm khớp trọn vẹn, một khớp về hướng nhưng không về
+độ lớn, một buộc phải siết lại cách phát biểu, một chỉ là tương quan chưa giải
+thích được, và một cho kết quả trái với kỳ vọng.
 Phần điều chỉnh được ghi rõ thay vì bỏ qua; theo quan điểm của luận văn, một kết
 quả tiêu cực được phân tích đúng nguyên nhân có giá trị ngang một kết quả khớp.
  
 Cấu trúc chương: Mục~\ref{sec:trienkhai} mô tả kiến trúc cài đặt trên
 PyTorch~\cite{paszke2019} và cấu hình chung. Các
-Mục~\ref{sec:tn1}--\ref{sec:tn5} trình bày năm thí nghiệm.
+Mục~\ref{sec:tn1}--\ref{sec:tn6} trình bày sáu thí nghiệm.
 Mục~\ref{sec:doi-chieu} đối chiếu toàn bộ lý thuyết với số liệu, và
 Mục~\ref{sec:hanche} nêu thẳng những hạn chế của thiết kế thực nghiệm này.
  
@@ -999,6 +999,112 @@ vẫn chấp nhận được, nhưng đúng chỗ quan trọng nhất về mặt
 nhất.
  
 %==============================================================================
+\section{Thí nghiệm 6: kiểm chứng chặn ổn định}
+\label{sec:tn6}
+%==============================================================================
+
+\begin{thinghiem}[Kiểm chứng Mệnh đề~\ref{md:chan-on-dinh}]
+\label{tn:chan}
+Mệnh đề~\ref{md:chan-on-dinh} là mắt xích biện minh cho toàn bộ phương pháp: nó
+nói rằng cực tiểu hoá một đại lượng \emph{tính được} ($\norm{r_{\btheta}}$) khống
+chế được đại lượng \emph{quan tâm} ($\norm{e_{\btheta}}$). Nhưng chặn ấy có một
+giả thiết dễ bị bỏ qua: điều kiện biên phải được thoả \emph{chính xác}. Câu hỏi:
+chặn có đúng trong thực tế không, nó chặt đến đâu, và điều gì xảy ra khi giả
+thiết bị vi phạm?
+\end{thinghiem}
+
+\textbf{Thiết lập.} Vẫn bài toán Poisson \eqref{eq:poisson-tn1}. Ta đo đồng thời
+$\norm{r_{\btheta}}_{L^2}$, $\norm{e_{\btheta}}_{L^2}$ và
+$\norm{e_{\btheta}'}_{L^2}$ trên lưới đánh giá $20\,001$ điểm bằng quy tắc hình
+thang, tại sáu mốc trải suốt quá trình huấn luyện để quét được bốn bậc độ lớn
+của phần dư. Ba cấu hình tách bạch vai trò của giả thiết:
+
+\begin{enumerate}[label=(\alph*),leftmargin=2.2em,itemsep=2pt]
+\item \textbf{Ràng buộc cứng} $\hat u_{\btheta}(x) = x(1-x)\,u_{\btheta}(x)$ theo
+Bổ đề~\ref{bd:rang-buoc-cung}, với $D(x) = x(1-x)$ đúng như dạng được đề nghị ở
+Mục~\ref{subsec:rang-buoc}. Điều kiện biên thoả chính xác với mọi $\btheta$, tức
+giả thiết của mệnh đề được \emph{thoả theo cấu trúc}.
+\item \textbf{Ràng buộc mềm, $\lambda_b = 100$} -- giá trị tốt nhất theo
+Bảng~\ref{tab:tn2}. Giả thiết chỉ thoả gần đúng.
+\item \textbf{Ràng buộc mềm, $\lambda_b = 0{,}01$} -- giá trị mà
+Bảng~\ref{tab:tn2} cho thấy sai số biên bão hoà ở mức $0{,}91$. Giả thiết bị vi
+phạm nặng.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption[Kiểm chứng chặn ổn định của Mệnh đề~\ref{md:chan-on-dinh}]{Kiểm chứng
+chặn $\norm{e_{\btheta}}_{L^2} \le \pi^{-2}\norm{r_{\btheta}}_{L^2}$. Cột
+``tỉ số'' là $\norm{e_{\btheta}}_{L^2}/\norm{r_{\btheta}}_{L^2}$; chặn được thoả
+khi tỉ số này không vượt $\pi^{-2} \approx 0{,}1013$.}
+\label{tab:tn6}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l rrr r c@{}}
+\toprule
+\textbf{Mốc} & $\norm{r_{\btheta}}_{L^2}$ & $\norm{e_{\btheta}}_{L^2}$
+& sai số biên & tỉ số & thoả chặn? \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{(a) Ràng buộc cứng --- giả thiết thoả chính xác}}\\
+Khởi tạo   & $2{,}809\times10^{1}$ & $7{,}115\times10^{-1}$ & $0$ & $0{,}0253$ & có \\
+Adam $200$ & $5{,}735\times10^{0}$ & $3{,}705\times10^{-2}$ & $0$ & $0{,}0065$ & có \\
+Adam $1000$& $1{,}511\times10^{-1}$& $4{,}173\times10^{-4}$ & $0$ & $0{,}0028$ & có \\
+Adam $4000$& $2{,}526\times10^{-2}$& $6{,}109\times10^{-5}$ & $0$ & $0{,}0024$ & có \\
+$+$ L-BFGS & $2{,}599\times10^{-3}$& $1{,}815\times10^{-6}$ & $0$ & $0{,}0007$ & có \\
+\addlinespace
+\multicolumn{6}{@{}l}{\emph{(b) Ràng buộc mềm, $\lambda_b = 100$}}\\
+Adam $1000$& $1{,}663\times10^{-1}$& $7{,}820\times10^{-3}$ & $1{,}7\times10^{-2}$ & $0{,}0470$ & có \\
+$+$ L-BFGS & $4{,}214\times10^{-3}$& $5{,}029\times10^{-6}$ & $9{,}9\times10^{-6}$ & $0{,}0012$ & có \\
+\addlinespace
+\multicolumn{6}{@{}l}{\emph{(c) Ràng buộc mềm, $\lambda_b = 0{,}01$}}\\
+Adam $200$ & $4{,}033\times10^{0}$ & $2{,}923\times10^{0}$  & $5{,}21$ & $0{,}7248$ & \textbf{không} \\
+Adam $1000$& $9{,}087\times10^{-2}$& $8{,}736\times10^{-1}$ & $1{,}52$ & $\mathbf{9{,}614}$ & \textbf{không} \\
+Adam $4000$& $2{,}976\times10^{-2}$& $2{,}906\times10^{-1}$ & $0{,}503$& $\mathbf{9{,}763}$ & \textbf{không} \\
+$+$ L-BFGS & $4{,}304\times10^{-3}$& $1{,}127\times10^{-3}$ & $2{,}1\times10^{-3}$ & $0{,}2618$ & \textbf{không} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Kết quả.} Ba kết luận, mỗi kết luận trả lời một phần của câu hỏi đặt ra.
+
+\emph{(a) Chặn đúng, và đúng trên toàn dải.} Với ràng buộc cứng, tỉ số
+$\norm{e_{\btheta}}/\norm{r_{\btheta}}$ nằm dưới $\pi^{-2}$ tại \emph{mọi} mốc,
+trong khi $\norm{r_{\btheta}}$ quét bốn bậc độ lớn từ $2{,}81\times10^{1}$ xuống
+$2{,}60\times10^{-3}$. Chặn cho đạo hàm cũng đúng: tỉ số
+$\norm{e_{\btheta}'}/\norm{r_{\btheta}}$ cao nhất là $0{,}159$, dưới
+$\pi^{-1}\approx 0{,}318$.
+
+\emph{(b) Chặn không chặt.} Tỉ số quan sát được nằm trong khoảng
+$0{,}0007$--$0{,}0261$, tức nhỏ hơn hằng số $\pi^{-2}$ từ $4$ đến $145$ lần. Điều
+này không mâu thuẫn với mệnh đề: hằng số $\pi^{-2}$ là tối ưu trên \emph{toàn bộ}
+lớp hàm $H^1_0(0,1)$, đạt được khi sai số trùng hàm riêng $\sin \pi x$ ứng với
+trị riêng nhỏ nhất. Sai số của mạng nơ-ron ở đây không có dạng ấy, nên chặn còn
+dư địa. Hệ quả thực hành: chặn dùng được như một \emph{bảo đảm}, không dùng được
+như một \emph{ước lượng} sai số.
+
+\emph{(c) Giả thiết điều kiện biên là thiết yếu, không phải trang trí.} Với
+$\lambda_b = 0{,}01$, chặn bị vi phạm ở mọi mốc sau khởi tạo, và mức vi phạm lên
+tới $9{,}76$ so với $0{,}1013$ --- tức \emph{gấp $96$ lần}. Đọc dòng
+``Adam $4000$'' cho thấy rõ cơ chế: phần dư đã nhỏ
+($\norm{r_{\btheta}} = 2{,}98\times10^{-2}$) trong khi sai số vẫn lớn
+($\norm{e_{\btheta}} = 2{,}91\times10^{-1}$, gấp mười lần phần dư). Đây chính là
+kịch bản mà Nhận xét~\ref{rem:ill-posedness} mô tả: mạng trôi trên tập
+$\mathcal{M}_r$ của \eqref{eq:manifold-r} và hội tụ về \emph{một nghiệm khác} của
+cùng phương trình vi phân.
+
+\begin{nhanxet}[Vì sao thí nghiệm này đáng làm]
+\label{nx:y-nghia-tn6}
+Đây là thí nghiệm duy nhất trong chương kiểm chứng trực tiếp mắt xích
+\emph{logic} của phương pháp chứ không phải một hiện tượng của mô hình. Nó cho
+một quy tắc thực hành cụ thể: chỉ khi điều kiện biên được thoả (chính xác bằng
+ràng buộc cứng, hoặc tới độ chính xác cao bằng $\lambda_b$ đủ lớn) thì việc theo
+dõi $J_r$ mới là chỉ báo hợp lệ cho sai số. Ở chế độ $\lambda_b$ nhỏ, một giá trị
+$J_r$ nhỏ \emph{không} nói gì về chất lượng nghiệm --- và đó là chế độ mà bệnh lý
+gradient (Mục~\ref{sec:gradient-pathology}) tự động đẩy bài toán vào khi
+$\lambda_b$ không được chọn cẩn thận.
+\end{nhanxet}
+
+%==============================================================================
 \section{Đối chiếu lý thuyết và thực nghiệm}
 \label{sec:doi-chieu}
 %==============================================================================
@@ -1044,20 +1150,25 @@ Quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$
 Thuật toán~\ref{alg:annealing}
 & cân bằng biên độ gradient
 & làm xấu $35{,}6$ lần (khuếch tán), $15{,}9$ lần (Burgers)
-& \textbf{Có chế độ hỏng} (Bổ đề~\ref{bd:phan-hoi-duong}) \\
+& \textbf{Có chế độ hỏng} (Bổ đề~\ref{bd:phan-hoi-duong}) \\[4pt]
+Mệnh đề~\ref{md:chan-on-dinh}
+& $\norm{e}_{L^2}\le \pi^{-2}\norm{r}_{L^2}$ khi điều kiện biên thoả chính xác
+& tỉ số $\le 0{,}026$ trên bốn bậc độ lớn của $\norm{r}$; vi phạm $96$ lần khi
+  $\lambda_b = 0{,}01$
+& \textbf{Khớp}, và giả thiết biên tỏ ra thiết yếu \\
 \bottomrule
 \end{tabular}
 \end{table}
  
-Trong tám hạng mục: bốn khớp trọn vẹn, một khớp về hướng nhưng không rút được kết
-luận định lượng, một cần siết lại cách phát biểu, một chỉ là tương quan chưa giải
-thích được, và một cho kết quả tiêu cực nhưng đã truy được nguyên nhân.
+Trong chín hạng mục: năm khớp trọn vẹn, một khớp về hướng nhưng không rút được
+kết luận định lượng, một cần siết lại cách phát biểu, một chỉ là tương quan chưa
+giải thích được, và một cho kết quả tiêu cực nhưng đã truy được nguyên nhân.
  
 Mức khớp này ủng hộ khung lý thuyết của Chương~\ref{chap:pinn} một cách
-\emph{có điều kiện}, và điều kiện ấy đáng được nêu rõ: ba trong bốn hạng mục khớp
-trọn vẹn tương ứng với một mệnh đề \emph{đã được chứng minh}
+\emph{có điều kiện}, và điều kiện ấy đáng được nêu rõ: bốn trong năm hạng mục
+khớp trọn vẹn tương ứng với một mệnh đề \emph{đã được chứng minh}
 (Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:phat-bien-phat},
-Mệnh đề~\ref{md:san-nhieu}); hạng mục thứ tư dựa trên
+Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh}); hạng mục còn lại dựa trên
 Định nghĩa~\ref{dn:rho}, vốn là một \emph{tiêu chí chẩn đoán} do luận văn đặt ra
 chứ không phải một mệnh đề, nên nó kiểm chứng tính hữu dụng của tiêu chí chứ
 không kiểm chứng một dự báo lý thuyết. Ngược lại, cả ba hạng mục có vấn đề đều
@@ -1119,12 +1230,12 @@ Mục~\ref{sec:tn4}. Thêm vào đó,
 Nhận xét~\ref{nx:hai-nghiem-tham-chieu} đã nêu việc hai chương hiện dùng hai nghiệm
 tham chiếu khác nhau.
  
-\item \emph{Chưa kiểm chứng chặn ổn định.} Mệnh đề~\ref{md:chan-on-dinh} và
-Mệnh đề~\ref{md:chan-suy-bien} cho quan hệ định lượng giữa
-$\norm{r_{\btheta}}_{L^2}$ và $\norm{e_{\btheta}}_{L^2}$, và cả hai đều kiểm chứng
-được trực tiếp trên bài toán Poisson của Mục~\ref{sec:tn1} bằng cách đo
-đồng thời hai chuẩn trên lưới đánh giá. Thí nghiệm ấy chưa được thực hiện; đó là
-bổ sung đơn giản và có giá trị nhất cho chương này.
+\item \emph{Chặn ổn định mới được kiểm chứng ở trường hợp đơn giản nhất.}
+Mục~\ref{sec:tn6} đã kiểm chứng Mệnh đề~\ref{md:chan-on-dinh} trên bài toán
+Poisson. Nhưng Mệnh đề~\ref{md:chan-suy-bien} --- vốn mới là tầng thứ nhất của
+Bảng~\ref{tab:ba-nguyen-nhan} --- thì chưa: sự suy biến của hằng số ổn định theo
+$1/\nu$ đòi hỏi quét $\nu$ trên bài toán đối lưu--khuếch tán, và phép quét ấy
+chưa được thực hiện. Đây là bổ sung có giá trị nhất còn lại cho chương này.
 \end{enumerate}
  
 %==============================================================================

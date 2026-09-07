@@ -1,0 +1,96 @@
+\appendix
+
+\chapter{Mã nguồn thực nghiệm}
+\label{app:code}
+
+Toàn bộ phần thực nghiệm của Chương~\ref{chap:thucnghiem} được cài đặt bằng
+PyTorch thuần, không dùng thư viện PINNs đóng gói sẵn, và được công bố kèm luận
+văn trong thư mục \texttt{code/}. Phụ lục này mô tả cấu trúc và các quy ước cần
+biết để tái lập kết quả.
+
+%==============================================================================
+\section{Cấu trúc và cách chạy}
+%==============================================================================
+
+\begin{table}[H]
+\centering
+\caption{Tổ chức thư mục \texttt{code/}.}
+\label{tab:code-struct}
+\small
+\begin{tabular}{@{}l p{9.2cm}@{}}
+\toprule
+\textbf{Tệp} & \textbf{Nội dung} \\
+\midrule
+\texttt{pinns/core.py} & Thành phần dùng chung: lớp \texttt{FNN}, toán tử đạo
+  hàm lồng nhau \texttt{grad}, chỉ tiêu sai số, chỉ số mất cân bằng
+  $\rho_i$, và hai giai đoạn huấn luyện Adam~$\to$~L-BFGS. \\
+\texttt{pinns/exp1\_relu.py} & Mục~\ref{sec:tn1} \\
+\texttt{pinns/exp2\_lambda.py} & Mục~\ref{sec:tn2} \\
+\texttt{pinns/exp3\_spectral.py} & Mục~\ref{sec:tn3} \\
+\texttt{pinns/exp4\_heat.py} & Mục~\ref{sec:tn4} \\
+\texttt{pinns/exp5\_burgers.py} & Mục~\ref{sec:tn5}, kèm bộ giải tham chiếu sai
+  phân hữu hạn \\
+\texttt{pinns/exp6\_stability.py} & Mục~\ref{sec:tn6} \\
+\texttt{pinns/run\_all.py} & Chạy lần lượt cả sáu thí nghiệm \\
+\texttt{results/*.json} & Số liệu thô của từng thí nghiệm \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Mỗi thí nghiệm chạy độc lập bằng một lệnh dạng
+\texttt{python -m pinns.<tệp>}, còn \texttt{python -m pinns.run\_all}
+chạy toàn bộ. Kết quả số được ghi ra \texttt{results/} dưới dạng JSON để có thể
+đối chiếu lại với các bảng trong luận văn.
+
+%==============================================================================
+\section{Các quy ước bám theo phần lý thuyết}
+%==============================================================================
+
+Mọi lựa chọn thiết kế trong \texttt{core.py} đều truy được về một kết quả ở
+Chương~\ref{chap:fnn} hoặc Chương~\ref{chap:autodiff}, đúng theo tinh thần đã nêu
+ở Bảng~\ref{tab:tong-ket}: hàm kích hoạt $\tanh$ (điều kiện
+$\sigma''\not\equiv 0$ của Hệ quả~\ref{hq:relu-hessian}); khởi tạo Xavier với
+phương sai \eqref{eq:xavier}; độ chệch bằng $\bm{0}$ (giả thiết (A2) của
+Mục~\ref{subsec:phuong-sai}); lớp ra tuyến tính \eqref{eq:fnn-output}; số học
+\texttt{float64}; và huấn luyện hai giai đoạn theo
+Thuật toán~\ref{alg:two-stage} với tìm kiếm đường Wolfe mạnh, vốn là điều kiện để
+$\bm{H}_k$ giữ tính xác định dương (Bổ đề~\ref{bd:wolfe-curvature}).
+
+\begin{nhanxet}[Quy ước lưới điểm phối trí]
+\label{nx:quy-uoc-luoi}
+Lưới điểm phối trí một chiều bao gồm \emph{cả hai điểm biên}. Chi tiết này không
+tuỳ tiện và có thể kiểm chứng: với $n = 256$ trên $(0,1)$ và
+$f = 4\pi^2\sin(2\pi x)$, trung bình của $f^2$ trên lưới ấy bằng đúng
+$776{,}229$ --- trùng với giá trị $J_r$ mà Mục~\ref{sec:tn1} báo cáo cho mạng
+ReLU. Nếu dùng $256$ điểm \emph{trong} thay vì kể cả biên, giá trị tương ứng là
+$782{,}317$. Ta ghi rõ quy ước này vì nó là loại chi tiết quyết định việc một
+bảng số có tái lập được hay không.
+\end{nhanxet}
+
+%==============================================================================
+\section{Hai đoạn mã trung tâm}
+%==============================================================================
+
+Toán tử đạo hàm lồng nhau ở Đoạn mã~\ref{lst:grad} là hiện thực trực tiếp của hai
+hệ thức truy hồi \eqref{eq:G-truy-hoi} và \eqref{eq:S-truy-hoi}; cờ
+\texttt{create\_graph=True} là điều kiện để lấy tiếp gradient theo $\btheta$
+(Mục~\ref{subsec:bac-cao-ad}). Lớp mạng ở Đoạn mã~\ref{lst:fnn} hiện thực
+Định nghĩa~\ref{def:fnn} cùng ba quy ước vừa nêu.
+
+Riêng với Mục~\ref{sec:tn6}, nghiệm thử ràng buộc cứng của
+Bổ đề~\ref{bd:rang-buoc-cung} được dựng bằng đúng một dòng:
+
+\begin{lstlisting}[caption={Nghiệm thử thoả điều kiện biên theo cấu trúc.},label={lst:hard}]
+# u(0) = u(1) = 0 voi MOI theta, theo Bo de rang buoc cung
+model = lambda x: x * (1 - x) * net(x)
+\end{lstlisting}
+
+%==============================================================================
+\section{Giới hạn về tính tái lập}
+%==============================================================================
+
+Mọi thí nghiệm dùng một hạt giống cố định (\texttt{seed = 0}) và số học
+\texttt{float64}, nên kết quả tái lập được trên cùng một phiên bản PyTorch. Cần
+đọc điều này kèm hạn chế thứ nhất ở Mục~\ref{sec:hanche}: tái lập được không đồng
+nghĩa với có ý nghĩa thống kê, và một hạt giống duy nhất chưa đủ để rút kết luận
+so sánh giữa hai phác đồ huấn luyện.

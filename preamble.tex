@@ -72,6 +72,15 @@
 \usepackage{emptypage}
 \usepackage{microtype}
 
+% Nới nhẹ tiêu chuẩn ngắt dòng. Lý do: \setdefaultlanguage{vietnamese} khiến
+% toàn văn bản dùng mẫu ngắt từ tiếng Việt, vốn không ngắt được các tên riêng và
+% thuật ngữ tiếng Anh dài (Goodfellow, Karniadakis, Perdikaris, collocation...).
+% Không có chỗ xuống dòng, TeX buộc phải cho chữ tràn ra lề. \emergencystretch
+% cho phép giãn khoảng trắng thêm một chút ở lượt cuối thay vì tràn -- đánh đổi
+% chuẩn mực trong sách in, và nhẹ hơn nhiều so với việc tự chẻ âm tiết tên người.
+\tolerance=1500
+\emergencystretch=1em
+
 % Header / footer
 \usepackage{fancyhdr}
 \pagestyle{fancy}

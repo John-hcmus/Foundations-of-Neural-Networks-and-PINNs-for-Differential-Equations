@@ -707,6 +707,7 @@ Bảng~\ref{tab:ba-nguyen-nhan}.
 toán ủ trọng số.}
 \label{tab:tn4}
 \small
+\setlength{\tabcolsep}{4pt}   % bảng 6 cột, thu khoảng cách cột cho vừa khổ chữ
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
 \multirow{2}{*}{\textbf{Chiến lược}}
@@ -942,14 +943,14 @@ miễn là $\norm{\nabla_{\btheta}J_r}_{\infty}$ bị chặn dưới bởi một
 \begin{proof}
 Ta có $\nabla J_i = \frac{2}{N_i}\sum_j g_j \nabla g_j$, nên theo bất đẳng thức
 tam giác rồi Cauchy--Schwarz trên chỉ số $j$,
-\[
+\begin{align*}
 \norm{\nabla J_i}_{2}
- \le \frac{2}{N_i}\sum_j \abs{g_j}\,\norm{\nabla g_j}_2
- \le \frac{2G_i}{N_i}\sum_j \abs{g_j}
- \le \frac{2G_i}{N_i}\sqrt{N_i}\Big(\sum_j g_j^2\Big)^{1/2}
- = \frac{2G_i}{N_i}\sqrt{N_i}\cdot\sqrt{N_i J_i}
- = 2G_i\sqrt{J_i},
-\]
+ &\le \frac{2}{N_i}\sum_j \abs{g_j}\,\norm{\nabla g_j}_2
+  \le \frac{2G_i}{N_i}\sum_j \abs{g_j}
+  \le \frac{2G_i}{N_i}\sqrt{N_i}\Big(\sum_j g_j^2\Big)^{1/2}\\
+ &= \frac{2G_i}{N_i}\sqrt{N_i}\cdot\sqrt{N_i J_i}
+  = 2G_i\sqrt{J_i},
+\end{align*}
 trong đó bước cuối dùng $\sum_j g_j^2 = N_i J_i$ theo định nghĩa của $J_i$.
 Chuyển sang chuẩn $L^1$ trên $\R^P$ bằng
 $\norm{\bm{v}}_1 \le \sqrt{P}\,\norm{\bm{v}}_2$ cho

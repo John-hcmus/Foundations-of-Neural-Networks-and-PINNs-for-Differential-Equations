@@ -276,14 +276,15 @@ $\bm{\Delta}^{(\ell)} = \big[\bm{\delta}^{(\ell)}_1,\dots,
 \bm{\delta}^{(\ell)}_N\big] \in \R^{n_\ell\times N}$. Khi ấy
 \eqref{eq:bp2}--\eqref{eq:bp4} trở thành
 \begin{equation}
-\bm{\Delta}^{(\ell)} = \left[\left(\bW^{(\ell+1)}\right)^{\!\top}
-  \bm{\Delta}^{(\ell+1)}\right] \odot \sigma'\!\left(\bm{Z}^{(\ell)}\right),
-\quad
+\begin{aligned}
+\bm{\Delta}^{(\ell)} &= \left[\left(\bW^{(\ell+1)}\right)^{\!\top}
+  \bm{\Delta}^{(\ell+1)}\right] \odot \sigma'\!\left(\bm{Z}^{(\ell)}\right),\\
 \frac{\partial J}{\partial \bW^{(\ell)}}
- = \frac{1}{N}\,\bm{\Delta}^{(\ell)}\big(\bm{A}^{(\ell-1)}\big)^{\!\top},
-\quad
+ &= \frac{1}{N}\,\bm{\Delta}^{(\ell)}\big(\bm{A}^{(\ell-1)}\big)^{\!\top},
+\qquad
 \frac{\partial J}{\partial \bb^{(\ell)}}
  = \frac{1}{N}\,\bm{\Delta}^{(\ell)}\bm{1}_N .
+\end{aligned}
 \label{eq:bp-batch}
 \end{equation}
 Phép lấy tổng theo mẫu, vốn là một vòng lặp trong dạng \eqref{eq:bp3}, đã được
@@ -393,12 +394,11 @@ với mẫu dữ liệu $x = 1$, $y = 0{,}5$.
 \ba^{(1)} = \tanh\!\left(\bz^{(1)}\right)
 = \begin{pmatrix} 0{,}537050 \\ -0{,}099668 \end{pmatrix},
 \]
-\[
+\begin{gather*}
 \hat{y} = z^{(2)} = 0{,}4 \cdot 0{,}537050 + 0{,}7 \cdot (-0{,}099668) - 0{,}1
-= 0{,}045052,
-\qquad
-J = \tfrac{1}{2}(0{,}045052 - 0{,}5)^2 = 0{,}103489.
-\]
+ = 0{,}045052, \\
+J = \tfrac{1}{2}\big(0{,}045052 - 0{,}5\big)^2 = 0{,}103489 .
+\end{gather*}
  
 \noindent\textbf{Lượt ngược.} Vì lớp ra tuyến tính, \eqref{eq:bp1} cho
 \[
@@ -979,13 +979,13 @@ $0$, phương sai $\varsigma^2$. Khi đó
 \begin{equation}
 \lim_{k\to\infty}\E\big[\theta_k^2\big]
  = \frac{\alpha\,\varsigma^{2}}{\mu\,(2-\alpha\mu)},
-\qquad\text{và do đó}\qquad
+\qquad
 \lim_{k\to\infty}\E\big[J(\theta_k)\big]
- = \frac{\alpha\,\varsigma^{2}}{2\,(2-\alpha\mu)}
- \;\sim\; \frac{\alpha\varsigma^{2}}{4}
- \quad (\alpha \to 0^{+}).
+ = \frac{\alpha\,\varsigma^{2}}{2\,(2-\alpha\mu)},
 \label{eq:san-nhieu}
 \end{equation}
+và do đó $\lim_{k\to\infty}\E[J(\theta_k)] \sim \alpha\varsigma^{2}/4$ khi
+$\alpha \to 0^{+}$.
 \end{menhde}
  
 \begin{proof}

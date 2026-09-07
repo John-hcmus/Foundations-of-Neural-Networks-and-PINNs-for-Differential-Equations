@@ -30,7 +30,7 @@ trong tài liệu học sâu tổng quát, vì vậy trở thành trục của c
       bậc nhất và dự đoán phương sai được bảo toàn \emph{chính xác} dưới khởi
       tạo Xavier -- điều thực nghiệm bác bỏ. Mệnh đề~\ref{md:hieu-chinh} bổ sung
       số hạng bậc hai và cho quy luật suy giảm điều hoà
-      $s_\ell^2 \sim 1/(2\ell)$, khớp số liệu TN4 với sai số dưới $9\%$ từ
+      $s_\ell^2 \sim 1/(2\ell)$, khớp số liệu TN-C với sai số dưới $9\%$ từ
       $\ell \ge 3$.
 \end{enumerate}
  
@@ -73,7 +73,7 @@ $\bS^{(\ell)}_k = \partial^2 a^{(\ell)}_k/\partial\bx\,\partial\bx^{\top}$ &
   Hessian của nơ-ron $k$ theo biến đầu vào \\
 $\bm{\delta}^{(\ell)} = \partial J/\partial\bz^{(\ell)}$ & sai số lan truyền
   ngược theo tham số \\
-$N$, $N_r$, $N_b$ & cỡ lô; số điểm cấu tứ trong miền; số điểm trên biên \\
+$N$, $N_r$, $N_b$ & cỡ lô; số điểm phối trí trong miền; số điểm trên biên \\
 $J(\btheta)$ & hàm mục tiêu (mất mát) \\
 \bottomrule
 \end{tabular}
@@ -236,7 +236,7 @@ Mục~\ref{subsec:phi-tuyen} chỉ khai thác đúng cấu trúc xen kẽ này.
 \caption{Kiến trúc FNN với $(n_0,n_1,n_2,n_3) = (2,4,4,1)$, tức $L = 3$. Theo
 \eqref{eq:so-tham-so}, mạng này có
 $P = (2\!\cdot\!4+4)+(4\!\cdot\!4+4)+(4\!\cdot\!1+1) = 12 + 20 + 5 = 37$ tham
-số -- con số được xác nhận bằng phép đếm trực tiếp trong thí nghiệm TN1.}
+số -- con số được xác nhận bằng phép đếm trực tiếp trong thí nghiệm TN-A.}
 \label{fig:kien-truc-fnn}
 \end{figure}
  
@@ -333,7 +333,7 @@ lại bằng cách làm rộng các lớp khác.
 \label{subsec:bieu-dien-ma-tran}
  
 Trong thực hành, mạng không bao giờ được đánh giá tại một điểm mà tại một lô
-điểm -- trong bài toán phương trình vi phân, đó là tập điểm cấu tứ. Đặt
+điểm -- trong bài toán phương trình vi phân, đó là tập điểm phối trí. Đặt
 $\bm{A}^{(\ell)} = \big[\ba^{(\ell)}_1, \dots, \ba^{(\ell)}_N\big]
 \in \R^{n_\ell \times N}$ là ma trận có cột thứ $i$ là kích hoạt của mẫu thứ
 $i$. Khi đó \eqref{eq:fnn-affine}--\eqref{eq:fnn-act} trở thành
@@ -381,7 +381,7 @@ bản thân $\btheta$.
 \end{proof}
  
 Hai quan sát từ \eqref{eq:do-phuc-tap}. Thứ nhất, chi phí \emph{tuyến tính} theo
-$N$: tăng gấp đôi số điểm cấu tứ làm tăng gấp đôi chi phí, không hơn. Thứ hai,
+$N$: tăng gấp đôi số điểm phối trí làm tăng gấp đôi chi phí, không hơn. Thứ hai,
 với mạng bề rộng đều $n_\ell \equiv n$, chi phí là
 $\mathcal{O}(N L n^2)$ -- \emph{tuyến tính} theo chiều sâu nhưng \emph{bậc hai}
 theo bề rộng. Với ngân sách tính toán cố định, tăng chiều sâu rẻ hơn tăng bề
@@ -550,7 +550,7 @@ $\bD^{(1)} = \diag(1;\ 0{,}419974)$, và $\bG^{(0)} = 1$. Theo
  = 2\cdot 1\cdot 1 + 3\cdot 0{,}419974\cdot(-1)
  = 2 - 1{,}259923 = 0{,}740077 .
 \]
-Đối chiếu trực tiếp: $\Net'(x) = 2\operatorname{sech}^2 x - 3\operatorname{sech}^2(1-x)$, tại $x=0$ cho $2 - 3\cdot 0{,}419974 = 0{,}740077$. Trùng khớp.
+Đối chiếu trực tiếp: $\Net'(x) = 2\sech^2 x - 3\sech^2(1-x)$, tại $x=0$ cho $2 - 3\cdot 0{,}419974 = 0{,}740077$. Trùng khớp.
  
 \emph{Hessian.} Vì $\bG^{(0)} = 1$, hàng thứ $k$ của $\bW^{(1)}\bG^{(0)}$ chính
 là $g^{(1)}_1 = 1$, $g^{(1)}_2 = -1$. Với
@@ -621,7 +621,7 @@ $\mathcal{O}(n_\ell n_0^2)$ ô nhớ. So với chi phí lan truyền xuôi
 \eqref{eq:do-phuc-tap}, tính Hessian theo đầu vào đắt hơn một thừa số $n_0^2$.
 Đây là dạng định lượng của một quan sát thường gặp trong tài liệu về
 PINNs~\cite{karniadakis2021}: chi phí một bước huấn luyện tăng nhanh theo
-\emph{số chiều của miền không gian--thời gian}, chứ không theo số điểm cấu tứ
+\emph{số chiều của miền không gian--thời gian}, chứ không theo số điểm phối trí
 (vốn chỉ vào tuyến tính qua $N$). Thuật toán~\ref{alg:dao-ham} được nêu ở đây
 như một \emph{đặc tả toán học} của đại lượng cần tính; trong cài đặt thực tế,
 các đại lượng ấy được tính bằng vi phân tự động (Chương~\ref{chap:autodiff}),
@@ -1100,8 +1100,13 @@ $\{z \in \mathbb{C} : |\operatorname{Im} z| < \pi/2\}$ và có cực điểm đ�
 $z = \pm i\pi/2$. Do đó chuỗi Taylor của $\tanh$ tại $0$ có bán kính hội tụ đúng
 bằng $\pi/2$, và
 \begin{equation}
-\big|\sigma^{(k)}(0)\big| \;\lesssim\; k!\left(\frac{2}{\pi}\right)^{k}
-\qquad (k \to \infty).
+\limsup_{k\to\infty}
+  \left(\frac{\big|\sigma^{(k)}(0)\big|}{k!}\right)^{\!1/k}
+ = \frac{2}{\pi},
+\qquad\text{tức}\qquad
+\forall\,\epsilon>0\ \ \exists\, C_\epsilon:\;
+\big|\sigma^{(k)}(0)\big| \le C_\epsilon\, k!
+  \left(\frac{2}{\pi}+\epsilon\right)^{\!k} .
 \label{eq:tanh-tang}
 \end{equation}
 \end{menhde}
@@ -1109,15 +1114,26 @@ bằng $\pi/2$, và
 \begin{proof}
 $\tanh z = \sinh z/\cosh z$ là thương của hai hàm nguyên; các điểm kỳ dị là
 nghiệm của $\cosh z = 0$, tức $z = i\pi/2 + ik\pi$, $k \in \mathbb{Z}$. Điểm kỳ
-dị gần gốc nhất cách gốc $\pi/2$, nên bán kính hội tụ bằng $\pi/2$. Ước lượng
-\eqref{eq:tanh-tang} là bất đẳng thức Cauchy cho hệ số Taylor:
-$|\sigma^{(k)}(0)|/k! \le M(r)/r^{k}$ với mọi $r < \pi/2$, trong đó
-$M(r) = \max_{|z|=r}|\tanh z|$.
+dị gần gốc nhất cách gốc $\pi/2$, nên bán kính hội tụ bằng $\pi/2$. Đẳng thức
+\eqref{eq:tanh-tang} chính là công thức Cauchy--Hadamard áp cho hệ số Taylor
+$a_k = \sigma^{(k)}(0)/k!$: bán kính hội tụ $R = \big(\limsup_k
+|a_k|^{1/k}\big)^{-1}$ bằng $\pi/2$. Dạng thứ hai suy ra từ định nghĩa của
+$\limsup$.
 \end{proof}
+ 
+\begin{nhanxet}[Vì sao không viết được chặn với đúng cơ số $2/\pi$]
+Bất đẳng thức Cauchy cho $|a_k| \le M(r)/r^{k}$ với mọi $r < \pi/2$, trong đó
+$M(r) = \max_{|z|=r}|\tanh z|$; nhưng $M(r) \to \infty$ khi $r \to \pi/2^{-}$ vì
+$\tanh$ có cực tại $i\pi/2$, nên \emph{không} thể chọn $r = \pi/2$ để thu được
+chặn dạng $|\sigma^{(k)}(0)| \le C\,k!\,(2/\pi)^k$ chỉ bằng lập luận này. Chặn
+với đúng cơ số $2/\pi$ vẫn đúng, nhưng đòi hỏi khai triển thặng dư tại cực đơn
+$i\pi/2$ chứ không phải bất đẳng thức Cauchy. Vì luận văn chỉ cần \emph{bậc}
+tăng, ta dừng ở \eqref{eq:tanh-tang}.
+\end{nhanxet}
  
 Mệnh đề~\ref{md:tanh-giai-tich} lý giải một quan sát thực nghiệm quen thuộc: vi
 phân tự động bậc cao trên mạng $\tanh$ ổn định về số, vì các đạo hàm tại gốc chỉ
-tăng theo cấp $k!\,(2/\pi)^k$ chứ không nhanh hơn. Trong thực hành, các phương
+tăng theo cấp giai thừa với cơ số $2/\pi < 1$, chứ không nhanh hơn. Trong thực hành, các phương
 trình được xét ở luận văn này có bậc không quá $2$, nên chỉ cần
 \eqref{eq:tanh-d1}--\eqref{eq:tanh-d2}.
  
@@ -1228,7 +1244,7 @@ J(\btheta) = \frac{1}{N_r}\sum_{i=1}^{N_r}
   \Big( -\Net''_{\btheta}(x_i) - f(x_i) \Big)^{2}.
 \label{eq:J-residual}
 \end{equation}
-Giả sử $\sigma = \mathrm{ReLU}$ và các điểm cấu tứ $x_i$ được lấy mẫu từ một
+Giả sử $\sigma = \mathrm{ReLU}$ và các điểm phối trí $x_i$ được lấy mẫu từ một
 phân phối liên tục tuyệt đối trên $\Omega$. Khi đó, với xác suất $1$, tồn tại
 lân cận $U$ của $\btheta$ trong $\R^P$ sao cho
 \begin{equation}
@@ -1302,8 +1318,12 @@ ngoài ra $|z^{(\ell)}_k| \ge \tau$ với mọi $k,\ell$ thì
 \sech^{2(L-1)}(\tau),
 \label{eq:chan-bao-hoa}
 \end{equation}
-tức gradient suy giảm ít nhất theo cấp số nhân với cơ số
-$\sech^{2}(\tau) < 1$.
+tức thừa số do bão hoà đóng góp vào chặn trên suy giảm theo cấp số nhân với cơ
+số $\sech^{2}(\tau) < 1$. Cần đọc \eqref{eq:chan-bao-hoa} cho đúng: đây là chặn
+\emph{trên}, và nó chỉ kéo theo gradient thực sự triệt tiêu khi tích
+$\prod_{\ell=2}^{L}\|\bW^{(\ell)}\|_2$ không bù lại được sự suy giảm ấy -- điều
+được bảo đảm dưới khởi tạo Xavier (Mục~\ref{sec:khoitao}), nơi mỗi
+$\|\bW^{(\ell)}\|_2$ ở thang $\mathcal{O}(1)$.
 \end{menhde}
  
 \begin{proof}
@@ -1316,7 +1336,9 @@ $1 - \tanh^2 t = \sech^2 t$ là hàm chẵn, giảm ngặt trên $[0,\infty)$, n
 $|z| \ge \tau$ kéo theo $\sech^2 z \le \sech^2 \tau$.
 \end{proof}
  
-Ví dụ số cho thấy mức độ nghiêm trọng: với $\tau = 3$ ta có
+Ví dụ số cho thấy mức độ nghiêm trọng (lấy
+$\prod_{\ell}\|\bW^{(\ell)}\|_2 = 1$ để cô lập riêng ảnh hưởng của bão hoà): với
+$\tau = 3$ ta có
 $\sech^2(3) \approx 0{,}00987$; qua $L-1 = 10$ lớp bão hoà, hệ số suy giảm là
 $0{,}00987^{10} \approx 8{,}7\times10^{-21}$ -- gradient bị triệt tiêu hoàn toàn
 trong số học dấu phẩy động độ chính xác kép, nơi epsilon máy vào cỡ
@@ -1326,7 +1348,7 @@ một khi mạng đã bão hoà thì không còn tín hiệu gradient để tho�
  
 \subsection{Kiểm chứng số}
  
-Thí nghiệm TN3 kiểm chứng \eqref{eq:tanh-d1}--\eqref{eq:tanh-d3} bằng sai phân
+Thí nghiệm TN-B kiểm chứng \eqref{eq:tanh-d1}--\eqref{eq:tanh-d3} bằng sai phân
 hữu hạn trung tâm tại năm điểm rải trên $[-2;\,3]$. Sai số tối đa thu được lần
 lượt là $3{,}3\times10^{-9}$, $9{,}0\times10^{-9}$ và $4{,}4\times10^{-5}$ cho
 đạo hàm bậc một, hai và ba -- hoàn toàn tương thích với bậc chính xác của các
@@ -1566,7 +1588,9 @@ $n = n_\ell$, rồi nhân thêm $\big(\sigma'(0)\big)^2$ theo (A4).
 Hai điều kiện \eqref{eq:dk-xuoi} và \eqref{eq:dk-nguoc} chỉ tương thích khi
 $n_{\ell-1} = n_{\ell}$, tức khi mạng có bề rộng đều. Với kiến trúc tổng quát,
 không tồn tại $v_\ell$ thoả cả hai. Glorot và Bengio~\cite{glorot2010} đề xuất
-dung hoà bằng cách lấy trung bình điều hoà của $n_{\ell-1}$ và $n_\ell$:
+dung hoà bằng cách lấy \emph{trung bình điều hoà của hai phương sai ứng viên}
+$1/n_{\ell-1}$ và $1/n_{\ell}$ -- tương đương nghịch đảo trung bình cộng của
+$n_{\ell-1}$ và $n_{\ell}$:
 \begin{equation}
 \boxed{\;
 v_\ell = \Var\!\left(w^{(\ell)}\right) = \frac{2}{n_{\ell-1} + n_{\ell}} \; }
@@ -1595,6 +1619,19 @@ $\Var U = \E U^2 = \frac{1}{2\alpha}\int_{-\alpha}^{\alpha} t^2\,dt
 = \frac{\alpha^2}{3}$. Đặt $\alpha^2/3 = 2/(n_{\ell-1}+n_\ell)$ và giải theo
 $\alpha > 0$ cho $\alpha = \sqrt{6/(n_{\ell-1}+n_\ell)}$.
 \end{proof}
+
+\begin{nhanxet}[Dạng đều và dạng chuẩn tắc là tương đương với mọi kết quả của
+chương]
+\label{nx:xavier-dang}
+Toàn bộ phân tích ở Mục~\ref{subsec:phuong-sai} chỉ dùng ba tính chất của phân
+phối khởi tạo: kỳ vọng $0$, các phần tử độc lập cùng phân phối, và phương sai
+bằng $v_\ell$. Không kết quả nào phụ thuộc \emph{dạng} của phân phối. Do đó
+\eqref{eq:xavier-uniform} và dạng chuẩn tắc
+$w^{(\ell)}_{kj}\sim\mathcal{N}\big(0,\,2/(n_{\ell-1}+n_\ell)\big)$ đều hiện thực
+hoá đúng điều kiện \eqref{eq:xavier} và đều dùng được. Ta ghi rõ điều này vì
+phần thực nghiệm ở Chương~\ref{chap:thucnghiem} dùng dạng chuẩn tắc
+(\texttt{xavier\_normal\_}), còn chương này nêu dạng đều làm ví dụ cụ thể.
+\end{nhanxet}
  
 \subsection{Khởi tạo He}
 \label{subsec:he}
@@ -1680,19 +1717,38 @@ s_\ell^2 \;\sim\; \frac{1}{2\ell}.
 \end{menhde}
  
 \begin{proof}
-Khai triển Taylor $\tanh t = t - \tfrac{t^3}{3} + \tfrac{2t^5}{15} -\cdots$,
-hội tụ với $|t| < \pi/2$ theo Mệnh đề~\ref{md:tanh-giai-tich}, cho
+Khai triển Taylor $\tanh t = t - \tfrac{t^3}{3} + \tfrac{2t^5}{15} -\cdots$ cho
+$\tanh^2 t = t^2 - \tfrac{2}{3}t^4 + \mathcal{O}(t^6)$ khi $t \to 0$. Chuỗi này
+chỉ hội tụ với $|t| < \pi/2$ (Mệnh đề~\ref{md:tanh-giai-tich}), trong khi biến
+Gauss $z$ nhận giá trị trên toàn $\R$; vì vậy \emph{không} được phép lấy kỳ vọng
+từng số hạng của chuỗi. Ta thay bằng một chặn phần dư đúng trên toàn trục. Đặt
 \[
-\tanh^2 t = t^2 - \tfrac{2}{3}t^4 + \mathcal{O}(t^6).
+\psi(t) := \tanh^2 t - \Big(t^2 - \tfrac{2}{3}t^4\Big).
 \]
-Với $z \sim \mathcal{N}(0,s^2)$ ta có $\E[z^2] = s^2$ và $\E[z^4] = 3s^4$, nên
+Hàm $\psi$ liên tục, $\psi(t) = \mathcal{O}(t^6)$ khi $t\to 0$, và vì
+$\tanh^2$ bị chặn bởi $1$ nên $|\psi(t)| \le 1 + t^2 + \tfrac23 t^4$ với mọi $t$.
+Hai tính chất ấy cho một hằng số $C$ (không phụ thuộc $t$) sao cho
+\begin{equation}
+\big|\psi(t)\big| \;\le\; C\,t^{6}
+\qquad\text{với mọi } t \in \R,
+\label{eq:chan-phan-du-tanh}
+\end{equation}
+bởi trên $[-1,1]$ hàm $t \mapsto \psi(t)/t^6$ liên tục (kỳ dị tại $0$ khử được)
+nên bị chặn, còn với $|t| \ge 1$ ta có $1 \le t^4$ và $t^2 \le t^4$, do đó
+$|\psi(t)| \le \tfrac83 t^4 \le \tfrac83 t^6$.
+
+Với $z \sim \mathcal{N}(0,s^2)$ ta có $\E[z^2] = s^2$, $\E[z^4] = 3s^4$ và
+$\E[z^6] = 15 s^6$. Lấy kỳ vọng hai vế của
+$\tanh^2 z = z^2 - \tfrac23 z^4 + \psi(z)$ rồi dùng
+\eqref{eq:chan-phan-du-tanh}:
 \[
-s_\ell^2 = \E\big[\tanh^2 z^{(\ell)}\big]
- = s^2 - \tfrac{2}{3}\cdot 3s^4 + \mathcal{O}(s^6)
- = s^2 - 2s^4 + \mathcal{O}(s^6),
+\Big| \E\big[\tanh^2 z\big] - \big(s^2 - 2s^4\big) \Big|
+ \;=\; \big|\E[\psi(z)]\big| \;\le\; C\,\E\big[z^6\big] \;=\; 15\,C\,s^{6},
 \]
-với $s = s_{\ell-1}$, do $\rho = 1$ kéo theo $\Var(z^{(\ell)}) = s_{\ell-1}^2$
-theo \eqref{eq:lan-truyen-phuong-sai}. Đó là \eqref{eq:hieu-chinh}.
+tức $s_\ell^2 = \E[\tanh^2 z^{(\ell)}] = s^2 - 2s^4 + \mathcal{O}(s^6)$ với
+$s = s_{\ell-1}$, do $\rho = 1$ kéo theo $\Var(z^{(\ell)}) = s_{\ell-1}^2$
+theo \eqref{eq:lan-truyen-phuong-sai}. Đó là \eqref{eq:hieu-chinh}, và số hạng
+dư nay là một chặn \emph{đều} chứ không phải một khai triển hình thức.
  
 Để suy ra \eqref{eq:dieu-hoa}, đặt $u_\ell := 1/s_\ell^2$. Từ
 \eqref{eq:hieu-chinh},
@@ -1751,7 +1807,7 @@ $1$, đúng như thiết kế của điều kiện \eqref{eq:dk-nguoc}.}
  
 \begin{table}[H]
 \centering
-\caption{Kết quả thí nghiệm TN4: mạng $12$ lớp, mỗi lớp $128$ nơ-ron, kích hoạt
+\caption{Kết quả thí nghiệm TN-C: mạng $12$ lớp, mỗi lớp $128$ nơ-ron, kích hoạt
 $\tanh$, lô $N = 400$ mẫu chuẩn tắc. Cột ``bão hoà'' là tỉ lệ nơ-ron có
 $|a^{(\ell)}| > 0{,}99$.}
 \label{tab:so-lieu-khoitao}
@@ -1789,7 +1845,7 @@ Bảng~\ref{tab:dieu-hoa} kiểm chứng trực tiếp dự đoán tiệm cận
 \begin{table}[H]
 \centering
 \caption{Kiểm chứng quy luật suy giảm điều hoà $s_\ell^2 \sim 1/(2\ell)$ cho
-khởi tạo Xavier (số liệu cùng thí nghiệm TN4).}
+khởi tạo Xavier (số liệu cùng thí nghiệm TN-C).}
 \label{tab:dieu-hoa}
 \begin{tabular}{@{}c c c c@{}}
 \toprule
@@ -1809,8 +1865,20 @@ $\ell$ & $s_\ell^2$ (thực nghiệm) & $1/(2\ell)$ (lý thuyết)
 Sai lệch lớn tại $\ell = 1$ là điều dự kiến: \eqref{eq:dieu-hoa} là công thức
 \emph{tiệm cận}, chỉ có hiệu lực khi $s_\ell^2$ đã đủ nhỏ để khai triển bậc hai
 trong \eqref{eq:hieu-chinh} chiếm ưu thế. Từ $\ell \ge 3$ trở đi, sai số tương
-đối giữ dưới $9\%$ trên toàn bộ dải khảo sát -- mức khớp tốt đối với một công
-thức tiệm cận không chứa tham số tự do nào.
+đối giữ dưới $9\%$ trên toàn bộ dải khảo sát -- mức khớp chấp nhận được đối với
+một công thức tiệm cận không chứa tham số tự do nào.
+
+Hai dè dặt cần nêu để không đọc bảng quá mạnh. Thứ nhất, sai số tương đối
+\emph{không đơn điệu} theo $\ell$ ($0{,}2\% \to 5{,}8\% \to 7{,}6\% \to 8{,}6\%
+\to 3{,}5\%$), trong khi một công thức tiệm cận đúng phải cho sai số giảm dần;
+dáng lên--xuống này đặc trưng cho nhiễu hữu hạn mẫu ở cỡ lô $N = 400$, và mức
+khớp tại $\ell = 3$ có phần may mắn. Thứ hai, đẩy khai triển ở cuối chứng minh
+thêm một bậc cho $u_\ell = 2\ell + \tfrac12\ln\ell + C + o(1)$, tức
+$s_\ell^2$ phải nằm \emph{dưới} $1/(2\ell)$ với $\ell$ đủ lớn; số liệu tại
+$\ell = 5,7,9$ lại nằm trên. Điều này không mâu thuẫn với
+\eqref{eq:dieu-hoa} -- vốn chỉ khẳng định tỉ số tiến tới $1$ -- nhưng cho thấy
+dải $\ell \le 11$ còn chịu ảnh hưởng của hằng số $C$ và của giai đoạn chuyển
+tiếp. Muốn kiểm chứng chặt hơn cần tăng $N$ và mở rộng dải $\ell$.
  
 \begin{nhanxet}[Giới hạn của kiểm chứng]
 Cần nêu rõ phạm vi của kết luận trên. Số liệu ở Bảng~\ref{tab:dieu-hoa} thu được
@@ -1829,7 +1897,7 @@ này cũng nhất quán với giả thiết (A2) của phân tích phương sai.
  
 Tổng hợp Mục~\ref{sec:kichhoat} và Mục~\ref{sec:khoitao}, cấu hình áp dụng xuyên
 suốt phần thực nghiệm của luận văn là: hàm kích hoạt $\tanh$, khởi tạo Xavier
-theo \eqref{eq:xavier-uniform}, độ chệch bằng $0$, lớp ra tuyến tính. Cấu hình
+theo \eqref{eq:xavier}, độ chệch bằng $0$, lớp ra tuyến tính. Cấu hình
 này đồng thời bảo đảm ba điều: (i) tính khả vi vô hạn cần cho toán tử vi phân
 bậc hai, với mọi đạo hàm bị chặn đều (Bổ đề~\ref{bd:tanh-dao-ham} và
 Hệ quả~\ref{hq:tanh-chan}); (ii) giữ $\bz^{(\ell)}$ trong vùng gần tuyến tính
@@ -1873,9 +1941,9 @@ Bước lưu trữ ở dòng 9 không phải chi tiết kỹ thuật phụ: chí
 gian này tạo thành \emph{đồ thị tính toán} mà vi phân tự động sẽ duyệt ngược để
 tính $\nabla_{\btheta} J$ (Chương~\ref{chap:autodiff}). Chi phí bộ nhớ tương ứng
 đã được nêu ở Mệnh đề~\ref{md:chi-phi}, và nó là lý do vì sao trong bài toán
-PINN, số điểm cấu tứ $N$ bị giới hạn bởi bộ nhớ chứ không bởi thời gian tính.
+PINN, số điểm phối trí $N$ bị giới hạn bởi bộ nhớ chứ không bởi thời gian tính.
  
-Thí nghiệm TN1 xác nhận tính đúng đắn của cài đặt trên kiến trúc $(2,4,4,1)$ với
+Thí nghiệm TN-A xác nhận tính đúng đắn của cài đặt trên kiến trúc $(2,4,4,1)$ với
 lô $N = 5$: hình dạng tensor biến đổi theo đúng
 $\bm{A}^{(0)} \in \R^{2\times5} \to \bm{A}^{(1)},\bm{A}^{(2)} \in \R^{4\times5}
 \to \bm{A}^{(3)} \in \R^{1\times5}$, và số tham số đếm được đúng bằng $37$ như
@@ -1967,7 +2035,7 @@ chứ không bằng dữ liệu đo có nhiễu, nên tồn tại hàm làm hàm
 $0$ (chính là nghiệm đúng, nếu nó thuộc lớp hàm biểu diễn được). Hệ quả là mọi
 sai số quan sát được trong thực nghiệm PINN đều thuộc về một trong ba nguồn: sai
 số xấp xỉ (lớp hàm không chứa nghiệm), sai số tối ưu (thuật toán không tìm được
-điểm cực tiểu), và sai số rời rạc hoá (tập điểm cấu tứ hữu hạn). Việc phân tách
+điểm cực tiểu), và sai số rời rạc hoá (tập điểm phối trí hữu hạn). Việc phân tách
 ba nguồn này là nội dung của phần đánh giá số ở
 Chương~\ref{chap:thucnghiem}.
 \end{nhanxet}
@@ -2140,7 +2208,7 @@ Mệnh đề~\ref{md:khong-loi}
 \end{table}
  
 Cấu hình được chốt lại cho toàn bộ phần thực nghiệm: kiến trúc FNN với hàm kích
-hoạt $\tanh$, khởi tạo Xavier theo \eqref{eq:xavier-uniform}, độ chệch bằng $0$,
+hoạt $\tanh$, khởi tạo Xavier theo \eqref{eq:xavier}, độ chệch bằng $0$,
 lớp ra tuyến tính. Mỗi thành phần của cấu hình này được biện minh bởi ít nhất
 một kết quả trong Bảng~\ref{tab:tong-ket}.
  

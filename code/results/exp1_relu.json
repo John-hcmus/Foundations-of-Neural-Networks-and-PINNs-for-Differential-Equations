@@ -1,0 +1,26 @@
+{
+  "f2_lien_tuc": 779.2727282720193,
+  "cau_hinh": [
+    {
+      "act": "tanh",
+      "max_uxx_khoi_tao": 0.10911823050495406,
+      "grad_Jr_inf_khoi_tao": 6.045277605200484,
+      "grad_Jr_l2_khoi_tao": 26.209324703712632,
+      "Jr_cuoi": 0.002445468220103081,
+      "eps_L2": 5.996637271634568e-05,
+      "eps_Linf": 8.474070075903395e-05,
+      "so_tham_so": 2209
+    },
+    {
+      "act": "relu",
+      "max_uxx_khoi_tao": 0.0,
+      "grad_Jr_inf_khoi_tao": 0.0,
+      "grad_Jr_l2_khoi_tao": 0.0,
+      "Jr_cuoi": 776.2286941772069,
+      "eps_L2": 0.9990688003063556,
+      "eps_Linf": 1.0044029964689614,
+      "so_tham_so": 2209
+    }
+  ],
+  "f2_tren_luoi_danh_gia": 778.4942340379814
+}

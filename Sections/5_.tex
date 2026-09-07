@@ -11,15 +11,16 @@ chứng đó.
 Mục tiêu không dừng ở chỗ trình bày một cài đặt chạy được. Mỗi thí nghiệm dưới
 đây được thiết kế để trả lời một câu hỏi cụ thể do Chương~\ref{chap:pinn} đặt ra,
 với tiêu chí thành công hoặc thất bại xác định \emph{trước} khi chạy. Ta báo cáo
-đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong tám hạng mục đối chiếu ở
-Mục~\ref{sec:doi-chieu}, năm khớp trọn vẹn, một khớp về hướng nhưng không về độ
-lớn, một buộc phải siết lại cách phát biểu, và một cho kết quả trái với kỳ vọng.
+đầy đủ cả những chỗ khớp lẫn những chỗ không khớp: trong chín hạng mục đối chiếu
+ở Mục~\ref{sec:doi-chieu}, năm khớp trọn vẹn, một khớp về hướng nhưng không về
+độ lớn, một buộc phải siết lại cách phát biểu, một chỉ là tương quan chưa giải
+thích được, và một cho kết quả trái với kỳ vọng.
 Phần điều chỉnh được ghi rõ thay vì bỏ qua; theo quan điểm của luận văn, một kết
 quả tiêu cực được phân tích đúng nguyên nhân có giá trị ngang một kết quả khớp.
  
 Cấu trúc chương: Mục~\ref{sec:trienkhai} mô tả kiến trúc cài đặt trên
 PyTorch~\cite{paszke2019} và cấu hình chung. Các
-Mục~\ref{sec:tn1}--\ref{sec:tn5} trình bày năm thí nghiệm.
+Mục~\ref{sec:tn1}--\ref{sec:tn6} trình bày sáu thí nghiệm.
 Mục~\ref{sec:doi-chieu} đối chiếu toàn bộ lý thuyết với số liệu, và
 Mục~\ref{sec:hanche} nêu thẳng những hạn chế của thiết kế thực nghiệm này.
  
@@ -53,7 +54,7 @@ def grad(y, x, order=1):
     return y
 \end{lstlisting}
  
-Hàm ở Mã nguồn~\ref{lst:grad} là hiện thực trực tiếp của các công thức truy hồi
+Hàm ở Đoạn mã~\ref{lst:grad} là hiện thực trực tiếp của các công thức truy hồi
 \eqref{eq:G-truy-hoi} và \eqref{eq:S-truy-hoi}: mỗi lần lặp trong vòng
 \texttt{for} tương ứng với một bậc trong truy hồi Jacobi--Hessian
 (Mệnh đề~\ref{md:jacobian} và \ref{md:hessian}), và chi phí nhân lên theo hệ số
@@ -89,9 +90,12 @@ class FNN(nn.Module):
         return self.lins[-1](x)
 \end{lstlisting}
  
-Ba lựa chọn trong Mã nguồn~\ref{lst:fnn} tương ứng trực tiếp với ba kết luận của
+Ba lựa chọn trong Đoạn mã~\ref{lst:fnn} tương ứng trực tiếp với ba kết luận của
 Chương~\ref{chap:fnn}. Khởi tạo Xavier là \eqref{eq:xavier} với độ chệch bằng
-$\bm{0}$, đúng quy ước (A2) của Mục~\ref{subsec:phuong-sai}. Vòng lặp
+$\bm{0}$, đúng quy ước (A2) của Mục~\ref{subsec:phuong-sai}; ta dùng dạng
+\emph{chuẩn tắc} (\texttt{xavier\_normal\_}) chứ không phải dạng đều
+\eqref{eq:xavier-uniform}, và theo Nhận xét~\ref{nx:xavier-dang} hai dạng cho
+cùng phương sai nên mọi kết quả của Chương~\ref{chap:fnn} áp dụng như nhau. Vòng lặp
 \texttt{for lin in self.lins[:-1]} bỏ hàm kích hoạt ở lớp cuối, hiện thực quy ước
 lớp ra tuyến tính \eqref{eq:fnn-output}. Ma trận $B$ của nhúng Fourier được đăng
 ký bằng \texttt{register\_buffer} chứ không phải \texttt{Parameter}: nó cố định,
@@ -130,7 +134,7 @@ opt2 = torch.optim.LBFGS(net.parameters(), max_iter=800, history_size=50,
 opt2.step(closure)
 \end{lstlisting}
  
-Quy trình hai giai đoạn ở Mã nguồn~\ref{lst:train} hiện thực đúng
+Quy trình hai giai đoạn ở Đoạn mã~\ref{lst:train} hiện thực đúng
 Thuật toán~\ref{alg:two-stage}, được lập luận ở Mục~\ref{subsec:adam-vs-lbfgs}
 bằng ba lý do: tính tất định của gradient, sàn nhiễu
 (Mệnh đề~\ref{md:san-nhieu}), và điều kiện xấu. Tham số
@@ -165,7 +169,8 @@ $\rho_i \gg 1$ \emph{và} $\rho_i$ tăng theo số vòng lặp huấn luyện.
 \end{definition}
  
 Điều kiện thứ hai trong Định nghĩa~\ref{dn:rho} là điều kiện thực chất và cần
-được nhấn mạnh, vì Thí nghiệm~\ref{sec:tn4} sẽ cho thấy một bài toán có
+được nhấn mạnh, vì bài toán khuếch tán ở Mục~\ref{sec:tn4} sẽ cho thấy một
+bài toán có
 $\rho_b = 25{,}4$ tại khởi tạo nhưng \emph{giảm} sau đó, và việc can thiệp vào bài
 toán ấy phản tác dụng. Giá trị tuyệt đối của $\rho_i$ tại một thời điểm không đủ
 để chẩn đoán; xu hướng mới đủ.
@@ -198,7 +203,8 @@ chỉ đo mỗi $100$ vòng lặp.
 Thư viện & PyTorch, NumPy; độ chính xác \texttt{float64} \\
 Phần cứng & 1 lõi CPU, không dùng GPU \\
 Hàm kích hoạt & $\tanh$ (trừ thí nghiệm đối chứng ReLU ở Mục~\ref{sec:tn1}) \\
-Khởi tạo & Xavier chuẩn tắc cho trọng số, $\bb^{(\ell)} = \bm{0}$ \\
+Khởi tạo & Xavier dạng chuẩn tắc, $\Var(w^{(\ell)}) = 2/(n_{\ell-1}+n_{\ell})$
+  theo \eqref{eq:xavier}; $\bb^{(\ell)} = \bm{0}$ \\
 Kiến trúc bài toán 1D & $(1,32,32,32,1)$, $2\,209$ tham số \\
 Kiến trúc bài toán 2D & $(2,32,32,32,32,1)$, $3\,297$ tham số \\
 Kiến trúc bài toán đa tần số & $(1,64,64,64,1)$, $8\,513$ tham số \\
@@ -533,8 +539,14 @@ $t_{10}(k) :=$ số vòng lặp đầu tiên để $\abs{c_k}$ giảm còn $10\%
  
 \begin{table}[H]
 \centering
-\caption{Thứ tự học các mode tần số. Dấu ``---'' nghĩa là không đạt ngưỡng trong
-$8\,000$ vòng lặp.}
+\caption[Thứ tự học các mode tần số]{Thứ tự học các mode tần số. Dấu ``---''
+nghĩa là không đạt ngưỡng trong $8\,000$ vòng lặp. \textbf{Cảnh báo khi đọc:}
+$t_{10}$ là thời điểm $\abs{c_k}$ chạm ngưỡng $10\%$ \emph{lần đầu}, và đại
+lượng này \emph{không đơn điệu} -- một mode có thể đạt ngưỡng rồi bị đẩy ra xa
+trở lại. Ở chế độ (b), mode $k=1$ chạm ngưỡng tại vòng $200$ nhưng sau đó phân
+kỳ tới $\abs{c_1} = 6{,}605$ tại vòng $40\,000$ theo \eqref{eq:c-plateau}. Vì
+vậy cột $t_{10}$ \emph{không} phản ánh thứ tự học của chế độ (b); căn cứ đúng là
+\eqref{eq:c-plateau}.}
 \label{tab:tn3}
 \small
 \begin{tabular}{@{}lrrrr@{}}
@@ -586,6 +598,20 @@ Trong ba mode được theo dõi, sai số tập trung ở mode \emph{tần số
 mode tần số cao nhất được học tốt nhất, với tỉ lệ
 $\abs{c_1}/\abs{c_8} = 38{,}6$. Đây đúng là hướng mà \eqref{eq:pho-hieu-dung} dự
 báo.
+
+Kết luận này \emph{mâu thuẫn bề ngoài} với cột $t_{10}$ của
+Bảng~\ref{tab:tn3}, nơi chế độ (b) cho $t_{10}(k{=}1) = 200$ -- nhanh nhất trong
+ba mode -- còn $k = 4$ và $k = 8$ không đạt ngưỡng. Cần giải thích rõ chỗ này vì
+nó dễ dẫn tới kết luận ngược. Hai cột đo hai thứ khác nhau: $t_{10}$ là thời
+điểm \emph{chạm ngưỡng lần đầu}, còn \eqref{eq:c-plateau} là sai số \emph{tại
+điểm dừng}. Với hàm mục tiêu phần dư, quỹ đạo của $\abs{c_1}$ không đơn điệu --
+nó giảm qua ngưỡng $10\%$ ở vòng $200$ rồi \emph{bị đẩy ngược trở ra} và ổn định
+ở $6{,}605$, tức lớn gấp hơn sáu lần biên độ ban đầu của chính mode đó. Trong
+khi ấy $\abs{c_4} = 0{,}821$ và $\abs{c_8} = 0{,}171$ tuy chưa bao giờ chạm
+ngưỡng $10\%$ nhưng dừng ở mức thấp hơn hẳn. Vì mục tiêu của thí nghiệm là so
+sánh thứ tự \emph{ưu tiên} chứ không phải tốc độ chạm một ngưỡng tuỳ chọn, căn
+cứ đúng là \eqref{eq:c-plateau}; cột $t_{10}$ chỉ đọc được như một chỉ báo thứ
+tự ở chế độ (a) và (c), nơi nó nhất quán với sai số cuối cùng.
  
 Về độ lớn, cần tách hai con số thường bị lẫn. Thừa số $\abs{P(k)}^2 \propto k^4$
 \emph{một mình} ưu tiên mode $k=8$ hơn mode $k=1$ một hệ số $8^4 = 4\,096$. Nhưng
@@ -646,7 +672,7 @@ Chương~\ref{chap:pinn} chỉ lập luận về thừa số $\abs{P}^2$ tăng
 thắng. Thí nghiệm này cho thấy trong dải tần số vừa phải, thừa số thứ nhất mới
 thắng.
  
-Vì vậy khi ghép hai chương, câu kết luận cần được siết lại thành: \emph{thành phần học chậm nhất là thành phần cực tiểu hoá $\abs{P(\bk)}^{2} \widehat{\varkappa}(\bk)$; với các bài toán có lớp biên trong dải tần số rất cao, nơi $\widehat{\varkappa}$ suy giảm nhanh, đó thường là thành phần tần số cao - nhưng không phải luôn luôn.} Ta nhấn mạnh rằng đây là điều chỉnh cách \emph{diễn đạt} một suy luận tiệm cận, không phải bác bỏ một mệnh đề đã chứng minh: Mệnh đề~\ref{md:khuech-dai} và Hệ quả~\ref{hq:parameter-cost} đều đứng vững, chỉ có việc ghép chúng thành một dự báo về thứ tự học là đã đi quá xa.
+Vì vậy khi ghép hai chương, câu kết luận cần được siết lại thành: \emph{thành phần học chậm nhất là thành phần cực tiểu hoá $\abs{P(\bk)}^{2} \widehat{\varkappa}(\bk)$; với các bài toán có lớp biên trong dải tần số rất cao, nơi $\widehat{\varkappa}$ suy giảm nhanh, đó thường là thành phần tần số cao -- nhưng không phải luôn luôn.} Ta nhấn mạnh rằng đây là điều chỉnh cách \emph{diễn đạt} một suy luận tiệm cận, không phải bác bỏ một mệnh đề đã chứng minh: Mệnh đề~\ref{md:khuech-dai} và Hệ quả~\ref{hq:parameter-cost} đều đứng vững, chỉ có việc ghép chúng thành một dự báo về thứ tự học là đã đi quá xa.
 \end{nhanxet}
  
 \section{Thí nghiệm 4: phương trình khuếch tán với nghiệm giải tích}
@@ -657,19 +683,19 @@ Vì vậy khi ghép hai chương, câu kết luận cần được siết lại 
 \begin{equation}
 \left\{
 \begin{aligned}
-&\partial_t u = \alpha\, \partial_{xx} u,
-  && (x,t) \in (0,1)\times(0,1], \ \ \alpha = 0{,}1,\\
+&\partial_t u = \nu\, \partial_{xx} u,
+  && (x,t) \in (0,1)\times(0,1], \ \ \nu = 0{,}1,\\
 &u(x,0) = \sin(\pi x), \quad u(0,t) = u(1,t) = 0,
 \end{aligned}
 \right.
 \label{eq:heat}
 \end{equation}
-với nghiệm đúng $u^{\star}(x,t) = \sin(\pi x)\,e^{-\alpha\pi^2 t}$. Ta dùng
+với nghiệm đúng $u^{\star}(x,t) = \sin(\pi x)\,e^{-\nu\pi^2 t}$. Ta dùng
 $N_r = 2\,000$, $N_b = 300$, $N_0 = 200$ điểm lấy mẫu đều ngẫu nhiên; $8\,000$
 vòng Adam rồi $500$ vòng L-BFGS; lưới đánh giá $101\times101$.
  
 Bài toán này được chọn làm đối chứng ``lành mạnh'': hệ số khuếch tán
-$\alpha = 0{,}1$ không nhỏ, nên theo Mệnh đề~\ref{md:chan-suy-bien} hằng số ổn
+$\nu = 0{,}1$ không nhỏ, nên theo Mệnh đề~\ref{md:chan-suy-bien} hằng số ổn
 định vẫn ở thang $\mathcal{O}(1)$, và nghiệm chỉ chứa một mode Fourier duy nhất
 $k=1$ nên không có vấn đề thiên kiến phổ. Mọi khó khăn quan sát được ở đây, nếu
 có, phải đến từ tầng tối ưu chứ không từ hai tầng kia của
@@ -681,6 +707,7 @@ Bảng~\ref{tab:ba-nguyen-nhan}.
 toán ủ trọng số.}
 \label{tab:tn4}
 \small
+\setlength{\tabcolsep}{4pt}   % bảng 6 cột, thu khoảng cách cột cho vừa khổ chữ
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
 \multirow{2}{*}{\textbf{Chiến lược}}
@@ -719,7 +746,7 @@ Nguyên nhân đo được nằm ở cột cuối Bảng~\ref{tab:tn4}. Với tr
 $\rho_b$ đạt cực đại chỉ $25{,}4$ \emph{ngay tại khởi tạo} rồi \emph{giảm} đơn
 điệu xuống khoảng $7$ trong quá trình huấn luyện (Hình~\ref{fig:tn4}b). Theo
 Định nghĩa~\ref{dn:rho}, điều kiện thứ hai -- $\rho_b$ tăng theo số vòng lặp -- bị
-vi phạm. Nói cách khác, \textbf{bài toán khuếch tán với $\alpha = 0{,}1$ không
+vi phạm. Nói cách khác, \textbf{bài toán khuếch tán với $\nu = 0{,}1$ không
 mắc bệnh lý gradient}. Áp Thuật toán~\ref{alg:annealing} lên một bài toán lành
 mạnh đẩy $\lambda_b$ lên $3{,}55\times10^3$ một cách không cần thiết, và theo đúng
 Nhận xét~\ref{nx:danh-doi}, trọng số biên quá lớn làm hy sinh phần dư trong miền.
@@ -883,7 +910,9 @@ của~\cite{wang2021}.
  
 \emph{(ii) Sai hệ số làm trơn?} Với quy tắc \eqref{eq:lambda-update}, giá trị
 $\alpha$ nhỏ làm trơn mạnh còn $\alpha$ gần $1$ nghiêng hẳn về ước lượng mới; bài
-báo gốc khuyến nghị $\alpha = 0{,}1$. Ta chạy lại với cả hai giá trị. Hai dòng cuối
+báo gốc khuyến nghị $\alpha = 0{,}1$. (Ký hiệu $\alpha$ ở đây là hệ số làm trơn
+của \eqref{eq:lambda-update}, không liên quan tới hệ số khuếch tán $\nu$ của
+\eqref{eq:heat}.) Ta chạy lại với cả hai giá trị. Hai dòng cuối
 Bảng~\ref{tab:tn5} cho kết quả gần như nhau ($4{,}51\times10^{-1}$ so với
 $4{,}49\times10^{-1}$), nên kết luận không nhạy với lựa chọn này.
  
@@ -897,14 +926,14 @@ $J_i(\btheta) = \frac{1}{N_i}\sum_{j=1}^{N_i} g_j(\btheta)^2$ với
 $g_j \in C^1$ và $\norm{\nabla g_j(\btheta)} \le G_i$ trên miền đang xét. Khi đó
 \begin{equation}
 \norm{\nabla_{\btheta} J_i(\btheta)}_{1}
- \;\le\; 2\,G_i\,\sqrt{P\,N_i}\;\sqrt{J_i(\btheta)} ,
+ \;\le\; 2\,G_i\,\sqrt{P}\;\sqrt{J_i(\btheta)} ,
 \label{eq:grad-le-sqrt}
 \end{equation}
 và do đó, với $\hat\lambda_i$ cho bởi \eqref{eq:lambda-hat},
 \begin{equation}
 \hat{\lambda}_i(\btheta)
  \;\ge\; \frac{\sqrt{P}\;\norm{\nabla_{\btheta}J_r(\btheta)}_{\infty}}
-              {2G_i\sqrt{N_i}}\cdot\frac{1}{\sqrt{J_i(\btheta)}}
+              {2G_i}\cdot\frac{1}{\sqrt{J_i(\btheta)}}
  \;\xrightarrow[\;J_i \to 0\;]{}\; +\infty ,
 \label{eq:lambda-phan-ky}
 \end{equation}
@@ -914,13 +943,15 @@ miễn là $\norm{\nabla_{\btheta}J_r}_{\infty}$ bị chặn dưới bởi một
 \begin{proof}
 Ta có $\nabla J_i = \frac{2}{N_i}\sum_j g_j \nabla g_j$, nên theo bất đẳng thức
 tam giác rồi Cauchy--Schwarz trên chỉ số $j$,
-\[
+\begin{align*}
 \norm{\nabla J_i}_{2}
- \le \frac{2}{N_i}\sum_j \abs{g_j}\,\norm{\nabla g_j}_2
- \le \frac{2G_i}{N_i}\sum_j \abs{g_j}
- \le \frac{2G_i}{N_i}\sqrt{N_i}\Big(\sum_j g_j^2\Big)^{1/2}
- = 2G_i\sqrt{J_i}.
-\]
+ &\le \frac{2}{N_i}\sum_j \abs{g_j}\,\norm{\nabla g_j}_2
+  \le \frac{2G_i}{N_i}\sum_j \abs{g_j}
+  \le \frac{2G_i}{N_i}\sqrt{N_i}\Big(\sum_j g_j^2\Big)^{1/2}\\
+ &= \frac{2G_i}{N_i}\sqrt{N_i}\cdot\sqrt{N_i J_i}
+  = 2G_i\sqrt{J_i},
+\end{align*}
+trong đó bước cuối dùng $\sum_j g_j^2 = N_i J_i$ theo định nghĩa của $J_i$.
 Chuyển sang chuẩn $L^1$ trên $\R^P$ bằng
 $\norm{\bm{v}}_1 \le \sqrt{P}\,\norm{\bm{v}}_2$ cho
 \eqref{eq:grad-le-sqrt}. Thay vào mẫu số của \eqref{eq:lambda-hat}, vốn bằng
@@ -948,7 +979,7 @@ $J_i \to 0$. Hai hướng khắc phục theo đúng cơ chế vừa chứng minh
 cho $\lambda_i$, hoặc thay mẫu số bằng một đại lượng không triệt tiêu cùng $J_i$
 -- chẳng hạn vết của nhân tiếp tuyến thay cho chuẩn gradient.
  
-Với phạm vi khoá luận này, khuyến nghị là dùng trọng số cố định kèm dò tìm
+Với phạm vi luận văn này, khuyến nghị là dùng trọng số cố định kèm dò tìm
 $\lambda_b$ theo Bảng~\ref{tab:tn2}, và xem việc ủ trọng số như một hướng cần khảo
 sát thêm. Cần nêu rõ rằng kết luận này \emph{không} bác bỏ kết quả
 của~\cite{wang2021}, vốn báo cáo cải thiện hơn một bậc độ lớn trên bài toán
@@ -967,6 +998,112 @@ phân tích ba tầng ở Bảng~\ref{tab:ba-nguyen-nhan} dự báo. Bậc sai s
 vẫn chấp nhận được, nhưng đúng chỗ quan trọng nhất về mặt vật lý thì sai số lớn
 nhất.
  
+%==============================================================================
+\section{Thí nghiệm 6: kiểm chứng chặn ổn định}
+\label{sec:tn6}
+%==============================================================================
+
+\begin{thinghiem}[Kiểm chứng Mệnh đề~\ref{md:chan-on-dinh}]
+\label{tn:chan}
+Mệnh đề~\ref{md:chan-on-dinh} là mắt xích biện minh cho toàn bộ phương pháp: nó
+nói rằng cực tiểu hoá một đại lượng \emph{tính được} ($\norm{r_{\btheta}}$) khống
+chế được đại lượng \emph{quan tâm} ($\norm{e_{\btheta}}$). Nhưng chặn ấy có một
+giả thiết dễ bị bỏ qua: điều kiện biên phải được thoả \emph{chính xác}. Câu hỏi:
+chặn có đúng trong thực tế không, nó chặt đến đâu, và điều gì xảy ra khi giả
+thiết bị vi phạm?
+\end{thinghiem}
+
+\textbf{Thiết lập.} Vẫn bài toán Poisson \eqref{eq:poisson-tn1}. Ta đo đồng thời
+$\norm{r_{\btheta}}_{L^2}$, $\norm{e_{\btheta}}_{L^2}$ và
+$\norm{e_{\btheta}'}_{L^2}$ trên lưới đánh giá $20\,001$ điểm bằng quy tắc hình
+thang, tại sáu mốc trải suốt quá trình huấn luyện để quét được bốn bậc độ lớn
+của phần dư. Ba cấu hình tách bạch vai trò của giả thiết:
+
+\begin{enumerate}[label=(\alph*),leftmargin=2.2em,itemsep=2pt]
+\item \textbf{Ràng buộc cứng} $\hat u_{\btheta}(x) = x(1-x)\,u_{\btheta}(x)$ theo
+Bổ đề~\ref{bd:rang-buoc-cung}, với $D(x) = x(1-x)$ đúng như dạng được đề nghị ở
+Mục~\ref{subsec:rang-buoc}. Điều kiện biên thoả chính xác với mọi $\btheta$, tức
+giả thiết của mệnh đề được \emph{thoả theo cấu trúc}.
+\item \textbf{Ràng buộc mềm, $\lambda_b = 100$} -- giá trị tốt nhất theo
+Bảng~\ref{tab:tn2}. Giả thiết chỉ thoả gần đúng.
+\item \textbf{Ràng buộc mềm, $\lambda_b = 0{,}01$} -- giá trị mà
+Bảng~\ref{tab:tn2} cho thấy sai số biên bão hoà ở mức $0{,}91$. Giả thiết bị vi
+phạm nặng.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption[Kiểm chứng chặn ổn định của Mệnh đề~\ref{md:chan-on-dinh}]{Kiểm chứng
+chặn $\norm{e_{\btheta}}_{L^2} \le \pi^{-2}\norm{r_{\btheta}}_{L^2}$. Cột
+``tỉ số'' là $\norm{e_{\btheta}}_{L^2}/\norm{r_{\btheta}}_{L^2}$; chặn được thoả
+khi tỉ số này không vượt $\pi^{-2} \approx 0{,}1013$.}
+\label{tab:tn6}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l rrr r c@{}}
+\toprule
+\textbf{Mốc} & $\norm{r_{\btheta}}_{L^2}$ & $\norm{e_{\btheta}}_{L^2}$
+& sai số biên & tỉ số & thoả chặn? \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{(a) Ràng buộc cứng --- giả thiết thoả chính xác}}\\
+Khởi tạo   & $2{,}809\times10^{1}$ & $7{,}115\times10^{-1}$ & $0$ & $0{,}0253$ & có \\
+Adam $200$ & $5{,}735\times10^{0}$ & $3{,}705\times10^{-2}$ & $0$ & $0{,}0065$ & có \\
+Adam $1000$& $1{,}511\times10^{-1}$& $4{,}173\times10^{-4}$ & $0$ & $0{,}0028$ & có \\
+Adam $4000$& $2{,}526\times10^{-2}$& $6{,}109\times10^{-5}$ & $0$ & $0{,}0024$ & có \\
+$+$ L-BFGS & $2{,}599\times10^{-3}$& $1{,}815\times10^{-6}$ & $0$ & $0{,}0007$ & có \\
+\addlinespace
+\multicolumn{6}{@{}l}{\emph{(b) Ràng buộc mềm, $\lambda_b = 100$}}\\
+Adam $1000$& $1{,}663\times10^{-1}$& $7{,}820\times10^{-3}$ & $1{,}7\times10^{-2}$ & $0{,}0470$ & có \\
+$+$ L-BFGS & $4{,}214\times10^{-3}$& $5{,}029\times10^{-6}$ & $9{,}9\times10^{-6}$ & $0{,}0012$ & có \\
+\addlinespace
+\multicolumn{6}{@{}l}{\emph{(c) Ràng buộc mềm, $\lambda_b = 0{,}01$}}\\
+Adam $200$ & $4{,}033\times10^{0}$ & $2{,}923\times10^{0}$  & $5{,}21$ & $0{,}7248$ & \textbf{không} \\
+Adam $1000$& $9{,}087\times10^{-2}$& $8{,}736\times10^{-1}$ & $1{,}52$ & $\mathbf{9{,}614}$ & \textbf{không} \\
+Adam $4000$& $2{,}976\times10^{-2}$& $2{,}906\times10^{-1}$ & $0{,}503$& $\mathbf{9{,}763}$ & \textbf{không} \\
+$+$ L-BFGS & $4{,}304\times10^{-3}$& $1{,}127\times10^{-3}$ & $2{,}1\times10^{-3}$ & $0{,}2618$ & \textbf{không} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Kết quả.} Ba kết luận, mỗi kết luận trả lời một phần của câu hỏi đặt ra.
+
+\emph{(a) Chặn đúng, và đúng trên toàn dải.} Với ràng buộc cứng, tỉ số
+$\norm{e_{\btheta}}/\norm{r_{\btheta}}$ nằm dưới $\pi^{-2}$ tại \emph{mọi} mốc,
+trong khi $\norm{r_{\btheta}}$ quét bốn bậc độ lớn từ $2{,}81\times10^{1}$ xuống
+$2{,}60\times10^{-3}$. Chặn cho đạo hàm cũng đúng: tỉ số
+$\norm{e_{\btheta}'}/\norm{r_{\btheta}}$ cao nhất là $0{,}159$, dưới
+$\pi^{-1}\approx 0{,}318$.
+
+\emph{(b) Chặn không chặt.} Tỉ số quan sát được nằm trong khoảng
+$0{,}0007$--$0{,}0261$, tức nhỏ hơn hằng số $\pi^{-2}$ từ $4$ đến $145$ lần. Điều
+này không mâu thuẫn với mệnh đề: hằng số $\pi^{-2}$ là tối ưu trên \emph{toàn bộ}
+lớp hàm $H^1_0(0,1)$, đạt được khi sai số trùng hàm riêng $\sin \pi x$ ứng với
+trị riêng nhỏ nhất. Sai số của mạng nơ-ron ở đây không có dạng ấy, nên chặn còn
+dư địa. Hệ quả thực hành: chặn dùng được như một \emph{bảo đảm}, không dùng được
+như một \emph{ước lượng} sai số.
+
+\emph{(c) Giả thiết điều kiện biên là thiết yếu, không phải trang trí.} Với
+$\lambda_b = 0{,}01$, chặn bị vi phạm ở mọi mốc sau khởi tạo, và mức vi phạm lên
+tới $9{,}76$ so với $0{,}1013$ --- tức \emph{gấp $96$ lần}. Đọc dòng
+``Adam $4000$'' cho thấy rõ cơ chế: phần dư đã nhỏ
+($\norm{r_{\btheta}} = 2{,}98\times10^{-2}$) trong khi sai số vẫn lớn
+($\norm{e_{\btheta}} = 2{,}91\times10^{-1}$, gấp mười lần phần dư). Đây chính là
+kịch bản mà Nhận xét~\ref{rem:ill-posedness} mô tả: mạng trôi trên tập
+$\mathcal{M}_r$ của \eqref{eq:manifold-r} và hội tụ về \emph{một nghiệm khác} của
+cùng phương trình vi phân.
+
+\begin{nhanxet}[Vì sao thí nghiệm này đáng làm]
+\label{nx:y-nghia-tn6}
+Đây là thí nghiệm duy nhất trong chương kiểm chứng trực tiếp mắt xích
+\emph{logic} của phương pháp chứ không phải một hiện tượng của mô hình. Nó cho
+một quy tắc thực hành cụ thể: chỉ khi điều kiện biên được thoả (chính xác bằng
+ràng buộc cứng, hoặc tới độ chính xác cao bằng $\lambda_b$ đủ lớn) thì việc theo
+dõi $J_r$ mới là chỉ báo hợp lệ cho sai số. Ở chế độ $\lambda_b$ nhỏ, một giá trị
+$J_r$ nhỏ \emph{không} nói gì về chất lượng nghiệm --- và đó là chế độ mà bệnh lý
+gradient (Mục~\ref{sec:gradient-pathology}) tự động đẩy bài toán vào khi
+$\lambda_b$ không được chọn cẩn thận.
+\end{nhanxet}
+
 %==============================================================================
 \section{Đối chiếu lý thuyết và thực nghiệm}
 \label{sec:doi-chieu}
@@ -1013,21 +1150,30 @@ Quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$
 Thuật toán~\ref{alg:annealing}
 & cân bằng biên độ gradient
 & làm xấu $35{,}6$ lần (khuếch tán), $15{,}9$ lần (Burgers)
-& \textbf{Có chế độ hỏng} (Bổ đề~\ref{bd:phan-hoi-duong}) \\
+& \textbf{Có chế độ hỏng} (Bổ đề~\ref{bd:phan-hoi-duong}) \\[4pt]
+Mệnh đề~\ref{md:chan-on-dinh}
+& $\norm{e}_{L^2}\le \pi^{-2}\norm{r}_{L^2}$ khi điều kiện biên thoả chính xác
+& tỉ số $\le 0{,}026$ trên bốn bậc độ lớn của $\norm{r}$; vi phạm $96$ lần khi
+  $\lambda_b = 0{,}01$
+& \textbf{Khớp}, và giả thiết biên tỏ ra thiết yếu \\
 \bottomrule
 \end{tabular}
 \end{table}
  
-Trong tám hạng mục: bốn khớp trọn vẹn, một khớp về hướng nhưng không rút được kết
-luận định lượng, một cần siết lại cách phát biểu, một chỉ là tương quan chưa giải
-thích được, và một cho kết quả tiêu cực nhưng đã truy được nguyên nhân.
+Trong chín hạng mục: năm khớp trọn vẹn, một khớp về hướng nhưng không rút được
+kết luận định lượng, một cần siết lại cách phát biểu, một chỉ là tương quan chưa
+giải thích được, và một cho kết quả tiêu cực nhưng đã truy được nguyên nhân.
  
 Mức khớp này ủng hộ khung lý thuyết của Chương~\ref{chap:pinn} một cách
-\emph{có điều kiện}, và điều kiện ấy đáng được nêu rõ: mọi hạng mục khớp trọn vẹn
-đều tương ứng với một mệnh đề \emph{đã được chứng minh}
+\emph{có điều kiện}, và điều kiện ấy đáng được nêu rõ: bốn trong năm hạng mục
+khớp trọn vẹn tương ứng với một mệnh đề \emph{đã được chứng minh}
 (Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:phat-bien-phat},
-Mệnh đề~\ref{md:san-nhieu}), còn cả ba hạng mục có vấn đề đều tương ứng với những
-chỗ luận văn dùng \emph{suy luận tiệm cận} hoặc \emph{ghép hai kết quả rời rạc}:
+Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh}); hạng mục còn lại dựa trên
+Định nghĩa~\ref{dn:rho}, vốn là một \emph{tiêu chí chẩn đoán} do luận văn đặt ra
+chứ không phải một mệnh đề, nên nó kiểm chứng tính hữu dụng của tiêu chí chứ
+không kiểm chứng một dự báo lý thuyết. Ngược lại, cả ba hạng mục có vấn đề đều
+tương ứng với những chỗ luận văn dùng \emph{suy luận tiệm cận} hoặc \emph{ghép
+hai kết quả rời rạc}:
 giả thuyết \eqref{eq:pho-hieu-dung} ghép $\abs{P}^2$ với
 $\widehat{\varkappa}$; kết luận ở Mục~\ref{subsec:he-qua-pinn} ngầm giả định thừa
 số nào thắng; quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$ không có chứng minh nào cả.
@@ -1072,22 +1218,24 @@ Mục~\ref{sec:tn3}.
  
 \item \emph{Chưa khảo sát độ nhạy theo cách lấy mẫu.} Cả lấy mẫu siêu khối Latin
 lẫn lấy mẫu thích nghi RAR ở Bảng~\ref{tab:remedies} đều chưa được kiểm chứng.
-Riêng với Thí nghiệm~\ref{sec:tn5}, nơi sai số tập trung vào một dải hẹp quanh
+Riêng với bài toán Burgers ở Mục~\ref{sec:tn5}, nơi sai số tập trung vào một
+dải hẹp quanh
 $x = 0$, RAR là kỹ thuật có khả năng cải thiện rõ nhất và đáng được thử trước
 tiên.
  
 \item \emph{Nghiệm tham chiếu cho Burgers là nghiệm số.} Dù đã kiểm chứng hội tụ
 lưới ($2{,}31\times10^{-4}$), đây vẫn không phải nghiệm giải tích, nên kết luận về
-Burgers có thêm một tầng sai số so với Thí nghiệm~\ref{sec:tn4}. Thêm vào đó,
+Burgers có thêm một tầng sai số so với bài toán khuếch tán ở
+Mục~\ref{sec:tn4}. Thêm vào đó,
 Nhận xét~\ref{nx:hai-nghiem-tham-chieu} đã nêu việc hai chương hiện dùng hai nghiệm
 tham chiếu khác nhau.
  
-\item \emph{Chưa kiểm chứng chặn ổn định.} Mệnh đề~\ref{md:chan-on-dinh} và
-Mệnh đề~\ref{md:chan-suy-bien} cho quan hệ định lượng giữa
-$\norm{r_{\btheta}}_{L^2}$ và $\norm{e_{\btheta}}_{L^2}$, và cả hai đều kiểm chứng
-được trực tiếp trên bài toán Poisson của Thí nghiệm~\ref{sec:tn1} bằng cách đo
-đồng thời hai chuẩn trên lưới đánh giá. Thí nghiệm ấy chưa được thực hiện; đó là
-bổ sung đơn giản và có giá trị nhất cho chương này.
+\item \emph{Chặn ổn định mới được kiểm chứng ở trường hợp đơn giản nhất.}
+Mục~\ref{sec:tn6} đã kiểm chứng Mệnh đề~\ref{md:chan-on-dinh} trên bài toán
+Poisson. Nhưng Mệnh đề~\ref{md:chan-suy-bien} --- vốn mới là tầng thứ nhất của
+Bảng~\ref{tab:ba-nguyen-nhan} --- thì chưa: sự suy biến của hằng số ổn định theo
+$1/\nu$ đòi hỏi quét $\nu$ trên bài toán đối lưu--khuếch tán, và phép quét ấy
+chưa được thực hiện. Đây là bổ sung có giá trị nhất còn lại cho chương này.
 \end{enumerate}
  
 %==============================================================================

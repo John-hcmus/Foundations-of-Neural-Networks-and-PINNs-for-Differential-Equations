@@ -37,6 +37,11 @@ số cân bằng mất mát. Hai đại lượng có bản chất hoàn toàn kh
 kiện (hoặc ẩn số) của bài toán vật lý, một là siêu tham số của thuật toán -- nên
 việc dùng chung ký hiệu là nguồn nhầm lẫn thực sự.
  
+Thứ ba, tốc độ học được ký hiệu $\eta$ từ chương này trở đi, tương ứng với
+$\alpha$ của \eqref{eq:iter-scheme} ở Chương~\ref{chap:autodiff}. Lý do đổi ký
+hiệu: trong chương này $\alpha$ đã được dùng cho hệ số làm trơn của quy tắc cân
+bằng trọng số \eqref{eq:lambda-update}, theo đúng ký hiệu của~\cite{wang2021}.
+
 Để đọc thuận, ta viết $u_{\btheta} := \Net_{\btheta}$ khi mạng đóng vai trò hàm
 nghiệm thử, và dành chữ $u$ không chỉ số cho nghiệm đúng.
  
@@ -200,23 +205,23 @@ Toàn bộ luồng tính toán được tóm tắt trong Hình~\ref{fig:pinn-arc
 \end{scope}
 
 \node[fit=(a1)(a2)(b1)(b4)(c1)(c4)(d1), inner sep=3pt, draw=none] (netbox) {};
-\node[font=\footnotesize, black!65] at ($(netbox.north)+(1.55,0.30)$) {mạng truyền thẳng $u_\btheta$};
+\node[font=\footnotesize, black!65] at ($(netbox.north)+(1.55,0.30)$) {mạng truyền thẳng $u_{\btheta}$};
 
 \draw[flow] (in) -- (a1);
 \draw[flow] (in) -- (a2);
 
-\node[box, fill=orange!10] (out) at (7.5,0) {$u_\btheta(x,t)$};
+\node[box, fill=orange!10] (out) at (7.5,0) {$u_{\btheta}(x,t)$};
 \draw[flow] (d1) -- (out);
 
-\node[box, fill=green!7] (ad) at (10.6,0) {vi phân tự động\\[2pt] $\dfrac{\partial u_\btheta}{\partial t},\; \dfrac{\partial u_\btheta}{\partial x},\; \dfrac{\partial^{2} u_\btheta}{\partial x^{2}}$};
+\node[box, fill=green!7] (ad) at (10.6,0) {vi phân tự động\\[2pt] $\dfrac{\partial u_{\btheta}}{\partial t},\; \dfrac{\partial u_{\btheta}}{\partial x},\; \dfrac{\partial^{2} u_{\btheta}}{\partial x^{2}}$};
 \draw[flow] (out) -- (ad);
 
-\node[box, fill=green!7] (res) at (14.4,0) {phần dư\\[3pt] $r_\btheta = \dfrac{\partial u_\btheta}{\partial t} + \Lop[u_\btheta;\bzeta]$};
+\node[box, fill=green!7] (res) at (14.4,0) {phần dư\\[3pt] $r_{\btheta} = \dfrac{\partial u_{\btheta}}{\partial t} + \Lop[u_{\btheta};\bzeta]$};
 \draw[flow] (ad) -- (res);
 
-\node[lossbox] (lb) at (1.7,-3.5) {$J_b=\dfrac{1}{N_b}\displaystyle\sum |\Bop[u_\btheta]-g|^{2}$};
-\node[lossbox] (l0) at (7.5,-3.5) {$J_0=\dfrac{1}{N_0}\displaystyle\sum |u_\btheta-u_0|^{2}$};
-\node[lossbox] (lr) at (13.2,-3.5) {$J_r=\dfrac{1}{N_r}\displaystyle\sum |r_\btheta|^{2}$};
+\node[lossbox] (lb) at (1.7,-3.5) {$J_b=\dfrac{1}{N_b}\displaystyle\sum |\Bop[u_{\btheta}]-g|^{2}$};
+\node[lossbox] (l0) at (7.5,-3.5) {$J_0=\dfrac{1}{N_0}\displaystyle\sum |u_{\btheta}-u_0|^{2}$};
+\node[lossbox] (lr) at (13.2,-3.5) {$J_r=\dfrac{1}{N_r}\displaystyle\sum |r_{\btheta}|^{2}$};
 
 \draw[flow] (res.south) -- ++(0,-0.55) -| (lr.north);
 \draw[flow] (out.south) -- (l0.north);
@@ -230,8 +235,18 @@ Toàn bộ luồng tính toán được tóm tắt trong Hình~\ref{fig:pinn-arc
 
 \draw[grad] (ltot.west) -- ++(-1.6,0) -- (-1.5,-5.6) -- (-1.5,2.45) -- (2.0,2.45) -- (2.0,1.18);
 
-\node[font=\footnotesize, red!62!black, align=center] at (-0.55,-4.35) {cập nhật tham số\\[-1pt] $\nabla_\btheta J$};
+\node[font=\footnotesize, red!62!black, align=center] at (-0.55,-4.35) {cập nhật tham số\\[-1pt] $\nabla_{\btheta} J$};
 \end{tikzpicture}}
+\caption[Luồng tính toán của một bước huấn luyện PINN]{Luồng tính toán của một
+bước huấn luyện PINN. Mạng truyền thẳng $u_{\btheta}$ nhận $(x,t)$ và trả về giá
+trị nghiệm thử; vi phân tự động (Chương~\ref{chap:autodiff}) lấy các đạo hàm
+theo \emph{biến đầu vào} để dựng phần dư \eqref{eq:residual}. Ba thành phần mất
+mát \eqref{eq:loss-r}--\eqref{eq:loss-b} được gộp theo trọng số thành
+\eqref{eq:total-loss}; mũi tên đứt màu đỏ là lượt ngược lấy
+$\nabla_{\btheta}J$ trên \emph{toàn bộ} đồ thị mở rộng, tức đi xuyên qua cả khối
+vi phân tự động. Điểm cần chú ý: chỉ có \emph{một} bộ tham số $\btheta$ duy nhất
+cho cả ba nhánh mất mát.}
+\label{fig:pinn-arch}
 \end{figure}
  
 \subsection{Điểm phối trí và chiến lược lấy mẫu}
@@ -538,8 +553,8 @@ và cộng sự~\cite{raissi2019} khảo sát.
 \paragraph{Bài toán thuận.}
 Tham số vật lý $\bzeta$ được cho trước; ẩn số duy nhất là $\btheta$. Bài toán tối
 ưu chính là \eqref{eq:opt-problem}. Toàn bộ thông tin giám sát nằm ở điều kiện
-đầu, điều kiện biên và phương trình. Đây là trường hợp của hai thực nghiệm ở
-Chương~\ref{chap:thucnghiem}.
+đầu, điều kiện biên và phương trình. Đây là trường hợp của toàn bộ năm thí
+nghiệm ở Chương~\ref{chap:thucnghiem}.
  
 \paragraph{Bài toán ngược.}
 Tham số $\bzeta$ chưa biết và cần được xác định từ một tập quan trắc rời rạc
@@ -792,7 +807,7 @@ $\lambda_i^{(n+1)} \approx \hat\lambda_i$ và mọi tác dụng làm trơn biế
 \begin{algorithmic}[1]
 \Require Kiến trúc $u_{\btheta}$; tốc độ học $\eta = 10^{-3}$; hệ số trung bình
   trượt $\alpha = 0{,}1$; chu kỳ cập nhật $N_{\text{up}}$; số vòng $N_{\max}$
-\State Khởi tạo $\btheta_{0}$ theo Xavier \eqref{eq:xavier-uniform}; đặt
+\State Khởi tạo $\btheta_{0}$ theo Xavier \eqref{eq:xavier}; đặt
   $\lambda_{i}^{(0)} = 1$ với mọi $i$
 \For{$n = 0, 1, \dots, N_{\max}-1$}
   \If{$n \bmod N_{\text{up}} = 0$}
@@ -899,7 +914,7 @@ thể hiện cấu trúc này.
 \node[gate] (ZL) at (12.5, 0) {$Z^{(L)}$};
 \node[mix]  (ML) at (14.6, 0) {};
 \node[hid]  (HL) at (16.5, 0) {$H^{(L+1)}$};
-\node[blk, fill=black!5] (OUT) at (19.1, 0) {$u_\btheta = H^{(L+1)}W+b$};
+\node[blk, fill=black!5] (OUT) at (19.1, 0) {$u_{\btheta} = H^{(L+1)}W+b$};
 \draw[flow] (X)   -- (H1);   \draw[flow] (H1)  -- (Z1);
 \draw[flow] (Z1)  -- (M1);   \draw[flow] (M1)  -- (H2);
 \draw[flow] (H2)  -- (dots); \draw[flow] (dots)-- (ZL);
@@ -1094,7 +1109,7 @@ Tần số càng cao thì mạng càng buộc phải dùng trọng số lớn, v
 luỹ thừa $d+1$. Điều này có hai hệ luỵ thực hành, cả hai nối trực tiếp với
 Chương~\ref{chap:fnn}.
  
-Thứ nhất, khởi tạo Xavier \eqref{eq:xavier-uniform} cho chuẩn trọng số nhỏ theo
+Thứ nhất, khởi tạo Xavier \eqref{eq:xavier} cho chuẩn trọng số nhỏ theo
 thiết kế -- đó chính là mục đích của nó, giữ $\bz^{(\ell)}$ trong vùng gần tuyến
 tính của $\tanh$ để tránh bão hoà (Mệnh đề~\ref{md:tich-gradient}). Nhưng
 \eqref{eq:param-cost} nói rằng biểu diễn tần số cao đòi hỏi chuẩn trọng số
@@ -1169,14 +1184,14 @@ của hệ số dẫn đầu.
 \begin{proof}
 Biến đổi Fourier biến $\partial^{\alpha}$ thành phép nhân với
 $(2\pi i k)^{\alpha}$; lấy tổ hợp tuyến tính với các hệ số $c_\alpha$ cho
-\eqref{eq:residual-amplification}. Khi $\norm{k}\to\infty$, ký hiệu chính (các số
+\eqref{eq:residual-amplification}. Khi $\norm{k}\to\infty$, biểu trưng chính (các số
 hạng bậc $m$) trội hơn mọi số hạng bậc thấp hơn.
 \end{proof}
  
 Với $\Lop$ phi tuyến như Burgers, \eqref{eq:residual-amplification} chỉ đúng cho
 bài toán đã tuyến tính hoá quanh nghiệm; số hạng $u\partial_x u$ còn sinh thêm
 hiện tượng trộn tần số mà phân tích tuyến tính không mô tả được. Ta dùng
-Mệnh đề~\ref{md:khuech-dai} như phân tích ký hiệu chính, không như một đẳng thức
+Mệnh đề~\ref{md:khuech-dai} như phân tích biểu trưng chính, không như một đẳng thức
 cho bài toán đầy đủ.
  
 Quan hệ \eqref{eq:residual-amplification} tạo ra một mâu thuẫn mang tính cấu
@@ -1222,8 +1237,14 @@ cao nhất ở đúng những tần số mà mô hình học chậm nhất, và 
 mà chặn ổn định suy biến. Điều này lý giải một quan sát phổ biến trong tài liệu:
 PINNs cho kết quả rất tốt với các bài toán trơn có nghiệm biến thiên chậm, nhưng
 suy giảm nhanh khi độ nhớt giảm, khi hệ số nhiễu kỳ dị nhỏ đi, hoặc khi nghiệm có
-dao động tần số cao. Ta sẽ kiểm chứng định lượng nhận định này qua hai bài toán
-ODE ở Chương~\ref{chap:thucnghiem}.
+dao động tần số cao; Krishnapriyan và cộng sự~\cite{krishnapriyan2021} khảo sát
+có hệ thống đúng hiện tượng này và cho thấy sự suy giảm đến từ \emph{không gian
+hàm mục tiêu} chứ không từ khả năng biểu diễn của mạng -- nhất quán với việc
+Bảng~\ref{tab:ba-nguyen-nhan} đặt hai trong ba nguyên nhân ở tầng bài toán và
+tầng tối ưu. Ta sẽ kiểm chứng định lượng nhận định này ở
+Chương~\ref{chap:thucnghiem}, qua cặp đối chứng gồm phương trình khuếch tán
+(hệ số $\nu = 0{,}1$, bài toán ``lành mạnh'') và phương trình Burgers
+($\nu = 0{,}01/\pi$, bài toán cứng).
  
 Cũng cần rút ra một kết luận phương pháp luận từ Bảng~\ref{tab:ba-nguyen-nhan}:
 vì ba nguyên nhân nằm ở ba tầng khác nhau, không kỹ thuật nào tác động lên một
@@ -1336,17 +1357,17 @@ cách thiết kế và đọc thực nghiệm.
   & Phần dư dùng chung tham số với mạng; đòi hỏi $u_{\btheta}\in C^m$, nối với
     Hệ quả~\ref{hq:pinn-hong}. \\
 Nhận xét~\ref{rem:monte-carlo}
-  & $J_r$ là ước lượng Monte Carlo của $\norm{r_\btheta}_{L^2}^2$; mất tính
+  & $J_r$ là ước lượng Monte Carlo của $\norm{r_{\btheta}}_{L^2}^2$; mất tính
     không chệch khi tối ưu trên chính tập mẫu. \\
 \textbf{Mệnh đề~\ref{md:chan-on-dinh}}
-  & \textbf{Chặn ổn định} $\norm{e_\btheta}_{L^2}\le \pi^{-2}
-    \norm{r_\btheta}_{L^2}$ cho bài toán Poisson: cơ sở biện minh cho việc cực
+  & \textbf{Chặn ổn định} $\norm{e_{\btheta}}_{L^2}\le \pi^{-2}
+    \norm{r_{\btheta}}_{L^2}$ cho bài toán Poisson: cơ sở biện minh cho việc cực
     tiểu hoá phần dư. \\
 \textbf{Mệnh đề~\ref{md:chan-suy-bien}}
   & \textbf{Hằng số ổn định suy biến như $1/\nu$} với bài toán đối lưu--khuếch
     tán -- tầng thứ nhất của Bảng~\ref{tab:ba-nguyen-nhan}. \\
 Bổ đề~\ref{bd:rang-buoc-cung}
-  & Nghiệm thử $G + D\,u_\btheta$ thoả điều kiện biên với mọi $\btheta$; loại
+  & Nghiệm thử $G + D\,u_{\btheta}$ thoả điều kiện biên với mọi $\btheta$; loại
     $J_b$ khỏi hàm mục tiêu. \\
 Nhận xét~\ref{rem:ill-posedness}
   & Gradient biên bị lấn át $\Rightarrow$ trôi trên $\mathcal{M}_r$ $\Rightarrow$

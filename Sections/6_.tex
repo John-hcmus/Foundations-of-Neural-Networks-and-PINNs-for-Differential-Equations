@@ -1,0 +1,158 @@
+\chapter{Kết luận và hướng phát triển}
+\label{chap:ketluan}
+
+%==============================================================================
+\section{Những việc đã làm được}
+\label{sec:da-lam}
+%==============================================================================
+
+Luận văn đặt ra năm nhiệm vụ ở Mục~\ref{sec:muc-tieu}. Phần này đối chiếu từng
+nhiệm vụ với kết quả thực tế, kể cả những chỗ chưa đạt.
+
+\paragraph{MT1 --- Cơ sở toán học của mạng truyền thẳng.}
+Đã hoàn thành, với trọng tâm khác tài liệu học sâu tổng quát đúng như dự kiến.
+Hai hệ thức truy hồi \eqref{eq:G-truy-hoi} và \eqref{eq:S-truy-hoi} cho Jacobi và
+Hessian \emph{theo biến đầu vào} được thiết lập tường minh
+(Mệnh đề~\ref{md:jacobian}, \ref{md:hessian}) và trở thành công cụ trung tâm cho
+mọi tính toán phần dư về sau. Từ chúng suy ra ngay điều kiện \emph{cần} trên hàm
+kích hoạt, mà trường hợp ReLU là dạng cực đoan: hàm mục tiêu phần dư của phương
+trình bậc hai \emph{hằng số địa phương}, nên mọi thuật toán gradient đứng yên
+tuyệt đối (Hệ quả~\ref{hq:pinn-hong}).
+
+\paragraph{MT2 --- Vi phân tự động và thuật toán tối ưu.}
+Đã hoàn thành. Mắt xích quan trọng nhất là Mệnh đề~\ref{md:ad-tai-tao}: cơ chế
+thuận-trên-thuận của vi phân tự động \emph{tái tạo đúng} hai hệ thức truy hồi của
+Chương~\ref{chap:fnn} mà không cần lập trình tường minh $\sigma''$. Nhờ đó,
+Thuật toán~\ref{alg:dao-ham} đóng vai trò đặc tả toán học, còn cài đặt thực tế
+chỉ là vài dòng gọi \texttt{torch.autograd.grad} với cờ
+\texttt{create\_graph=True}. Chiến lược hai giai đoạn Adam~$\to$~L-BFGS được biện
+minh bằng ba lập luận cụ thể --- tính tất định của gradient, sàn nhiễu
+(Mệnh đề~\ref{md:san-nhieu}), và điều kiện xấu --- chứ không bằng kinh nghiệm
+thực hành.
+
+\paragraph{MT3 --- Xây dựng PINNs một cách chặt chẽ.}
+Đã hoàn thành, và đây là chỗ luận văn bổ sung được một mắt xích mà tài liệu
+thường bỏ qua: \emph{vì sao cực tiểu hoá phần dư lại là việc đáng làm}.
+Mệnh đề~\ref{md:chan-on-dinh} trả lời bằng một chặn ổn định, và
+Mệnh đề~\ref{md:chan-suy-bien} chỉ ra hằng số của chặn ấy suy biến theo $1/\nu$.
+Đóng góp tổng hợp của chương là Bảng~\ref{tab:ba-nguyen-nhan}: ba nguyên nhân độc
+lập, nằm ở ba tầng khác nhau, cùng làm PINNs suy giảm trên đúng lớp bài toán có
+thang độ dài nhỏ.
+
+\paragraph{MT4 --- Cài đặt và thực nghiệm trên PyTorch.}
+Đã hoàn thành. Toàn bộ cài đặt dùng PyTorch thuần, không dùng thư viện PINNs đóng
+gói sẵn, và được công bố kèm luận văn (Phụ lục~\ref{app:code}) để mọi bảng số và
+mọi hình trong Chương~\ref{chap:thucnghiem} đều tái lập được bằng một lệnh.
+
+\paragraph{MT5 --- Khảo sát độ nhạy và phân tích hạn chế.}
+Đã hoàn thành ở mức tương xứng với ngân sách tính toán, nhưng đây cũng là nhiệm
+vụ còn nhiều dư địa nhất; Mục~\ref{sec:hanche} đã nêu thẳng sáu hạn chế của chính
+thiết kế thực nghiệm.
+
+%==============================================================================
+\section{Đóng góp của luận văn}
+\label{sec:dong-gop-cuoi}
+%==============================================================================
+
+Trong phạm vi đã nêu ở Mục~\ref{subsec:pham-vi}, luận văn có ba đóng góp.
+
+\emph{Thứ nhất}, một trình bày mạch lạc bằng tiếng Việt về PINNs, đi từ cơ sở
+toán học của mạng truyền thẳng tới công thức đầy đủ của mô hình thời gian liên
+tục, với notation nhất quán xuyên suốt và mọi khẳng định đều truy được về một
+mệnh đề cụ thể.
+
+\emph{Thứ hai}, một cài đặt PyTorch độc lập kèm kết quả thực nghiệm định lượng,
+tái lập được, có thể dùng làm điểm khởi đầu cho các nghiên cứu tiếp theo.
+
+\emph{Thứ ba}, một phân tích đối chiếu có hệ thống giữa lý thuyết và số liệu
+(Bảng~\ref{tab:doi-chieu}). Phần đối chiếu này cho một kết luận phương pháp luận
+đáng chú ý: những hạng mục khớp trọn vẹn đều tương ứng với một mệnh đề đã được
+chứng minh, còn mọi hạng mục phải điều chỉnh đều tương ứng với chỗ suy luận tiệm
+cận hoặc ghép hai kết quả rời rạc.
+
+Bên cạnh ba đóng góp đã dự kiến, quá trình thực nghiệm sinh thêm hai kết quả
+không nằm trong kế hoạch ban đầu, và cả hai đều xuất phát từ \emph{kết quả tiêu
+cực}:
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Một điều chỉnh phát biểu lý thuyết.} Mục~\ref{subsec:he-qua-pinn}
+      kết luận rằng bài toán đòi hỏi độ chính xác cao nhất ở đúng những tần số mà
+      mô hình học chậm nhất. Thí nghiệm~\ref{tn:pho} cho thấy phát biểu này
+      không đúng phổ quát: với toán tử elliptic thuần tuý, hàm mục tiêu phần dư
+      \emph{ưu tiên} tần số cao và chính tần số thấp mới bị bỏ rơi. Cách phát
+      biểu đã được siết lại ở Nhận xét~\ref{nx:hieu-chinh}.
+\item \textbf{Một chế độ hỏng chứng minh được của quy tắc cân bằng trọng số.}
+      Thuật toán~\ref{alg:annealing} làm giảm độ chính xác trên cả hai bài toán
+      khảo sát. Truy nguyên dẫn tới Bổ đề~\ref{bd:phan-hoi-duong}: quy tắc
+      \eqref{eq:lambda-hat} có một vòng phản hồi dương với tốc độ phân kỳ
+      $\hat\lambda_i \gtrsim J_i^{-1/2}$ và không có cơ chế tự hãm. Đây là kết
+      quả lý thuyết nảy sinh \emph{từ} thực nghiệm chứ không phải được kiểm chứng
+      bởi thực nghiệm.
+\end{itemize}
+
+%==============================================================================
+\section{Hạn chế}
+\label{sec:han-che-cuoi}
+%==============================================================================
+
+Ngoài sáu hạn chế về thiết kế thực nghiệm đã nêu ở Mục~\ref{sec:hanche}, cần nói
+rõ ba giới hạn về phạm vi của toàn bộ luận văn.
+
+Thứ nhất, luận văn \emph{không} chứng minh định lý mới về hội tụ hay ước lượng
+sai số cho PINNs. Các kết quả lớn của lĩnh vực chỉ được trích dẫn cùng diễn giải;
+những chứng minh được trình bày đầy đủ đều sơ cấp, và giá trị của chúng nằm ở chỗ
+biến những khẳng định mơ hồ thành phát biểu có giả thiết rõ ràng.
+
+Thứ hai, phạm vi bài toán hẹp: chỉ mô hình thời gian liên tục, chỉ mạng truyền
+thẳng kết nối đầy đủ, chỉ bài toán thuận, và chỉ các phương trình một chiều theo
+không gian. Lợi thế lý thuyết quan trọng nhất của mạng nơ-ron --- bậc xấp xỉ
+$\mathcal{O}(m^{-1/2})$ không phụ thuộc số chiều ở Định lý~\ref{dl:barron} ---
+vì vậy \emph{không} được kiểm chứng bằng thực nghiệm nào trong luận văn.
+
+Thứ ba, các chặn ổn định ở Mệnh đề~\ref{md:chan-on-dinh} và
+Mệnh đề~\ref{md:chan-suy-bien} được thiết lập cho bài toán tuyến tính một chiều
+với điều kiện biên thoả chính xác. Với ràng buộc mềm và với toán tử phi tuyến,
+chúng chỉ đóng vai trò cơ sở khái niệm chứ không phải chặn hậu nghiệm áp dụng
+được trực tiếp.
+
+%==============================================================================
+\section{Hướng phát triển}
+\label{sec:huong-phat-trien}
+%==============================================================================
+
+Bảng~\ref{tab:ba-nguyen-nhan} gợi ý một nguyên tắc sắp xếp các hướng tiếp theo:
+vì ba nguyên nhân nằm ở ba tầng khác nhau, mỗi hướng nên được đánh giá theo
+\emph{tầng mà nó tác động tới}, và không hướng nào thay thế được hai tầng còn
+lại.
+
+\paragraph{Tầng bài toán.} Phân rã miền và hành quân theo thời gian
+(Bảng~\ref{tab:remedies}) thay một bài toán khó bằng một dãy bài toán dễ hơn, tức
+tác động trực tiếp lên hằng số ổn định. Đây là hướng đáng thử trước với phương
+trình Burgers độ nhớt nhỏ, nơi Mục~\ref{sec:tn5} cho thấy sai số tập trung vào
+một dải hẹp quanh lớp trong.
+
+\paragraph{Tầng tối ưu.} Bổ đề~\ref{bd:phan-hoi-duong} không chỉ ra rằng cân bằng
+trọng số là sai, mà chỉ ra \emph{cơ chế} hỏng. Hai sửa đổi đi thẳng từ cơ chế
+ấy đáng được khảo sát: đặt chặn trên cho $\lambda_i$, hoặc thay mẫu số của
+\eqref{eq:lambda-hat} bằng một đại lượng không triệt tiêu cùng $J_i$ --- chẳng
+hạn vết của nhân tiếp tuyến.
+
+\paragraph{Tầng xấp xỉ.} Thí nghiệm~\ref{tn:pho} cho thấy nhúng đặc trưng Fourier
+cải thiện $161$ lần nhưng chỉ \emph{dịch chuyển} dải tần hiệu dụng chứ không mở
+rộng nó, và việc chọn thang $s$ đòi hỏi biết trước thang độ dài của nghiệm chưa
+biết. Một quy tắc chọn $s$ dựa trên dữ liệu --- ví dụ ước lượng từ phổ của phần
+dư trong vài trăm vòng lặp đầu --- là hướng cụ thể và khả thi.
+
+\paragraph{Củng cố phương pháp luận thực nghiệm.} Ba việc rẻ và có giá trị ngay:
+lặp mỗi cấu hình trên $5$--$10$ hạt giống rồi báo cáo trung vị cùng khoảng phân
+vị (Mục~\ref{sec:hanche}); áp dụng lấy mẫu thích nghi RAR cho bài toán Burgers;
+và mở rộng phép kiểm chứng chặn ổn định ở Mục~\ref{sec:tn6} sang bài toán đối
+lưu--khuếch tán để đo trực tiếp sự suy biến theo $1/\nu$ mà
+Mệnh đề~\ref{md:chan-suy-bien} dự báo.
+
+\paragraph{Mở rộng phạm vi.} Cuối cùng, hai mở rộng nằm ngoài phạm vi luận văn
+nhưng nối liền với nó: bài toán ngược, nơi khung hàm mất mát \eqref{eq:total-loss}
+đã sẵn sàng và chỉ cần thêm $\bzeta$ vào tập biến tối ưu
+(Mục~\ref{subsec:thuan-nguoc}); và bài toán nhiều chiều, nơi lập luận chống lời
+nguyền số chiều ở Nhận xét~\ref{nx:loi-nguyen} lần đầu tiên trở nên kiểm chứng
+được.

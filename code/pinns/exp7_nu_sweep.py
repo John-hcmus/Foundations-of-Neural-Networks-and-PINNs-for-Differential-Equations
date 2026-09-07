@@ -47,7 +47,7 @@ def l2(vals, x):
     return torch.sqrt(torch.trapz(vals.squeeze() ** 2, x.squeeze())).item()
 
 
-def run(nu, seed=0, adam_iters=20000, n_col=512, lbfgs_iters=2000, n_eval=20001):
+def run(nu, seed=0, adam_iters=8000, n_col=512, lbfgs_iters=800, n_eval=20001):
     set_seed(seed)
     net = FNN([1, 64, 64, 64, 1], act="tanh")
     model = lambda x: x * (1 - x) * net(x)          # Bo de bd:rang-buoc-cung
@@ -88,48 +88,53 @@ def run(nu, seed=0, adam_iters=20000, n_col=512, lbfgs_iters=2000, n_eval=20001)
             "eps_L2_tuong_doi": ne / l2(ue, xs)}
 
 
+SEEDS = [0, 1, 2]
+NUS = [1.0, 0.3, 0.1, 0.03, 0.01]
+
+
 def main():
+    """Quet nu tren nhieu hat giong.
+
+    Uoc luong so mu tu MOT hat giong khong on dinh (do duoc: -0,730 voi ngan
+    sach 8000 vong va -0,535 voi 20000 vong, cung hat giong 0). Vi vay o day
+    lap lai tren ba hat giong va bao cao TRUNG VI cung KHOANG, thay vi mot
+    con so duy nhat.
+    """
+    import statistics as st
     os.makedirs(OUT, exist_ok=True)
-    nus = [1.0, 0.3, 0.1, 0.03, 0.01]
-    rows = [run(nu) for nu in nus]
-    print(f"{'nu':>7}{'be day lop':>12}{'||r||':>12}{'||e||':>12}"
-          f"{'ti so':>12}{'chan 1/(pi^2 nu)':>18}{'thoa?':>8}{'hoi tu?':>9}{'eps_L2':>12}")
-    for w in rows:
-        ok = "co" if w["ty_so"] <= w["chan"] else "KHONG"
-        hc = "co" if w["hoi_tu"] else "KHONG"
-        print(f"{w['nu']:7g}{w['be_day_lop_bien']:12.4f}{w['r']:12.4e}{w['e']:12.4e}"
-              f"{w['ty_so']:12.5f}{w['chan']:18.4f}{ok:>8}{hc:>9}"
-              f"{w['eps_L2_tuong_doi']:12.4e}")
+    tat_ca, so_mu = {}, []
+    for sd in SEEDS:
+        rows = [run(nu, seed=sd) for nu in NUS]
+        tat_ca[sd] = rows
+        ht = [w for w in rows if w["hoi_tu"]]
+        if len(ht) >= 2:
+            A = np.log10([w["nu"] for w in ht]); B = np.log10([w["ty_so"] for w in ht])
+            so_mu.append(float(np.polyfit(A, B, 1)[0]))
 
-    print(f"\nChan duoc thoa o {sum(w['ty_so'] <= w['chan'] for w in rows)}/{len(rows)}"
-          f" gia tri nu.")
+    print(f"{'nu':>7}{'be day lop':>12}{'ti so (trung vi)':>19}"
+          f"{'khoang':>26}{'chan 1/(pi^2 nu)':>18}{'hoi tu':>9}")
+    for j, nu in enumerate(NUS):
+        ts = [tat_ca[sd][j]["ty_so"] for sd in SEEDS]
+        hts = sum(tat_ca[sd][j]["hoi_tu"] for sd in SEEDS)
+        w0 = tat_ca[SEEDS[0]][j]
+        print(f"{nu:7g}{w0['be_day_lop_bien']:12.4f}{st.median(ts):19.5f}"
+              f"{'[%.5f; %.5f]' % (min(ts), max(ts)):>26}"
+              f"{1.0/(PI**2*nu):18.4f}{hts:>6}/{len(SEEDS)}")
 
-    # Ti so co THUC SU tang theo 1/nu khong? Chi hoi quy tren cac diem ma huan
-    # luyen da dua duoc phan du xuong du thap; o cac diem khac, ti so
-    # ||e||/||r|| khong phai phep do cho hang so on dinh ma cho su that bai
-    # cua chinh qua trinh toi uu.
-    ht = [w for w in rows if w["hoi_tu"]]
-    out = {"rows": rows}
-    if len(ht) >= 2:
-        A = np.log10([w["nu"] for w in ht]); B = np.log10([w["ty_so"] for w in ht])
-        slope = float(np.polyfit(A, B, 1)[0])
-        out["so_mu_hoi_tu"] = slope
-        out["nu_hoi_tu"] = [w["nu"] for w in ht]
-        ds = ", ".join("%g" % w["nu"] for w in ht)
-        print(f"Hoi quy log-log tren {len(ht)} diem HOI TU (nu = {ds}):")
-        print(f"  ti so ~ nu^({slope:.3f})        du bao cua chan: nu^(-1)")
-    if len(ht) < len(rows):
-        kh = [w for w in rows if not w["hoi_tu"]]
-        print(f"Loai {len(kh)} diem khong hoi tu: "
-              + ", ".join(f"nu={w['nu']:g} (||r||={w['r']:.2e})" for w in kh))
-        A = np.log10([w["nu"] for w in rows]); B = np.log10([w["ty_so"] for w in rows])
-        out["so_mu_tat_ca"] = float(np.polyfit(A, B, 1)[0])
-        print(f"  (neu tinh ca chung: nu^({out['so_mu_tat_ca']:.3f}) -- vo nghia)")
-    r0, r1 = rows[0], rows[-1]
-    print(f"Sai so TUONG DOI tang {r1['eps_L2_tuong_doi']/r0['eps_L2_tuong_doi']:.0f} lan "
-          f"khi nu giam {r0['nu']/r1['nu']:.0f} lan")
-    json.dump(out, open(os.path.join(OUT, "exp7_nu_sweep.json"), "w"), indent=2)
-
-
+    n_thoa = sum(w["ty_so"] <= w["chan"] for sd in SEEDS for w in tat_ca[sd])
+    n_tong = len(SEEDS) * len(NUS)
+    print(f"\nChan duoc thoa o {n_thoa}/{n_tong} truong hop (moi nu x moi hat giong).")
+    print(f"So mu tren cac diem hoi tu, tung hat giong: "
+          + ", ".join(f"{x:.3f}" for x in so_mu))
+    print(f"  trung vi {st.median(so_mu):.3f}, khoang "
+          f"[{min(so_mu):.3f}; {max(so_mu):.3f}]   (du bao cua chan: -1)")
+    j = NUS.index(0.01)
+    rr = [tat_ca[sd][j]["r"] for sd in SEEDS]
+    print(f"Tai nu = 0,01: ||r|| = " + ", ".join(f"{x:.2e}" for x in rr)
+          + "  -> khong hat giong nao hoi tu")
+    json.dump({"chi_tiet": {str(k): v for k, v in tat_ca.items()},
+               "so_mu_tung_hat_giong": so_mu,
+               "so_mu_trung_vi": st.median(so_mu)},
+              open(os.path.join(OUT, "exp7_nu_sweep.json"), "w"), indent=2)
 if __name__ == "__main__":
     main()

@@ -612,6 +612,15 @@ ngưỡng $10\%$ nhưng dừng ở mức thấp hơn hẳn. Vì mục tiêu củ
 sánh thứ tự \emph{ưu tiên} chứ không phải tốc độ chạm một ngưỡng tuỳ chọn, căn
 cứ đúng là \eqref{eq:c-plateau}; cột $t_{10}$ chỉ đọc được như một chỉ báo thứ
 tự ở chế độ (a) và (c), nơi nó nhất quán với sai số cuối cùng.
+
+Chạy lại thí nghiệm này với cùng cấu hình nhưng khác hạt giống cho thấy hiện
+tượng nghịch nói trên \emph{phụ thuộc hạt giống}: trong lần chạy đối chứng,
+chế độ (b) cho $t_{10}(k{=}4) = 300 < t_{10}(k{=}1) = 1\,400$, tức cột $t_{10}$
+và các hệ số $\abs{c_k}$ cùng chỉ về một hướng và không có gì phải hoà giải.
+Quỹ đạo trong đó $\abs{c_1}$ chạm ngưỡng rồi bị đẩy ngược ra là đặc thù của một
+lần chạy, không phải đặc tính của chế độ (b). Điều này củng cố hạn chế thứ nhất
+ở Mục~\ref{sec:hanche}, và cũng là lý do kết luận của thí nghiệm được rút từ
+\eqref{eq:c-plateau} chứ không từ $t_{10}$.
  
 Về độ lớn, cần tách hai con số thường bị lẫn. Thừa số $\abs{P(k)}^2 \propto k^4$
 \emph{một mình} ưu tiên mode $k=8$ hơn mode $k=1$ một hệ số $8^4 = 4\,096$. Nhưng
@@ -1230,6 +1239,31 @@ Mục~\ref{sec:tn4}. Thêm vào đó,
 Nhận xét~\ref{nx:hai-nghiem-tham-chieu} đã nêu việc hai chương hiện dùng hai nghiệm
 tham chiếu khác nhau.
  
+\item \emph{Cách sinh mẫu ngẫu nhiên không được đặc tả.} Ba thí nghiệm
+TN3, TN4, TN5 dùng điểm phối trí lấy mẫu ngẫu nhiên, nhưng luận văn chỉ ghi
+\emph{số lượng} điểm chứ không ghi bộ sinh số ngẫu nhiên và thứ tự tiêu thụ nó.
+Hệ quả đo được: khi cài đặt lại từ chính mô tả trong luận văn
+(Phụ lục~\ref{app:code}), ba thí nghiệm ấy tái lập \emph{kết luận định tính} một
+cách trọn vẹn --- thứ tự học đơn điệu ở TN3, $\rho_b$ giảm ở TN4 và tăng ở TN5,
+ủ trọng số phản tác dụng ở cả hai --- nhưng các \emph{con số} lệch từ hai đến
+chín lần. Ngược lại, TN1, TN2, TN6 dùng lưới tất định và nghiệm tham chiếu sai
+phân hữu hạn của TN5 cũng tất định; cả bốn tái lập tới ba hoặc bốn chữ số có
+nghĩa. Bài học: với một thí nghiệm ngẫu nhiên, \emph{số lượng} điểm không phải
+là đặc tả đủ.
+
+\item \emph{Hạt giống cố định chưa đủ để tái lập từng chữ số.} Ngoài hạt giống,
+kết quả còn phụ thuộc \emph{số luồng} của thư viện đại số tuyến tính. Đo trực
+tiếp trên bài toán Poisson với mạng $(1,32,32,32,1)$: khởi tạo và vòng lặp đầu
+tiên giống nhau tới từng bit ở mọi cấu hình luồng, nhưng đến vòng $1\,500$ thì
+hàm mục tiêu đã lệch ở chữ số có nghĩa thứ tư ($0{,}0232628$ với một luồng,
+$0{,}0232880$ với hai luồng, $0{,}0232605$ với bốn luồng). Nguyên nhân là số
+luồng thay đổi \emph{thứ tự cộng dồn} trong phép nhân ma trận; sai khác cỡ
+epsilon máy sinh ra ở đó được quỹ đạo tối ưu hoá khuếch đại dần. Điều này không
+mâu thuẫn với việc dùng \texttt{float64} --- độ chính xác kép vẫn cần thiết theo
+lập luận ở Mục~\ref{ssec:ad-pytorch} --- nhưng nó có nghĩa là tuyên bố ``tái lập
+được'' chỉ chặt chẽ khi cố định \emph{cả} hạt giống, \emph{cả} số luồng và
+\emph{cả} phiên bản thư viện.
+
 \item \emph{Chặn ổn định mới được kiểm chứng ở trường hợp đơn giản nhất.}
 Mục~\ref{sec:tn6} đã kiểm chứng Mệnh đề~\ref{md:chan-on-dinh} trên bài toán
 Poisson. Nhưng Mệnh đề~\ref{md:chan-suy-bien} --- vốn mới là tầng thứ nhất của

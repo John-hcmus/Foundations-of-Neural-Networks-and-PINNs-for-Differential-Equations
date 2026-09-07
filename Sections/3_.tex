@@ -166,7 +166,12 @@ cùng lớp ấy chỉ là một phép nhân với ma trận chuyển vị.
  
 \subsection{Bốn phương trình của lan truyền ngược}
 \label{subsec:bon-pt}
- 
+
+Bốn hệ thức dưới đây là dạng ma trận của thuật toán lan truyền ngược; cách trình
+bày qua đồ thị tính toán ở đây theo Goodfellow và cộng sự~\cite{goodfellow2016},
+còn ký hiệu $\bm{\delta}^{(\ell)}$ thì bám theo quy ước đã dùng từ
+Chương~\ref{chap:fnn}.
+
 Áp dụng \eqref{eq:chain-graph} cho cấu trúc chuỗi
 \eqref{eq:fnn-input}--\eqref{eq:fnn-output}, ta thu được dạng ma trận. Đặt
 \emph{sai số cục bộ} (local error, hay biến liên hợp) của lớp $\ell$ là
@@ -949,6 +954,8 @@ $\mathcal{B}_k \subset \{1,\dots,N\}$:
 \btheta_{k+1} = \btheta_k - \alpha_k \bm{g}_k .
 \label{eq:sgd}
 \end{equation}
+Trình bày về hạ gradient ngẫu nhiên và các biến thể của nó ở mục này theo
+Goodfellow và cộng sự~\cite{goodfellow2016}.
  
 \begin{dinhly}[Hội tụ dưới điều kiện bước học Robbins--Monro]
 \label{dl:robbins-monro}
@@ -1032,8 +1039,8 @@ sát được ở Hình~\ref{fig:hoitu}, nhưng không phải là một định 
  
 Hạ gradient thuần tuý tiến rất chậm trong các ``khe hẹp'' của hàm mục tiêu: nó
 dao động qua lại theo hướng có độ cong lớn và bò rất chậm theo hướng có độ cong
-nhỏ. Phương pháp \emph{động lượng} khắc phục bằng cách tích luỹ một trung bình
-trượt của các gradient quá khứ:
+nhỏ. Phương pháp \emph{động lượng}~\cite{goodfellow2016} khắc phục bằng cách tích
+luỹ một trung bình trượt của các gradient quá khứ:
 \begin{equation}
 \bm{v}_k = \beta \bm{v}_{k-1} - \alpha \bm{g}_k,
 \qquad
@@ -1089,7 +1096,8 @@ tới gần điểm cực tiểu.
 Ý tưởng tiếp theo là dùng bước học \emph{riêng cho từng toạ độ}, tự động thu nhỏ
 ở những hướng có gradient lớn kéo dài. AdaGrad tích luỹ toàn bộ lịch sử bình
 phương gradient, nên bước học giảm đơn điệu và có thể tắt quá sớm; RMSProp thay
-tổng tích luỹ bằng trung bình trượt hàm mũ, khắc phục nhược điểm đó. Adam kết hợp
+tổng tích luỹ bằng trung bình trượt hàm mũ, khắc phục nhược điểm
+đó~\cite{goodfellow2016}. Adam kết hợp
 RMSProp với động lượng, đồng thời hiệu chỉnh độ chệch của các trung bình trượt ở
 những bước đầu~\cite{kingma2015}.
  

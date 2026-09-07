@@ -43,6 +43,32 @@ bằng $776{,}229$ — đúng giá trị $J_r$ mà TN1 báo cáo cho mạng ReLU
 
 ## Tái lập
 
-Mọi thí nghiệm dùng một hạt giống cố định (`seed = 0`) và `float64`, nên kết quả
-tái lập được từng chữ số trên cùng phiên bản PyTorch. Xem phần Hạn chế của luận
-văn về việc một hạt giống duy nhất là chưa đủ để rút kết luận thống kê.
+Mọi thí nghiệm dùng một hạt giống cố định (`seed = 0`) và `float64`.
+
+**Nhưng hạt giống cố định là chưa đủ để tái lập từng chữ số.** Kết quả còn phụ
+thuộc **số luồng BLAS**. Đo trực tiếp trên bài toán Poisson, mạng `(1,32,32,32,1)`:
+
+| | `OMP_NUM_THREADS=1` | `=2` | `=4` |
+|---|---|---|---|
+| `‖W⁽¹⁾‖` khởi tạo | `1.5813022424358212` | giống hệt | giống hệt |
+| `J` tại vòng 0 | `777.60307687791374` | giống hệt | giống hệt |
+| `J` tại vòng 100 | `28.153617819651501` | `...505` | `...505` |
+| `J` tại vòng 1499 | `0.023262825` | `0.023287981` | `0.023260501` |
+
+Khởi tạo và vòng lặp đầu tiên giống nhau từng bit; sai khác chỉ xuất hiện khi
+tích luỹ qua nhiều bước, vì số luồng đổi **thứ tự cộng dồn** trong phép nhân ma
+trận. Sai khác cỡ epsilon máy ban đầu được quỹ đạo tối ưu hoá khuếch đại: sau
+$1\,500$ vòng đã lệch ở chữ số có nghĩa thứ tư.
+
+Hệ quả thực hành:
+
+- Muốn tái lập từng chữ số, phải cố định **cả** hạt giống **lẫn** số luồng
+  (`OMP_NUM_THREADS`), và dùng cùng phiên bản PyTorch.
+- Với các thí nghiệm dùng lấy mẫu ngẫu nhiên (TN3, TN4, TN5), chỉ nên kỳ vọng
+  tái lập được **kết luận định tính**, không phải con số.
+- Các thí nghiệm dùng lưới tất định (TN1, TN2, TN6) và bộ giải tham chiếu sai
+  phân hữu hạn của TN5 thì ổn định hơn hẳn: chúng tái lập tới ba đến bốn chữ số
+  có nghĩa so với số liệu trong luận văn.
+
+Xem thêm phần Hạn chế của luận văn về việc một hạt giống duy nhất là chưa đủ để
+rút kết luận thống kê.

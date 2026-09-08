@@ -49,3 +49,11 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# =========================
+# Beamer
+# =========================
+slides/*.nav
+slides/*.snm
+slides/*.vrb
+slides/slide.pdf

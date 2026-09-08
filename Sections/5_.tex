@@ -1051,7 +1051,7 @@ phản hồi này \emph{không có cơ chế tự hãm}: cận dưới \eqref{eq
 phân kỳ như $J_i^{-1/2}$.
  
 Số liệu khớp với dự báo. Trong lần chạy có ủ, $\rho_b$ đạt $1{,}69\times10^5$, tức
-cao gấp $96$ lần lần chạy không ủ -- thuật toán nhằm \emph{giảm} mất cân bằng lại
+cao gấp $96$ lần so với lần chạy không ủ -- thuật toán nhằm \emph{giảm} mất cân bằng lại
 làm nó trầm trọng hơn hai bậc độ lớn. Và theo
 Nhận xét~\ref{nx:danh-doi}, $\lambda_b$ ở thang $10^4$--$10^5$ nằm xa quá mức giá
 trị hữu hạn tối ưu, nên phần dư trong miền bị hy sinh hoàn toàn.
@@ -1823,34 +1823,52 @@ Mức khớp này ủng hộ khung lý thuyết của Chương~\ref{chap:pinn} m
 \emph{có điều kiện}, và điều kiện ấy hiện ra rất rõ khi xếp mười bốn hạng mục
 theo \emph{nguồn gốc} của phát biểu thay vì theo kết quả.
 
-\emph{Không một mệnh đề đã chứng minh nào bị số liệu bác bỏ.} Bốn mệnh đề được
-xác nhận trọn vẹn (Hệ quả~\ref{hq:pinn-hong}, Mệnh đề~\ref{md:san-nhieu},
-Mệnh đề~\ref{md:chan-on-dinh}, Mệnh đề~\ref{md:chi-phi-bp}), và hai mệnh đề còn
-lại --- Mệnh đề~\ref{md:phat-bien-phat} và Mệnh đề~\ref{md:chan-suy-bien} ---
-đúng về \emph{hướng} ở mọi hạt giống và mọi giá trị $\nu$; cái phải sửa ở cả hai
-là \emph{cách đọc}, không phải nội dung. Trong toàn bộ chương thực nghiệm, chứng
+Trong mười bốn hạng mục, \emph{sáu} là mệnh đề đã được chứng minh trong báo cáo
+và \emph{tám} thì không. Ranh giới giữa hai nhóm ấy giải thích gần như toàn bộ
+bảng.
+
+\emph{Nhóm thứ nhất --- sáu mệnh đề đã chứng minh --- không có cái nào bị số
+liệu bác bỏ.} Bốn được xác nhận trọn vẹn: Hệ quả~\ref{hq:pinn-hong},
+Mệnh đề~\ref{md:san-nhieu}, Mệnh đề~\ref{md:chan-on-dinh},
+Mệnh đề~\ref{md:chi-phi-bp}. Hai mệnh đề còn lại ---
+Mệnh đề~\ref{md:phat-bien-phat} và Mệnh đề~\ref{md:chan-suy-bien} --- đúng về
+\emph{hướng} ở mọi hạt giống và mọi giá trị $\nu$; cái phải sửa ở cả hai là
+\emph{cách đọc}, không phải nội dung.
+
+\emph{Nhóm thứ hai --- tám hạng mục không phải mệnh đề --- thì phân hoá.} Hai
+khớp trọn vẹn: quan sát rằng $\lambda_b$ tối ưu là hữu hạn, và
+Nhận xét~\ref{rem:ntk-view} về thứ tự học của hồi quy. Một là \emph{chế độ hỏng
+tìm được} của một thuật toán trong tài liệu, và chính nó sinh ra
+Bổ đề~\ref{bd:phan-hoi-duong}. \emph{Năm} hạng mục còn lại phải điều chỉnh.
+
+Cộng cả hai nhóm: \emph{bảy hạng mục} phải điều chỉnh --- hai cách đọc mệnh đề
+và năm phát biểu không phải mệnh đề. Trong toàn bộ chương thực nghiệm, chứng
 minh chưa một lần thất bại; chỉ có suy đoán thất bại.
 
-Tám chỗ phải điều chỉnh chia thành bốn kiểu suy luận yếu hơn.
+Bảy hạng mục ấy mang \emph{tám} khiếm khuyết, vì giả thuyết
+\eqref{eq:pho-hieu-dung} mắc cả hai kiểu cùng lúc. Tám khiếm khuyết chia thành
+bốn kiểu suy luận yếu hơn.
 
-\emph{Đối chiếu một số mũ đo ở ngân sách hữu hạn với số mũ tiệm cận.} Đây là
+\emph{(i) Đối chiếu một số mũ đo ở ngân sách hữu hạn với số mũ tiệm cận.} Đây là
 kiểu phổ biến nhất và tinh vi nhất, vì nó luôn cho cảm giác ``khớp gần đúng'':
 Mệnh đề~\ref{md:phat-bien-phat} (số mũ đo được trải $[-0{,}907;\ -0{,}503]$ so
 với dự báo $-1$) và Mệnh đề~\ref{md:chan-suy-bien} (số mũ trải
 $[-0{,}730;\ +0{,}049]$ so với dự báo $-1$). Trong cả hai, độ phân tán của chính
 số mũ lớn hơn khoảng cách tới dự báo, nên phép đối chiếu không mang thông tin.
 
-\emph{Ghép hai kết quả rời rạc}: giả thuyết \eqref{eq:pho-hieu-dung} nhân
+\emph{(ii) Ghép hai kết quả rời rạc}: giả thuyết \eqref{eq:pho-hieu-dung} nhân
 $\abs{P}^2$ với $\widehat{\varkappa}$, và kết luận ở Mục~\ref{subsec:he-qua-pinn}
 ngầm giả định thừa số nào thắng.
 
-\emph{Khái quát hoá từ một lần chạy}: quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$
+\emph{(iii) Khái quát hoá từ một lần chạy}: quan hệ $\rho_b$--$\norm{\bW^{(1)}}^2$
 không sống sót qua năm hạt giống (Nhận xét~\ref{nx:tuong-quan-hong}); phát biểu
 về chiều biến thiên của $\rho_b$ trên bài toán lành mạnh chỉ đúng ở $3/5$ hạt
-giống; và tỉ số $\abs{c_1}/\abs{c_8} = 38{,}6$ thuộc đuôi hiếm của một phân bố
-có trung vị $5{,}5$ (Mục~\ref{sec:tn8}).
+giống; và tỉ số $\abs{c_1}/\abs{c_8} = 38{,}6$ đo cho
+giả thuyết \eqref{eq:pho-hieu-dung} thuộc đuôi hiếm của một phân bố có trung vị
+$5{,}5$ (Mục~\ref{sec:tn8}). Chính chỗ cuối này là khiếm khuyết thứ hai của
+\eqref{eq:pho-hieu-dung}.
 
-\emph{Ước lượng bậc độ lớn không được kiểm chứng}: Nhận xét~\ref{nx:chi-phi-bac-cao}
+\emph{(iv) Ước lượng bậc độ lớn không được kiểm chứng}: Nhận xét~\ref{nx:chi-phi-bac-cao}
 đoán bội số $4$--$6$ trong khi đo được khoảng $9$ (Mục~\ref{sec:tn9}).
 
 Đáng chú ý là cả bốn kiểu đều \emph{không} bị phát hiện bởi một lần chạy. Ba

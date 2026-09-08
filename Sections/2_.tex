@@ -1271,10 +1271,13 @@ tuyệt đối, $\mathbb{P}\big(\exists\, i:\ x_i \in \mathcal{K}(\btheta)\big) 
 Vậy với xác suất $1$, mọi $x_i$ đều nằm trong phần trong của một ô, nơi
 $\Net''_{\btheta}(x_i) = 0$ theo Hệ quả~\ref{hq:relu-hkn}.
  
-Hơn nữa, vị trí các siêu phẳng phân hoạch phụ thuộc liên tục vào $\btheta$; do
-$\{x_i\}$ hữu hạn và mỗi $x_i$ nằm trong phần trong của ô chứa nó với khoảng
-cách dương tới biên, tồn tại lân cận $U$ đủ nhỏ sao cho với mọi $\btheta' \in U$
-các điểm $x_i$ vẫn nằm trong phần trong của ô tương ứng. Trên $U$ ta có
+Hơn nữa, điều vừa nói tương đương với $z^{(\ell)}_k(x_i) \ne 0$ với mọi
+$i,\ell,k$, vì các điểm gãy đúng là nơi một tiền kích hoạt đổi dấu. Mỗi hàm
+$\btheta' \mapsto z^{(\ell)}_k(x_i)$ liên tục (hợp thành của các phép affine và
+ReLU, đều liên tục), và bộ ba chỉ số $(i,\ell,k)$ chạy trên một tập
+\emph{hữu hạn}. Vậy tồn tại lân cận $U$ của $\btheta$ mà trên đó cả hữu hạn
+đại lượng ấy đều giữ nguyên dấu, nói riêng không triệt tiêu: không một điểm gãy
+nào có thể rơi trúng một $x_i$ khi $\btheta'$ còn nằm trong $U$. Trên $U$ ta có
 $\Net''_{\btheta'}(x_i) = 0$ với mọi $i$; thay vào \eqref{eq:J-residual} cho
 $J$ hằng trên $U$ với giá trị nêu ở \eqref{eq:gradient-zero}. Một hàm hằng địa
 phương có gradient bằng $0$.

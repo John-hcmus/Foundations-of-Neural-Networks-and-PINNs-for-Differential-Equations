@@ -1176,16 +1176,37 @@ hạng thời gian),
 p(\xi) := \sum_{\abs{\alpha}\le m} c_\alpha\, \xi^{\alpha},
 \label{eq:residual-amplification}
 \end{equation}
-nên với các $k$ lớn, $\abs{\widetilde{r}_{\btheta}(k)} \sim
-\norm{k}^{m}\,\abs{\widetilde{e}_{\btheta}(k)}$, sai khác một hằng số bằng modul
-của hệ số dẫn đầu.
+nên với các $k$ lớn,
+\begin{equation}
+\abs{\widetilde{r}_{\btheta}(k)}
+ \;\sim\; \abs{p_m\!\left(2\pi i\,k/\norm{k}\right)}\;
+   \norm{k}^{m}\,\abs{\widetilde{e}_{\btheta}(k)},
+\label{eq:bieu-trung-chinh}
+\end{equation}
+trong đó $p_m(\xi) := \sum_{\abs{\alpha}=m} c_\alpha \xi^{\alpha}$ là
+\emph{biểu trưng chính}. Phát biểu tiệm cận này đòi hỏi
+$p_m\big(2\pi i\,k/\norm{k}\big) \ne 0$ theo hướng đang xét --- điều kiện được
+thoả với toán tử elliptic, nhưng \emph{không} với mọi toán tử: chẳng hạn toán tử
+sóng $\partial_{tt} - \partial_{xx}$ có biểu trưng chính triệt tiêu trên nón ánh
+sáng, và ở đúng những hướng ấy không có sự khuếch đại nào.
 \end{menhde}
  
 \begin{proof}
 Biến đổi Fourier biến $\partial^{\alpha}$ thành phép nhân với
 $(2\pi i k)^{\alpha}$; lấy tổ hợp tuyến tính với các hệ số $c_\alpha$ cho
-\eqref{eq:residual-amplification}. Khi $\norm{k}\to\infty$, biểu trưng chính (các số
-hạng bậc $m$) trội hơn mọi số hạng bậc thấp hơn.
+\eqref{eq:residual-amplification}. Viết $k = \norm{k}\,\omega$ với
+$\norm{\omega} = 1$; do $\xi \mapsto \xi^{\alpha}$ thuần nhất bậc
+$\abs{\alpha}$,
+\[
+p(2\pi i k) = \norm{k}^{m} p_m(2\pi i \omega)
+ + \mathcal{O}\big(\norm{k}^{m-1}\big).
+\]
+Khi $p_m(2\pi i\omega) \ne 0$, số hạng thứ nhất trội và cho
+\eqref{eq:bieu-trung-chinh}. Cần nhấn mạnh rằng thừa số
+$\abs{p_m(2\pi i\omega)}$ phụ thuộc \emph{hướng} $\omega$ chứ không chỉ phụ
+thuộc $\norm{k}$; nó thu về một hằng số duy nhất trong trường hợp một chiều, nơi
+chỉ có hai hướng $\omega = \pm 1$ --- và đó là toàn bộ các bài toán được thực
+nghiệm ở Chương~\ref{chap:thucnghiem}.
 \end{proof}
  
 Với $\Lop$ phi tuyến như Burgers, \eqref{eq:residual-amplification} chỉ đúng cho

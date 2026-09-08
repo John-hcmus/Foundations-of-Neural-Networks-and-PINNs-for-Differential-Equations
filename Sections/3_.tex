@@ -340,7 +340,7 @@ Với mạng theo Định nghĩa~\ref{def:fnn} và lô $N$ mẫu, lượt ngư�
 Thuật toán~\ref{alg:backprop} tiêu tốn
 \begin{equation}
 B = 4N\sum_{\ell=1}^{L} n_\ell n_{\ell-1}
-  \;-\; 2N\, n_L n_{L-1}
+  \;-\; 2N\, n_1 n_0
 \label{eq:bp-cost-exact}
 \end{equation}
 phép toán số thực, tức
@@ -356,14 +356,28 @@ Thứ nhất, tích ngoài \eqref{eq:bp3}: ma trận kết quả có $n_\ell n_{
 tử, mỗi phần tử là một phép nhân, cộng thêm phép cộng tích luỹ theo $N$ mẫu
 trong dạng \eqref{eq:bp-batch}, tổng cộng $2N n_\ell n_{\ell-1}$ phép.
  
-Thứ hai, phép nhân với ma trận chuyển vị trong \eqref{eq:bp2}: theo cùng lập luận
-đếm của Mệnh đề~\ref{md:chi-phi}, phép này tốn $2N n_\ell n_{\ell-1}$ phép. Phép
-này không được thực hiện tại lớp cuối ($\ell = L$ chỉ cần \eqref{eq:bp1}), từ đó
-có số hạng trừ trong \eqref{eq:bp-cost-exact}. Phép nhân Hadamard với
-$\sigma'(\bz^{(\ell)})$ chỉ tốn $N n_\ell$ phép, thuộc bậc thấp hơn.
+Thứ hai, phép nhân với ma trận chuyển vị trong \eqref{eq:bp2}. Bước này chạy với
+$\ell = L-1,\dots,1$ và dùng ma trận $\bW^{(\ell+1)}$ cỡ
+$n_{\ell+1}\times n_\ell$, nên theo cùng lập luận đếm của
+Mệnh đề~\ref{md:chi-phi} nó tốn $2N n_{\ell+1} n_\ell$ phép. Đổi chỉ số
+$m = \ell+1$, các ma trận thực sự được dùng là $\bW^{(L)},\dots,\bW^{(2)}$, tức
+tổng
+\[
+\sum_{m=2}^{L} 2N n_m n_{m-1}
+ = 2N\sum_{m=1}^{L} n_m n_{m-1} \;-\; 2N\, n_1 n_0 .
+\]
+Ma trận \emph{vắng mặt} trong tổng là $\bW^{(1)}$: bước dùng nó sẽ cho
+$\bm{\delta}^{(0)} = \partial J/\partial\bx$, đại lượng không cần thiết để lấy
+gradient theo tham số. Đó là nguồn gốc của số hạng trừ trong
+\eqref{eq:bp-cost-exact} --- lưu ý số hạng ấy là $2N n_1 n_0$ chứ không phải
+$2N n_L n_{L-1}$, vì bước bị bỏ nằm ở \emph{đầu vào} chứ không phải ở lớp ra.
+Phép nhân Hadamard với $\sigma'(\bz^{(\ell)})$ chỉ tốn $N n_\ell$ phép, thuộc
+bậc thấp hơn.
  
-Chia \eqref{eq:bp-cost-exact} cho \eqref{eq:do-phuc-tap} được tỉ số không vượt
-quá $2$; cộng thêm chính lượt xuôi (bắt buộc phải chạy trước) cho $c \le 3$. Mọi
+Chia \eqref{eq:bp-cost-exact} cho \eqref{eq:do-phuc-tap}:
+\[
+\frac{B}{F} = 2 - \frac{n_1 n_0}{\sum_{\ell=1}^{L} n_\ell n_{\ell-1}} \;\le\; 2 ;
+\] cộng thêm chính lượt xuôi (bắt buộc phải chạy trước) cho $c \le 3$. Mọi
 đại lượng trong lập luận chỉ phụ thuộc kiến trúc, không phụ thuộc $P$ theo bất kỳ
 cách nào khác ngoài qua chính tổng $\sum_\ell n_\ell n_{\ell-1}$ vốn đã có mặt
 trong $\mathrm{cost}(J)$.

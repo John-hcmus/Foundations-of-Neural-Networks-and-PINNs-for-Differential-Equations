@@ -846,8 +846,35 @@ không phải đa thức, với các đạo hàm tới bậc $k$ bị chặn. Kh
 \end{equation}
 tức với mọi $f \in C^k(K)$ và $\varepsilon > 0$ tồn tại $\Net$ dạng
 \eqref{eq:xapxi} sao cho $\|f - \Net\|_{C^k(K)} < \varepsilon$. Nói riêng, tập
-ấy cũng trù mật trong không gian Sobolev $W^{k,\infty}(K)$.
+ấy cũng trù mật trong không gian Sobolev $W^{k,p}(K)$ với \emph{mọi}
+$p \in [1,\infty)$.
 \end{dinhly}
+
+\begin{nhanxet}[Vì sao phải loại trừ $p = \infty$]
+\label{nx:khong-p-vo-cung}
+Hệ quả Sobolev ở trên đúng với mọi $p$ \emph{hữu hạn}, và lập luận rất ngắn: với
+$K$ bị chặn, chuẩn $C^k$ trội hơn chuẩn $W^{k,p}$ sai khác thừa số
+$\abs{K}^{1/p}$, còn $C^k(K)$ thì trù mật trong $W^{k,p}(K)$ khi $p < \infty$.
+
+Trường hợp $p = \infty$ thì \emph{sai}, và đây là chỗ dễ phát biểu quá tay. Lý
+do không nằm ở mạng nơ-ron mà ở chính không gian $W^{k,\infty}$: các hàm trơn
+\emph{không} trù mật trong nó. Lấy $k=1$, $K=(-1,1)$ và $f(x) = \abs{x}$. Khi
+đó $f \in W^{1,\infty}(K)$ với $f' = \operatorname{sgn}$ hầu khắp nơi, nhưng với
+\emph{mọi} $g \in C^1(K)$,
+\[
+\norm{f-g}_{W^{1,\infty}}
+ \;\ge\; \operatorname*{ess\,sup}_{x}\abs{\operatorname{sgn}(x) - g'(x)}
+ \;\ge\; 1,
+\]
+bởi $g'$ liên tục nên không thể bám sát một hàm nhảy biên độ $2$: đặt
+$c := g'(0)$, ít nhất một trong hai số $\abs{1-c}$ và $\abs{-1-c}$ phải
+$\ge 1$. Vậy không có dãy hàm trơn nào --- mạng nơ-ron hay không --- tiến tới
+$f$ trong chuẩn $W^{1,\infty}$.
+
+Điều này không làm yếu vai trò của Định lý~\ref{dl:sobolev} trong báo cáo: mọi
+chỗ dùng nó về sau đều dùng kết luận theo chuẩn $C^k$, vốn là kết luận
+\emph{mạnh hơn} trên lớp hàm $C^k$ đang xét.
+\end{nhanxet}
  
 Định lý~\ref{dl:sobolev} (\cite{hornik1991}) là mệnh đề bảo đảm nền tảng cho
 toàn bộ phương pháp: nếu nghiệm đúng $u$ của một phương trình vi phân bậc $k$

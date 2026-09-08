@@ -1974,9 +1974,13 @@ J(\btheta)
  
 \begin{menhde}[Hồi quy Gauss sinh ra MSE]
 \label{md:gauss-mse}
-Chọn $p_{\text{model}}(\bm{y}\mid\bx;\btheta)
- = \mathcal{N}\!\big(\bm{y};\, \Net_{\btheta}(\bx),\,
-   \varsigma^{2}\bI_{n_L}\big)$ với $\varsigma > 0$ cố định. Khi đó
+Chọn
+\[
+  p_{\text{model}}(\bm{y}\mid\bx;\btheta)
+  = \mathcal{N}\!\big(\bm{y};\, \Net_{\btheta}(\bx),\,
+    \varsigma^{2}\bI_{n_L}\big),
+\]
+với $\varsigma > 0$ cố định. Khi đó
 \begin{equation}
 J(\btheta)
  = \frac{1}{2\varsigma^{2}}\,
@@ -2157,15 +2161,26 @@ tổng hợp trong Bảng~\ref{tab:tong-ket}. Điểm chung của chúng: mỗi 
 kế trong phần thực nghiệm đều truy về được một mệnh đề cụ thể, chứ không về một
 quy ước thực hành.
  
-\begin{table}[H]
-\centering
-\caption{Tổng kết các kết quả chính của chương và vai trò của chúng.}
-\label{tab:tong-ket}
+\begingroup
 \small
-\begin{tabular}{@{}l p{8.2cm}@{}}
+\setlength{\LTcapwidth}{\textwidth}
+\begin{longtable}{@{}l p{8.2cm}@{}}
+\caption{Tổng kết các kết quả chính của chương và vai trò của chúng.}
+\label{tab:tong-ket} \\
 \toprule
 \textbf{Kết quả} & \textbf{Nội dung và vai trò} \\
 \midrule
+\endfirsthead
+\multicolumn{2}{@{}l}{\emph{Bảng~\thetable{} (tiếp theo)}} \\
+\toprule
+\textbf{Kết quả} & \textbf{Nội dung và vai trò} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{2}{r@{}}{\emph{(xem tiếp trang sau)}} \\
+\endfoot
+\bottomrule
+\endlastfoot
 Bổ đề~\ref{bd:affine}, Hệ quả~\ref{hq:suy-bien}
   & Hợp thành affine vẫn affine; phi tuyến là nguồn duy nhất của sức biểu
     diễn. \\
@@ -2209,10 +2224,9 @@ Mệnh đề~\ref{md:hieu-chinh}
 Mệnh đề~\ref{md:gauss-mse}, \ref{md:ky-vong-dieu-kien}
   & MSE sinh từ hợp lý cực đại; nghiệm lý tưởng là $\E[\bm{y}\mid\bx]$. \\
 Mệnh đề~\ref{md:khong-loi}
-  & $J$ không lồi do đối xứng dấu; ít nhất $2^{n_1}n_1!$ cực tiểu tương đương. \\
-\bottomrule
-\end{tabular}
-\end{table}
+  & $J$ không lồi do đối xứng dấu; ít nhất $2^{n_1}n_1!$ cực tiểu tương đương.
+\end{longtable}
+\endgroup
  
 Cấu hình được chốt lại cho toàn bộ phần thực nghiệm: kiến trúc FNN với hàm kích
 hoạt $\tanh$, khởi tạo Xavier theo \eqref{eq:xavier}, độ chệch bằng $0$,

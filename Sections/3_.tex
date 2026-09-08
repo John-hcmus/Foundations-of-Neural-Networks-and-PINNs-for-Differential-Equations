@@ -767,8 +767,7 @@ tính bởi một đồ thị tính toán}. Do đó có thể áp dụng vi phâ
 nó. Mệnh đề sau làm rõ rằng cơ chế này không phải một thủ thuật lập trình mà tái
 tạo đúng các hệ thức truy hồi đã được chứng minh ở Chương~\ref{chap:fnn}.
  
-\begin{menhde}[Vi phân tự động tái tạo các truy hồi \eqref{eq:G-truy-hoi} và
-\eqref{eq:S-truy-hoi}]
+\begin{menhde}[Vi phân tự động tái tạo hai hệ thức truy hồi]
 \label{md:ad-tai-tao}
 Xét mạng theo Định nghĩa~\ref{def:fnn} với $\sigma \in C^2$ và $n_L = 1$.
  
@@ -780,9 +779,9 @@ $\dot{\bx} = \bm{r}$, sinh ra dãy tangent $\dot{\ba}^{(\ell)}$ thoả đúng
 \label{eq:ad-jvp}
 \end{equation}
 tức $\dot{\ba}^{(\ell)} = \bG^{(\ell)}\bm{r}$ với $\bG^{(\ell)}$ của
-Mệnh đề~\ref{md:jacobian}. Do đó $n_0$ lượt thuận với các mầm
-$\bm{e}_1,\dots,\bm{e}_{n_0}$ cho đúng ma trận $\partial_{\bx}\Net_{\btheta}$
-của \eqref{eq:jacobian}.
+Mệnh đề~\ref{md:jacobian}. Do đó $n_0$ lượt thuận với các vectơ mầm
+$\bm{e}_1,\dots,\bm{e}_{n_0}$ cho đúng ma trận Jacobi
+$\partial_{\bx}\Net_{\btheta}$ ở \eqref{eq:jacobian}.
  
 \emph{(b)} Một lượt chế độ thuận với mầm $\bm{r}$ áp lên đồ thị \emph{mở rộng}
 đã chứa $\dot{\ba}^{(\ell)}$ (tức chế độ thuận trên chế độ thuận) sinh ra dãy
